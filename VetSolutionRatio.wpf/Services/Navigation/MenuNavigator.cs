@@ -1,13 +1,15 @@
 ﻿using System.Linq;
 using PRF.Utils.Injection.Containers;
 using PRF.WPFCore;
+using VetSolutionRatio.wpf.Views.Parameters;
+using VetSolutionRatio.wpf.Views.RatioPanel;
 
 namespace VetSolutionRatio.wpf.Services.Navigation
 {
     internal interface IMenuNavigator
     {
         INavigationCommand[] AvailableMenuCommands { get; }
-        INavigeablePanel MainPanel { get; }
+        INavigeablePanel? MainPanel { get; }
         bool ShouldDisplayMenu { get; set; }
         void NavigateToFirstView();
     }
@@ -28,15 +30,15 @@ namespace VetSolutionRatio.wpf.Services.Navigation
     // ReSharper disable once ClassNeverInstantiated.Global
     internal sealed class MenuNavigator : ViewModelBase, IMenuNavigator
     {
-        private INavigeablePanel _mainPanel;
+        private INavigeablePanel? _mainPanel;
         private bool _shouldDisplayMenu;
 
         public MenuNavigator(IInjectionContainer container)
         {
             AvailableMenuCommands = new INavigationCommand[]
             {
-                // new NavigationCommand("Record & Validation", () => MainPanel = container.Resolve<RecValidationView>()),
-                // new NavigationCommand("Extract Diff", () => MainPanel = container.Resolve<QuadrantsControlsView>())
+                new NavigationCommand("Ration Calculation", () => MainPanel = container.Resolve<RatioPanelView>()),
+                new NavigationCommand("Parameters", () => MainPanel = container.Resolve<ParametersView>())
             };
         }
 
@@ -48,7 +50,7 @@ namespace VetSolutionRatio.wpf.Services.Navigation
             set => SetProperty(ref _shouldDisplayMenu, value);
         }
         
-        public INavigeablePanel MainPanel
+        public INavigeablePanel? MainPanel
         {
             get => _mainPanel;
             private set

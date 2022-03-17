@@ -18,7 +18,7 @@
         FontFamily="{DynamicResource MaterialDesignFont}"
         Height="650" Width="1200"
         d:DataContext="{d:DesignInstance main:MainWindowViewModel, IsDesignTimeCreatable=False}">
-    
+
     <materialDesign:DrawerHost IsLeftDrawerOpen="{Binding ElementName=MenuToggleButton, Path=IsChecked}">
         <!--Le panneau de menu-->
         <materialDesign:DrawerHost.LeftDrawerContent>
@@ -48,10 +48,10 @@
         <!-- CONTENT -->
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            
+
             <materialDesign:ColorZone Padding="5" materialDesign:ShadowAssist.ShadowDepth="Depth2" Mode="Dark"
                                       VerticalAlignment="Stretch">
                 <StackPanel>
