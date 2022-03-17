@@ -1,8 +1,28 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VetSolutionRatio.UnitTest", "VetSolutionRatio.UnitTest\VetSolutionRatio.UnitTest.csproj", "{151B7C62-C1E7-4572-B0FB-4DB99ABDB2E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VetSolutionRatio.wpf", "VetSolutionRatio.wpf\VetSolutionRatio.wpf.csproj", "{F9916264-3841-4D39-B3AF-96B57D7CEBC2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VetSolutionRatioLib", "VetSolutionRatioLib\VetSolutionRatioLib.csproj", "{7E98F232-4A85-4533-A3E2-D841FCB159F6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{151B7C62-C1E7-4572-B0FB-4DB99ABDB2E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{151B7C62-C1E7-4572-B0FB-4DB99ABDB2E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{151B7C62-C1E7-4572-B0FB-4DB99ABDB2E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{151B7C62-C1E7-4572-B0FB-4DB99ABDB2E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F9916264-3841-4D39-B3AF-96B57D7CEBC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9916264-3841-4D39-B3AF-96B57D7CEBC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9916264-3841-4D39-B3AF-96B57D7CEBC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9916264-3841-4D39-B3AF-96B57D7CEBC2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E98F232-4A85-4533-A3E2-D841FCB159F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E98F232-4A85-4533-A3E2-D841FCB159F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E98F232-4A85-4533-A3E2-D841FCB159F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E98F232-4A85-4533-A3E2-D841FCB159F6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
