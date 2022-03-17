@@ -11,4 +11,17 @@
       <None Remove="cow.png" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Services" />
+      <Folder Include="Views" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="MaterialDesignColors" Version="2.0.4" />
+      <PackageReference Include="MaterialDesignThemes" Version="4.3.0" />
+      <PackageReference Include="PRF.Utils.CoreComponents" Version="2.2.0" />
+      <PackageReference Include="PRF.Utils.Injection" Version="2.0.0" />
+      <PackageReference Include="PRF.WPFCore" Version="2.1.1" />
+    </ItemGroup>
+
 </Project>
