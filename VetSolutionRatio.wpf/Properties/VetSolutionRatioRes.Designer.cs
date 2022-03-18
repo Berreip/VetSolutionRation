@@ -77,5 +77,23 @@ namespace VetSolutionRatio.wpf.Properties {
                 return ResourceManager.GetString("AnimalSubKind_Heifer", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Search an animal by nam (splited by space).
+        /// </summary>
+        internal static string View_AnimalSelection_Search_Hint {
+            get {
+                return ResourceManager.GetString("View_AnimalSelection_Search_Hint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Each part of your search separated by a space will be processed. ie: if you type &quot;gen 1&quot; you will see what contains BOTH &quot;gen&quot; AND &quot;1&quot;, but NOT what would contain only &quot;gen&quot;. Search is not case sensitive .
+        /// </summary>
+        internal static string View_AnimalSelection_Search_Tooltip {
+            get {
+                return ResourceManager.GetString("View_AnimalSelection_Search_Tooltip", resourceCulture);
+            }
+        }
     }
 }

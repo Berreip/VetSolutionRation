@@ -24,4 +24,10 @@
     <data name="AnimalSubKind_Heifer" xml:space="preserve">
         <value>Génisse</value>
     </data>
+    <data name="View_AnimalSelection_Search_Hint" xml:space="preserve">
+        <value>Rechercher un animal par nom (espace est un séparateur)</value>
+    </data>
+    <data name="View_AnimalSelection_Search_Tooltip" xml:space="preserve">
+        <value>Chaque partie de votre recherche séparée par un espace va être traité. ex: si vous tapez "gen 1" vous verrez ce qui comporte A LA FOIS "gen" ET "1", mais PAS ce qui comporterait seulement "gen". La recherche n'est pas sensible à la cass</value>
+    </data>
 </root>

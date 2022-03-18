@@ -1,4 +1,5 @@
 ﻿using PRF.WPFCore;
+using VetSolutionRatio.wpf.Properties;
 using VetSolutionRatio.wpf.Views.RatioPanel.Components;
 
 namespace VetSolutionRatio.wpf.Views.RatioPanel.SubPanels
@@ -29,5 +30,9 @@ namespace VetSolutionRatio.wpf.Views.RatioPanel.SubPanels
                 }
             }
         }
+
+        public string Hint => VetSolutionRatioRes.View_AnimalSelection_Search_Hint;
+
+        public string Tooltip => VetSolutionRatioRes.View_AnimalSelection_Search_Tooltip;
     }
 }

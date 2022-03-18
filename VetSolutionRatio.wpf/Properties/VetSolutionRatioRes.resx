@@ -24,4 +24,10 @@
     <data name="AnimalSubKind_Heifer" xml:space="preserve">
         <value>Heifer</value>
     </data>
+    <data name="View_AnimalSelection_Search_Hint" xml:space="preserve">
+        <value>Search an animal by nam (splited by space)</value>
+    </data>
+    <data name="View_AnimalSelection_Search_Tooltip" xml:space="preserve">
+        <value>Each part of your search separated by a space will be processed. ie: if you type "gen 1" you will see what contains BOTH "gen" AND "1", but NOT what would contain only "gen". Search is not case sensitive </value>
+    </data>
 </root>

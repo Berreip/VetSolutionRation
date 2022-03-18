@@ -4,9 +4,10 @@ namespace VetSolutionRatio.wpf.Views.RatioPanel.SubPanels
 {
     internal sealed partial class AnimalSelectionView : UserControl
     {
-        public AnimalSelectionView()
+        public AnimalSelectionView(IAnimalSelectionViewModel vm)
         {
             InitializeComponent();
+            DataContext = vm;
         }
     }
 }
