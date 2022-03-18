@@ -7,6 +7,7 @@
         <ApplicationIcon>main_icon_temp_.ico</ApplicationIcon>
         <Nullable>enable</Nullable>
         <StartupObject>VetSolutionRatio.wpf.Startup</StartupObject>
+        <LangVersion>10</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
@@ -19,6 +20,29 @@
       <PackageReference Include="PRF.Utils.CoreComponents" Version="2.2.0" />
       <PackageReference Include="PRF.Utils.Injection" Version="2.0.0" />
       <PackageReference Include="PRF.WPFCore" Version="2.1.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\VetSolutionRatioLib\VetSolutionRatioLib.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Update="Properties\VetSolutionRatioRes.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>VetSolutionRatioRes.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Properties\VetSolutionRatioRes.fr-fr.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>VetSolutionRatioRes.fr-fr.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Properties\VetSolutionRatioRes.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>VetSolutionRatioRes.resx</DependentUpon>
+      </Compile>
     </ItemGroup>
 
 </Project>

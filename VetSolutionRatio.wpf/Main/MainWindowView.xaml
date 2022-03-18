@@ -8,7 +8,7 @@
         xmlns:navigation="clr-namespace:VetSolutionRatio.wpf.Services.Navigation"
         xmlns:main="clr-namespace:VetSolutionRatio.wpf.Main"
         mc:Ignorable="d"
-        Title="QicRecVisualizer"
+        Title="VetSolution Ratio Calculation"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="Regular"
         TextElement.FontSize="13"

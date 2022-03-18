@@ -6,6 +6,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VetSolutionRatio.wpf", "Vet
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VetSolutionRatioLib", "VetSolutionRatioLib\VetSolutionRatioLib.csproj", "{7E98F232-4A85-4533-A3E2-D841FCB159F6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RatioDataProvider", "RatioDataProvider\RatioDataProvider.csproj", "{7A467C56-CC9B-4513-AA33-A7E0AAB06A4C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VetSolutionRatio.wpf.UnitTests", "VetSolutionRatio.wpf.UnitTests\VetSolutionRatio.wpf.UnitTests.csproj", "{0A66C755-7F72-49D3-96AB-08FDAFC49B5F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{944362E8-6184-4EB3-A61E-BF5A785ABB01}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +30,17 @@ Global
 		{7E98F232-4A85-4533-A3E2-D841FCB159F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7E98F232-4A85-4533-A3E2-D841FCB159F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7E98F232-4A85-4533-A3E2-D841FCB159F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A467C56-CC9B-4513-AA33-A7E0AAB06A4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A467C56-CC9B-4513-AA33-A7E0AAB06A4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A467C56-CC9B-4513-AA33-A7E0AAB06A4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A467C56-CC9B-4513-AA33-A7E0AAB06A4C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A66C755-7F72-49D3-96AB-08FDAFC49B5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A66C755-7F72-49D3-96AB-08FDAFC49B5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A66C755-7F72-49D3-96AB-08FDAFC49B5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A66C755-7F72-49D3-96AB-08FDAFC49B5F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{151B7C62-C1E7-4572-B0FB-4DB99ABDB2E8} = {944362E8-6184-4EB3-A61E-BF5A785ABB01}
+		{0A66C755-7F72-49D3-96AB-08FDAFC49B5F} = {944362E8-6184-4EB3-A61E-BF5A785ABB01}
 	EndGlobalSection
 EndGlobal

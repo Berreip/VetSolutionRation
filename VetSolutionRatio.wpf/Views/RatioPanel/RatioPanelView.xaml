@@ -15,16 +15,6 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         
-        <materialDesign:Card Grid.Row="0" Margin="10, 5" Padding="10"
-                             materialDesign:ShadowAssist.ShadowDepth="Depth2">
-            <Button
-                VerticalAlignment="Center"
-                HorizontalAlignment="Center"
-                Width="200"
-                Style="{StaticResource MaterialDesignOutlinedButton}"
-                ToolTip="Load a previously generated diff file"
-                Content="Load Diff file" />
-        </materialDesign:Card>
-
-    </Grid>
+        <ContentControl Content="{Binding AnimalSelectionView}"></ContentControl>
+     </Grid>
 </UserControl>

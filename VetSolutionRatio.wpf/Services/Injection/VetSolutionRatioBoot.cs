@@ -5,6 +5,7 @@ using VetSolutionRatio.wpf.Main;
 using VetSolutionRatio.wpf.Services.Navigation;
 using VetSolutionRatio.wpf.Views.Parameters;
 using VetSolutionRatio.wpf.Views.RatioPanel;
+using VetSolutionRatio.wpf.Views.RatioPanel.SubPanels;
 
 namespace VetSolutionRatio.wpf.Services.Injection
 {
@@ -37,12 +38,14 @@ namespace VetSolutionRatio.wpf.Services.Injection
 
             _internalContainer.RegisterType<ParametersView>(LifeTime.Singleton);
             _internalContainer.Register<IParametersViewModel, ParametersViewModel>(LifeTime.Singleton);
-            //
+            
+            _internalContainer.RegisterType<AnimalSelectionView>(LifeTime.Singleton);
+            _internalContainer.Register<IAnimalSelectionViewModel, AnimalSelectionViewModel>(LifeTime.Singleton);
+            
             // // services:
             // _internalContainer.Register<IImageCacheService, ImageCacheService>(LifeTime.Singleton);
             //
             // // VM related services
-            // _internalContainer.Register<IImagesListHolder, ImagesListHolder>(LifeTime.Singleton);
             // _internalContainer.Register<IQicRecConfigProvider, QicRecConfigProvider>(LifeTime.Singleton);
             // _internalContainer.Register<IImageDisplayer, ImageDisplayer>(LifeTime.Singleton);
             // _internalContainer.Register<IResultDisplayer, ResultDisplayer>(LifeTime.Singleton);
