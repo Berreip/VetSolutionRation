@@ -8,19 +8,19 @@ using VetSolutionRatioLib.Helpers;
 
 namespace VetSolutionRatio.wpf.Views.RatioPanel.Adapter
 {
-    internal interface IAnimalKindAdapter
+    internal interface IAnimalAdapter
     {
         bool ContainsAll(string[] searchText);
     }
 
-    internal sealed class AnimalKindAdapter : ViewModelBase, IAnimalKindAdapter
+    internal sealed class AnimalAdapter : ViewModelBase, IAnimalAdapter
     {
         private readonly AnimalKind _animalKind;
         private readonly AnimalSubKind _animalSubKind;
         private readonly string _specificDetails;
         private readonly string[] _searchPart;
 
-        public AnimalKindAdapter(AnimalKind animalKind, AnimalSubKind animalSubKind, string specificDetails)
+        public AnimalAdapter(AnimalKind animalKind, AnimalSubKind animalSubKind, string specificDetails)
         {
             _animalKind = animalKind;
             _animalSubKind = animalSubKind;
@@ -58,6 +58,12 @@ namespace VetSolutionRatio.wpf.Views.RatioPanel.Adapter
             }
 
             return false;
+        }
+
+        /// <inheritdoc />
+        public override string ToString()
+        {
+            return $"{_animalKind.GetDisplayName()} | {_animalSubKind.GetDisplayName()} | {_specificDetails}";
         }
 
         private sealed class SearchText

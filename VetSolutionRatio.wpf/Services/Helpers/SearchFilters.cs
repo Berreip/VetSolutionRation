@@ -11,7 +11,7 @@ internal static class SearchFilters
             // if no filter, show all.
             return true;
         }
-        if (obj is IAnimalKindAdapter animal)
+        if (obj is IAnimalAdapter animal)
         {
             return animal.ContainsAll(searchText);
         }

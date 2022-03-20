@@ -63,9 +63,72 @@ namespace VetSolutionRatio.wpf.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Cow.
         /// </summary>
-        internal static string AnimalKind_Cow {
+        internal static string AnimalKind_BovineFemale {
             get {
-                return ResourceManager.GetString("AnimalKind_Cow", resourceCulture);
+                return ResourceManager.GetString("AnimalKind_BovineFemale", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bull.
+        /// </summary>
+        internal static string AnimalKind_BovineMale {
+            get {
+                return ResourceManager.GetString("AnimalKind_BovineMale", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to She-goat.
+        /// </summary>
+        internal static string AnimalKind_GoatFemale {
+            get {
+                return ResourceManager.GetString("AnimalKind_GoatFemale", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to He-goat.
+        /// </summary>
+        internal static string AnimalKind_GoatMale {
+            get {
+                return ResourceManager.GetString("AnimalKind_GoatMale", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mare.
+        /// </summary>
+        internal static string AnimalKind_HorseFemale {
+            get {
+                return ResourceManager.GetString("AnimalKind_HorseFemale", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Horse.
+        /// </summary>
+        internal static string AnimalKind_HorseMale {
+            get {
+                return ResourceManager.GetString("AnimalKind_HorseMale", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ewe.
+        /// </summary>
+        internal static string AnimalKind_SheepFemale {
+            get {
+                return ResourceManager.GetString("AnimalKind_SheepFemale", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ram.
+        /// </summary>
+        internal static string AnimalKind_SheepMale {
+            get {
+                return ResourceManager.GetString("AnimalKind_SheepMale", resourceCulture);
             }
         }
         

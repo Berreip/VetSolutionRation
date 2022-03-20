@@ -9,6 +9,8 @@ namespace VetSolutionRatio.wpf.EnumExtensions
         {
             switch (kind)
             {
+                case AnimalSubKind.Undefined:
+                    return string.Empty;
                 case AnimalSubKind.Heifer:
                     return Properties.VetSolutionRatioRes.AnimalSubKind_Heifer;
                 default:

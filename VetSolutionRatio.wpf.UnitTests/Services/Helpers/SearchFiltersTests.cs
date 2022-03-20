@@ -12,7 +12,7 @@ internal sealed class SearchFiltersTests
     public void SearchFilters_returns_true_when_no_filter()
     {
         //Arrange
-        var animal = new Mock<IAnimalKindAdapter>();
+        var animal = new Mock<IAnimalAdapter>();
         animal.Setup(o => o.ContainsAll(It.IsAny<string[]>())).Returns(false);
 
         //Act

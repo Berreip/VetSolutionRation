@@ -20,17 +20,26 @@
             </Grid.RowDefinitions>
 
             <!-- SEARCH -->
-            <TextBox
-                Margin="5, 2"
-                Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                VerticalAlignment="Center"
-                Height="50"
-                HorizontalAlignment="Stretch"
-                materialDesign:HintAssist.Hint="{Binding Hint, Mode=OneTime}" 
-                ToolTip="{Binding Tooltip, Mode=OneTime}" 
-                Text="{Binding SearchFilter, UpdateSourceTrigger=PropertyChanged, Delay=100}"/>
-                <!---->
-                <!-- materialDesign:HintAssist.Hint="{x:Static properties:VetSolutionRatioRes.View_AnimalSelection_Search_Hint}" /> -->
+            <!-- <TextBox -->
+            <!--     Margin="5, 2" -->
+            <!--     Style="{StaticResource MaterialDesignOutlinedTextBox}" -->
+            <!--     VerticalAlignment="Center" -->
+            <!--     Height="50" -->
+            <!--     HorizontalAlignment="Stretch" -->
+            <!--     materialDesign:HintAssist.Hint="{Binding Hint, Mode=OneTime}"  -->
+            <!--     ToolTip="{Binding Tooltip, Mode=OneTime}"  -->
+            <!--     Text="{Binding SearchFilter, UpdateSourceTrigger=PropertyChanged, Delay=100}"/> -->
+            <ComboBox
+                materialDesign:HintAssist.Hint="Barre de recherche"
+                MinWidth="72"
+                IsEditable="True"
+                ItemsSource="{Binding AnimalAdaptersHoster.AvailableAnimals}">
+                <ComboBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <VirtualizingStackPanel />
+                    </ItemsPanelTemplate>
+                </ComboBox.ItemsPanel>
+            </ComboBox>
         </Grid>
 
     </materialDesign:Card>

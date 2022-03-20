@@ -10,11 +10,11 @@ namespace VetSolutionRatio.wpf.Views.RatioPanel.SubPanels.AnimalSelection
 
     internal sealed class AnimalSelectionViewModel : ViewModelBase, IAnimalSelectionViewModel
     {
-        public IAnimalKindHoster AnimalKindHoster { get; }
+        public IAnimalAdaptersHoster AnimalAdaptersHoster { get; }
 
-        public AnimalSelectionViewModel(IAnimalKindHoster animalKindHoster)
+        public AnimalSelectionViewModel(IAnimalAdaptersHoster animalAdaptersHoster)
         {
-            AnimalKindHoster = animalKindHoster;
+            AnimalAdaptersHoster = animalAdaptersHoster;
         }
         
         private string? _searchFilter;
@@ -26,7 +26,7 @@ namespace VetSolutionRatio.wpf.Views.RatioPanel.SubPanels.AnimalSelection
             {
                 if (SetProperty(ref _searchFilter, value))
                 {
-                    AnimalKindHoster.FilterAnimal(value);
+                    AnimalAdaptersHoster.FilterAnimal(value);
                 }
             }
         }

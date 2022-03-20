@@ -17,4 +17,8 @@
       <ProjectReference Include="..\VetSolutionRatioLib\VetSolutionRatioLib.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="DataProvider" />
+    </ItemGroup>
+
 </Project>

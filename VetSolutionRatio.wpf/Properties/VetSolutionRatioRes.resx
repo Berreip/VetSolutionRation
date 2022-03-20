@@ -18,7 +18,7 @@
     <resheader name="writer">
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
-    <data name="AnimalKind_Cow" xml:space="preserve">
+    <data name="AnimalKind_BovineFemale" xml:space="preserve">
         <value>Cow</value>
     </data>
     <data name="AnimalSubKind_Heifer" xml:space="preserve">
@@ -29,5 +29,26 @@
     </data>
     <data name="View_AnimalSelection_Search_Tooltip" xml:space="preserve">
         <value>Each part of your search separated by a space will be processed. ie: if you type "gen 1" you will see what contains BOTH "gen" AND "1", but NOT what would contain only "gen". Search is not case sensitive </value>
+    </data>
+    <data name="AnimalKind_BovineMale" xml:space="preserve">
+        <value>Bull</value>
+    </data>
+    <data name="AnimalKind_SheepFemale" xml:space="preserve">
+        <value>Ewe</value>
+    </data>
+    <data name="AnimalKind_SheepMale" xml:space="preserve">
+        <value>Ram</value>
+    </data>
+    <data name="AnimalKind_GoatMale" xml:space="preserve">
+        <value>He-goat</value>
+    </data>
+    <data name="AnimalKind_GoatFemale" xml:space="preserve">
+        <value>She-goat</value>
+    </data>
+    <data name="AnimalKind_HorseMale" xml:space="preserve">
+        <value>Horse</value>
+    </data>
+    <data name="AnimalKind_HorseFemale" xml:space="preserve">
+        <value>Mare</value>
     </data>
 </root>
