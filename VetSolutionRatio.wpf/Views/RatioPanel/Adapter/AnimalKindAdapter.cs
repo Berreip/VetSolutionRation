@@ -8,7 +8,12 @@ using VetSolutionRatioLib.Helpers;
 
 namespace VetSolutionRatio.wpf.Views.RatioPanel.Adapter
 {
-    internal sealed class AnimalKindAdapter : ViewModelBase
+    internal interface IAnimalKindAdapter
+    {
+        bool ContainsAll(string[] searchText);
+    }
+
+    internal sealed class AnimalKindAdapter : ViewModelBase, IAnimalKindAdapter
     {
         private readonly AnimalKind _animalKind;
         private readonly AnimalSubKind _animalSubKind;
@@ -25,6 +30,7 @@ namespace VetSolutionRatio.wpf.Views.RatioPanel.Adapter
 
         public bool ContainsAll(string[] searchText)
         {
+            // we create a search text object that will hold the 'isfound' during searching
             var parts = _searchPart.Select(o => new SearchText(o)).ToArray();
             foreach (var searchPart in searchText)
             {
@@ -54,7 +60,7 @@ namespace VetSolutionRatio.wpf.Views.RatioPanel.Adapter
             return false;
         }
 
-        private class SearchText
+        private sealed class SearchText
         {
             private readonly string _text;
             public bool AlreadyFound { get; set; }

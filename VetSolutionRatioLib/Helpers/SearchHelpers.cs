@@ -1,10 +1,12 @@
-﻿namespace VetSolutionRatioLib.Helpers
+﻿using System;
+
+namespace VetSolutionRatioLib.Helpers
 {
     public static class SearchHelpers
     {
         public static string[] SplitByWhitspace(string input)
         {
-            return input.Split();
+            return input.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
         } 
     }
 }

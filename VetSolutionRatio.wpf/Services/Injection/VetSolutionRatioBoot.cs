@@ -43,13 +43,8 @@ namespace VetSolutionRatio.wpf.Services.Injection
             _internalContainer.RegisterType<AnimalSelectionView>(LifeTime.Singleton);
             _internalContainer.Register<IAnimalSelectionViewModel, AnimalSelectionViewModel>(LifeTime.Singleton);
             
-            // // services:
-            // _internalContainer.Register<IImageCacheService, ImageCacheService>(LifeTime.Singleton);
-            //
             // // VM related services
             _internalContainer.Register<IAnimalKindHoster, AnimalKindHoster>(LifeTime.Singleton);
-            // _internalContainer.Register<IImageDisplayer, ImageDisplayer>(LifeTime.Singleton);
-            // _internalContainer.Register<IResultDisplayer, ResultDisplayer>(LifeTime.Singleton);
         }
 
         private void Initialize()

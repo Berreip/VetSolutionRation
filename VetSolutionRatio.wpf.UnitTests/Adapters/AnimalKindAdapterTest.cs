@@ -12,7 +12,7 @@ namespace VetSolutionRatio.wpf.UnitTests.Adapters
         public void ContainsAny_retuns_true_if_empty()
         {
             //Arrange
-            var sut = new AnimalKindAdapter(AnimalKind.Cow, AnimalSubKind.Heifer, "1/2 ans");
+            var sut = new AnimalKindAdapter(AnimalKind.Cow, AnimalSubKind.Heifer, "1/2 ans et autre chose");
 
             //Act
             var res = sut.ContainsAll(Array.Empty<string>());
