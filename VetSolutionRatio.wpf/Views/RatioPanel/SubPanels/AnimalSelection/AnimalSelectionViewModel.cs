@@ -2,7 +2,7 @@
 using VetSolutionRatio.wpf.Properties;
 using VetSolutionRatio.wpf.Views.RatioPanel.Components;
 
-namespace VetSolutionRatio.wpf.Views.RatioPanel.SubPanels
+namespace VetSolutionRatio.wpf.Views.RatioPanel.SubPanels.AnimalSelection
 {
     internal interface IAnimalSelectionViewModel
     {

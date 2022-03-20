@@ -7,14 +7,42 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
-             d:DataContext="{d:DesignInstance local:RatioPanelViewModel, IsDesignTimeCreatable=False}" 
+             d:DataContext="{d:DesignInstance local:RatioPanelViewModel, IsDesignTimeCreatable=False}"
              x:ClassModifier="internal">
-    <Grid >
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        
-        <ContentControl Content="{Binding AnimalSelectionView}"></ContentControl>
-     </Grid>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width=".66*" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width=".34*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- ANIMAL AND FEED SELECTION PANELS -->
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <!-- ANIMAL SELECTION PANEL -->
+            <ContentControl Grid.Row="0" Content="{Binding AnimalSelectionView}" />
+            
+            <!-- FEED SELECTION PANEL -->
+            <ContentControl Grid.Row="1" Content="{Binding FeedSelectionView}" />
+        </Grid>
+
+        <!-- SEPARATOR -->
+        <GridSplitter Grid.Column="1"
+                      Margin="0"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Stretch"
+                      Background="Transparent"
+                      ShowsPreview="False"
+                      Width="4" />
+
+        <!-- RESULTS PANEL -->
+        <Grid Grid.Column="2">
+            <ContentControl Grid.Row="0" Content="{Binding ResultView}" />
+        </Grid>
+    </Grid>
+
 </UserControl>

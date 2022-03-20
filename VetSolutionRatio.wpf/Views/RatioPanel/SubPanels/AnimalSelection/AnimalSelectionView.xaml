@@ -6,9 +6,10 @@
              xmlns:local="clr-namespace:VetSolutionRatio.wpf.Views.RatioPanel.SubPanels"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:properties="clr-namespace:VetSolutionRatio.wpf.Properties"
+             xmlns:animalSelection="clr-namespace:VetSolutionRatio.wpf.Views.RatioPanel.SubPanels.AnimalSelection"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
-             d:DataContext="{d:DesignInstance local:AnimalSelectionViewModel, IsDesignTimeCreatable=False}"
+             d:DataContext="{d:DesignInstance animalSelection:AnimalSelectionViewModel, IsDesignTimeCreatable=False}"
              x:ClassModifier="internal">
     <materialDesign:Card Margin="10, 5" Padding="10" materialDesign:ShadowAssist.ShadowDepth="Depth2">
 
