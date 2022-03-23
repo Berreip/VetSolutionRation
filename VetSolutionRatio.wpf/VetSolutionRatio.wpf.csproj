@@ -10,6 +10,14 @@
         <LangVersion>10</LangVersion>
     </PropertyGroup>
 
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+        <WarningsAsErrors>;NU1605;CS8600;CS8601;CS8602;CS8603;CS8604;CS8613;CS8614;CS8619;CS8620;CS8622;CS8625;CS8629;CS8633,CS8767</WarningsAsErrors>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+        <WarningsAsErrors>;NU1605;CS8600;CS8601;CS8602;CS8603;CS8604;CS8613;CS8614;CS8619;CS8620;CS8622;CS8625;CS8629;CS8633,CS8767</WarningsAsErrors>
+    </PropertyGroup>
+
     <ItemGroup>
       <None Remove="cow.png" />
     </ItemGroup>

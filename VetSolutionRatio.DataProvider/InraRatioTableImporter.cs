@@ -1,4 +1,9 @@
-﻿using VetSolutionRatio.DataProvider.Dto;
+﻿using System.Text;
+using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
+using VetSolutionRatio.DataProvider.Dto;
+using VetSolutionRatio.DataProvider.Services.Excel;
 
 namespace VetSolutionRatio.DataProvider;
 
@@ -17,7 +22,9 @@ public static class InraRatioTableImporter
             throw new ArgumentException($"the provided file {inraFile.FullName} does not exists");
         }
 
-        return new InraRationTableImportDto();
+        var excelDto = ExcelProvider.ImportExcel(inraFile, 1);
+       
+        return new InraRationTableImportDto(excelDto);
 
     }
 }
