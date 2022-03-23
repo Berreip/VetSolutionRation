@@ -25,7 +25,7 @@ namespace VetSolutionRation.wpf.Views.RatioPanel.Adapter
             _animalKind = animalKind;
             _animalSubKind = animalSubKind;
             _specificDetails = specificDetails;
-            _searchPart = SearchHelpers.SplitByWhitspace(new string(animalKind.GetDisplayName() + " " + animalSubKind.GetDisplayName() + " " + specificDetails));
+            _searchPart = SearchHelpers.SplitByWhitspace(animalKind.GetDisplayName() + " " + animalSubKind.GetDisplayName() + " " + specificDetails);
         }
 
         public bool ContainsAll(string[] searchText)
@@ -63,7 +63,13 @@ namespace VetSolutionRation.wpf.Views.RatioPanel.Adapter
         /// <inheritdoc />
         public override string ToString()
         {
-            return $"{_animalKind.GetDisplayName()} | {_animalSubKind.GetDisplayName()} | {_specificDetails}";
+            var parts = new[]
+            {
+                _animalKind.GetDisplayName(),
+                _animalSubKind.GetDisplayName(),
+                _specificDetails
+            };
+            return string.Join(" | ", parts.Where(s => !string.IsNullOrWhiteSpace(s)));
         }
 
         private sealed class SearchText
