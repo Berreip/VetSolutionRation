@@ -53,9 +53,4 @@
       </Compile>
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Views\RatioPanel\SubPanels\ResultPanels\Calculate" />
-      <Folder Include="Views\RatioPanel\SubPanels\ResultPanels\Verify" />
-    </ItemGroup>
-
 </Project>

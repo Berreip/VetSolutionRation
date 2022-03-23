@@ -41,7 +41,7 @@
 
         <!-- RESULTS PANEL -->
         <Grid Grid.Column="2">
-            <ContentControl Grid.Row="0" Content="{Binding ResultView}" />
+            <ContentControl Grid.Row="0" Content="{Binding FeedSelectionViewModel.SelectedResultView}" />
         </Grid>
     </Grid>
 

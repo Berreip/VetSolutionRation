@@ -8,12 +8,12 @@ using VetSolutionRatio.wpf.Services.Navigation;
 using VetSolutionRatio.wpf.Views.Parameters;
 using VetSolutionRatio.wpf.Views.RatioPanel;
 using VetSolutionRatio.wpf.Views.RatioPanel.Components;
-using VetSolutionRatio.wpf.Views.RatioPanel.SubPanels;
 using VetSolutionRatio.wpf.Views.RatioPanel.SubPanels.AnimalSelection;
 using VetSolutionRatio.wpf.Views.RatioPanel.SubPanels.FeedSelection;
 using VetSolutionRatio.wpf.Views.RatioPanel.SubPanels.FeedSelection.Calculate;
 using VetSolutionRatio.wpf.Views.RatioPanel.SubPanels.FeedSelection.Verify;
-using VetSolutionRatio.wpf.Views.RatioPanel.SubPanels.Results;
+using VetSolutionRatio.wpf.Views.RatioPanel.SubPanels.ResultPanels.Calculate;
+using VetSolutionRatio.wpf.Views.RatioPanel.SubPanels.ResultPanels.Verify;
 using VetSolutionRatioLib;
 
 namespace VetSolutionRatio.wpf.Services.Injection
@@ -61,15 +61,18 @@ namespace VetSolutionRatio.wpf.Services.Injection
 
             _internalContainer.RegisterType<FeedSelectionView>(LifeTime.Singleton);
             _internalContainer.Register<IFeedSelectionViewModel, FeedSelectionViewModel>(LifeTime.Singleton);
-
-            _internalContainer.RegisterType<ResultView>(LifeTime.Singleton);
-            _internalContainer.Register<IResultViewModel, ResultViewModel>(LifeTime.Singleton);
             
             _internalContainer.RegisterType<VerifyRatiosView>(LifeTime.Singleton);
             _internalContainer.Register<IVerifyRatiosViewModel, VerifyRatiosViewModel>(LifeTime.Singleton);
             
             _internalContainer.RegisterType<CalculateRatiosView>(LifeTime.Singleton);
             _internalContainer.Register<ICalculateRatiosViewModel, CalculateRatiosViewModel>(LifeTime.Singleton);
+            
+            _internalContainer.RegisterType<VerifyResultView>(LifeTime.Singleton);
+            _internalContainer.Register<IVerifyResultViewModel, VerifyResultViewModel>(LifeTime.Singleton);
+            
+            _internalContainer.RegisterType<CalculateResultView>(LifeTime.Singleton);
+            _internalContainer.Register<ICalculateResultViewModel, CalculateResultViewModel>(LifeTime.Singleton);
 
             // // VM related services
             _internalContainer.Register<IAnimalAdaptersHoster, AnimalAdaptersHoster>(LifeTime.Singleton);

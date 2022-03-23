@@ -3,6 +3,10 @@ using PRF.WPFCore;
 
 namespace VetSolutionRatio.wpf.Views.RatioPanel.Adapter.FeedSelection;
 
+internal interface IResultView
+{
+}
+
 internal interface IFeedSelectionModeView
 {
 }
@@ -10,7 +14,9 @@ internal interface IFeedSelectionModeView
 internal interface IFeedSelectionModeAdapter
 {
     event Action<IFeedSelectionModeAdapter> OnFeedSelectionModeSelected;
-    IFeedSelectionModeView View { get; }
+    IFeedSelectionModeView SelectionView { get; }
+    IResultView ResultView { get; }
+    bool IsSelected { get; set; }
 }
 
 internal sealed class FeedSelectionModeAdapter : ViewModelBase, IFeedSelectionModeAdapter
@@ -20,12 +26,15 @@ internal sealed class FeedSelectionModeAdapter : ViewModelBase, IFeedSelectionMo
     public event Action<IFeedSelectionModeAdapter>? OnFeedSelectionModeSelected;
 
     /// <inheritdoc />
-    public IFeedSelectionModeView View { get; }
+    public IFeedSelectionModeView SelectionView { get; }
 
-    public FeedSelectionModeAdapter(string header, IFeedSelectionModeView feedSelectionModeView)
+    public IResultView ResultView { get; }
+
+    public FeedSelectionModeAdapter(string header, IFeedSelectionModeView feedSelectionModeSelectionView, IResultView resultView)
     {
         TabHeader = header;
-        View = feedSelectionModeView;
+        SelectionView = feedSelectionModeSelectionView;
+        ResultView = resultView;
     }
 
     public bool IsSelected

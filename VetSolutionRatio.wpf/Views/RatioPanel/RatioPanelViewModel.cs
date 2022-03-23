@@ -1,8 +1,6 @@
 ﻿using PRF.WPFCore;
-using VetSolutionRatio.wpf.Views.RatioPanel.SubPanels;
 using VetSolutionRatio.wpf.Views.RatioPanel.SubPanels.AnimalSelection;
 using VetSolutionRatio.wpf.Views.RatioPanel.SubPanels.FeedSelection;
-using VetSolutionRatio.wpf.Views.RatioPanel.SubPanels.Results;
 
 namespace VetSolutionRatio.wpf.Views.RatioPanel
 {
@@ -15,15 +13,15 @@ namespace VetSolutionRatio.wpf.Views.RatioPanel
         public RatioPanelViewModel(
             AnimalSelectionView animalSelectionView,
             FeedSelectionView feedSelectionView,
-            ResultView resultView)
+            IFeedSelectionViewModel feedSelectionViewModel)
         {
             AnimalSelectionView = animalSelectionView;
             FeedSelectionView = feedSelectionView;
-            ResultView = resultView;
+            FeedSelectionViewModel = feedSelectionViewModel;
         }
 
         public AnimalSelectionView AnimalSelectionView { get; }
         public FeedSelectionView FeedSelectionView { get; }
-        public ResultView ResultView { get; }
+        public IFeedSelectionViewModel FeedSelectionViewModel { get; }
     }
 }
