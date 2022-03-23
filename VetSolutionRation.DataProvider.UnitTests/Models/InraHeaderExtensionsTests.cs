@@ -1,8 +1,8 @@
 ﻿using System;
 using NUnit.Framework;
-using VetSolutionRation.DataProvider.Dto;
+using VetSolutionRation.DataProvider.Models;
 
-namespace VetSolutionRation.DataProvider.UnitTests.Dto;
+namespace VetSolutionRation.DataProvider.UnitTests.Models;
 
 [TestFixture]
 internal sealed class InraHeaderExtensionsTests

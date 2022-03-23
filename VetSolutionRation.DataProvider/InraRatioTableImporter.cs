@@ -1,4 +1,4 @@
-﻿using VetSolutionRation.DataProvider.Dto;
+﻿using VetSolutionRation.DataProvider.Models;
 using VetSolutionRation.DataProvider.Services.Excel;
 
 namespace VetSolutionRation.DataProvider;
@@ -11,7 +11,7 @@ public static class InraRatioTableImporter
     /// <summary>
     /// Import the given file
     /// </summary>
-    public static IInraRationTableImportDto ImportInraTable(FileInfo inraFile)
+    public static IInraRationTableImportModel ImportInraTable(FileInfo inraFile)
     {
         if (!inraFile.Exists)
         {
@@ -20,7 +20,7 @@ public static class InraRatioTableImporter
 
         var excelDto = ExcelProvider.ImportExcel(inraFile, 1);
        
-        return new InraRationTableImportDto(excelDto);
+        return new InraRationTableImportModel(excelDto);
 
     }
 }

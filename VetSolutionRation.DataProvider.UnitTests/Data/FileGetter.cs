@@ -6,11 +6,15 @@ using NUnit.Framework;
 
 namespace VetSolutionRation.DataProvider.UnitTests.Data;
 
+// ReSharper disable InconsistentNaming
 internal enum AvailableFile
 {
-    InraRatioConcentrateTable,
-    InraRatioForageTable,
+    InraRatioConcentrateTable_FR,
+    InraRatioForageTable_FR,
+    InraRatioConcentrateTable_EN,
+    InraRatioForageTable_EN,
 }
+// ReSharper restore InconsistentNaming
 
 internal static class FileGetter
 {
@@ -35,10 +39,14 @@ internal static class FileGetter
     {
         switch (availableFile)
         {
-            case AvailableFile.InraRatioConcentrateTable:
+            case AvailableFile.InraRatioConcentrateTable_FR:
                 return @"INRA2018_TablesConcentres_20122018.xlsx";
-            case AvailableFile.InraRatioForageTable:
+            case AvailableFile.InraRatioForageTable_FR:
                 return @"INRA2018_TablesFourrages_17042019.xlsx";
+            case AvailableFile.InraRatioConcentrateTable_EN:
+                return @"INRA2018_ConcentrateFeedTables_08022018.xlsx";
+            case AvailableFile.InraRatioForageTable_EN:
+                return @"INRA2018_ForageFeedTables_17042019.xlsx";
             default:
                 throw new ArgumentOutOfRangeException(nameof(availableFile), availableFile, null);
         }
