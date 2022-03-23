@@ -4,12 +4,44 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:VetSolutionRatio.wpf.Views.RatioPanel.SubPanels.FeedSelection"
+             xmlns:feedSelection="clr-namespace:VetSolutionRatio.wpf.Views.RatioPanel.Adapter.FeedSelection"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance local:FeedSelectionViewModel, IsDesignTimeCreatable=False}"
-             d:DesignHeight="300" 
-             d:DesignWidth="300" 
+             d:DesignHeight="300"
+             d:DesignWidth="300"
              x:ClassModifier="internal">
-    <Grid Background="Aqua">
-        
-    </Grid>
+    <materialDesign:Card Margin="10, 5" Padding="10" materialDesign:ShadowAssist.ShadowDepth="Depth2">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <ItemsControl
+                Grid.Row="0"
+                ItemsSource="{Binding AvailableFeedSelectionModes}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Columns="2" HorizontalAlignment="Stretch" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="{x:Type feedSelection:FeedSelectionModeAdapter}">
+                        <RadioButton
+                            GroupName="FeedSelectionModes"
+                            Style="{StaticResource MaterialDesignTabRadioButton}"
+                            Margin="4"
+                            IsChecked="{Binding IsSelected}"
+                            Content="{Binding TabHeader}"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <ContentControl
+                Grid.Row="1"
+                Content="{Binding SelectedFeedSelectionMode}" />
+        </Grid>
+    </materialDesign:Card>
 </UserControl>

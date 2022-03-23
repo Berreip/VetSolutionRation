@@ -1,8 +1,4 @@
-﻿using System.Text;
-using DocumentFormat.OpenXml;
-using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Spreadsheet;
-using VetSolutionRatio.DataProvider.Dto;
+﻿using VetSolutionRatio.DataProvider.Dto;
 using VetSolutionRatio.DataProvider.Services.Excel;
 
 namespace VetSolutionRatio.DataProvider;

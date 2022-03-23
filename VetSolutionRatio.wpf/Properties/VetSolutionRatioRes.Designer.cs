@@ -142,6 +142,24 @@ namespace VetSolutionRatio.wpf.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Calculate rations.
+        /// </summary>
+        internal static string FeedSelectionModeCalculateRatiosTitle {
+            get {
+                return ResourceManager.GetString("FeedSelectionModeCalculateRatiosTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Verify rations.
+        /// </summary>
+        internal static string FeedSelectionModeVerifyRatiosTitle {
+            get {
+                return ResourceManager.GetString("FeedSelectionModeVerifyRatiosTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Search an animal by nam (splited by space).
         /// </summary>
         internal static string View_AnimalSelection_Search_Hint {

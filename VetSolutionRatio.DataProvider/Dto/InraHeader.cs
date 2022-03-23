@@ -1,6 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-
-namespace VetSolutionRatio.DataProvider.Dto;
+﻿namespace VetSolutionRatio.DataProvider.Dto;
 
 // ReSharper disable InconsistentNaming
 internal enum InraHeader

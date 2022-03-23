@@ -1,5 +1,6 @@
 ﻿using PRF.WPFCore;
 using VetSolutionRatio.wpf.Views.RatioPanel.SubPanels;
+using VetSolutionRatio.wpf.Views.RatioPanel.SubPanels.AnimalSelection;
 using VetSolutionRatio.wpf.Views.RatioPanel.SubPanels.FeedSelection;
 using VetSolutionRatio.wpf.Views.RatioPanel.SubPanels.Results;
 

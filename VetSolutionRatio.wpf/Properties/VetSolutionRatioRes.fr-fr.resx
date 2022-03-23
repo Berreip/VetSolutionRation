@@ -51,4 +51,10 @@
     <data name="AnimalKind_HorseFemale" xml:space="preserve">
         <value>Jument</value>
     </data>
+    <data name="FeedSelectionModeVerifyRatiosTitle" xml:space="preserve">
+        <value>Vérification des rations</value>
+    </data>
+    <data name="FeedSelectionModeCalculateRatiosTitle" xml:space="preserve">
+        <value>Calculer des rations</value>
+    </data>
 </root>

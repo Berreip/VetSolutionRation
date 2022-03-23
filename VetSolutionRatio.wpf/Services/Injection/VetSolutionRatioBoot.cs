@@ -11,6 +11,8 @@ using VetSolutionRatio.wpf.Views.RatioPanel.Components;
 using VetSolutionRatio.wpf.Views.RatioPanel.SubPanels;
 using VetSolutionRatio.wpf.Views.RatioPanel.SubPanels.AnimalSelection;
 using VetSolutionRatio.wpf.Views.RatioPanel.SubPanels.FeedSelection;
+using VetSolutionRatio.wpf.Views.RatioPanel.SubPanels.FeedSelection.Calculate;
+using VetSolutionRatio.wpf.Views.RatioPanel.SubPanels.FeedSelection.Verify;
 using VetSolutionRatio.wpf.Views.RatioPanel.SubPanels.Results;
 using VetSolutionRatioLib;
 
@@ -62,6 +64,12 @@ namespace VetSolutionRatio.wpf.Services.Injection
 
             _internalContainer.RegisterType<ResultView>(LifeTime.Singleton);
             _internalContainer.Register<IResultViewModel, ResultViewModel>(LifeTime.Singleton);
+            
+            _internalContainer.RegisterType<VerifyRatiosView>(LifeTime.Singleton);
+            _internalContainer.Register<IVerifyRatiosViewModel, VerifyRatiosViewModel>(LifeTime.Singleton);
+            
+            _internalContainer.RegisterType<CalculateRatiosView>(LifeTime.Singleton);
+            _internalContainer.Register<ICalculateRatiosViewModel, CalculateRatiosViewModel>(LifeTime.Singleton);
 
             // // VM related services
             _internalContainer.Register<IAnimalAdaptersHoster, AnimalAdaptersHoster>(LifeTime.Singleton);

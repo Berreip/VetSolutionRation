@@ -1,6 +1,4 @@
-﻿using System.Collections;
-
-namespace VetSolutionRatio.DataProvider.Services.Excel.ExcelDto;
+﻿namespace VetSolutionRatio.DataProvider.Services.Excel.ExcelDto;
 
 public interface IExcelRowDto
 {
