@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <Nullable>enable</Nullable>
+
+        <IsPackable>false</IsPackable>
+
+        <AssemblyName>VetSolutionRation.DataProvider.UnitTests</AssemblyName>
+
+        <RootNamespace>VetSolutionRation.DataProvider.UnitTests</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
+        <PackageReference Include="NUnit" Version="3.13.2" />
+        <PackageReference Include="NUnit3TestAdapter" Version="4.0.0" />
+        <PackageReference Include="coverlet.collector" Version="3.1.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\VetSolutionRation.DataProvider\VetSolutionRation.DataProvider.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Data\INRA2018_TablesConcentres_20122018.xlsx" />
+      <Content Include="Data\INRA2018_TablesConcentres_20122018.xlsx">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <None Remove="Data\INRA2018_TablesFourrages_17042019.xlsx" />
+      <Content Include="Data\INRA2018_TablesFourrages_17042019.xlsx">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Services\Excel" />
+    </ItemGroup>
+
+</Project>

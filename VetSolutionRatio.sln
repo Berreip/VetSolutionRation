@@ -1,18 +1,18 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VetSolutionRatio.UnitTest", "VetSolutionRatio.UnitTest\VetSolutionRatio.UnitTest.csproj", "{151B7C62-C1E7-4572-B0FB-4DB99ABDB2E8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VetSolutionRation.UnitTest", "VetSolutionRation.UnitTest\VetSolutionRation.UnitTest.csproj", "{151B7C62-C1E7-4572-B0FB-4DB99ABDB2E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VetSolutionRatio.wpf", "VetSolutionRatio.wpf\VetSolutionRatio.wpf.csproj", "{F9916264-3841-4D39-B3AF-96B57D7CEBC2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VetSolutionRation.wpf", "VetSolutionRation.wpf\VetSolutionRation.wpf.csproj", "{F9916264-3841-4D39-B3AF-96B57D7CEBC2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VetSolutionRatioLib", "VetSolutionRatioLib\VetSolutionRatioLib.csproj", "{7E98F232-4A85-4533-A3E2-D841FCB159F6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VetSolutionRationLib", "VetSolutionRationLib\VetSolutionRationLib.csproj", "{7E98F232-4A85-4533-A3E2-D841FCB159F6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VetSolutionRatio.wpf.UnitTests", "VetSolutionRatio.wpf.UnitTests\VetSolutionRatio.wpf.UnitTests.csproj", "{0A66C755-7F72-49D3-96AB-08FDAFC49B5F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VetSolutionRation.wpf.UnitTests", "VetSolutionRation.wpf.UnitTests\VetSolutionRation.wpf.UnitTests.csproj", "{0A66C755-7F72-49D3-96AB-08FDAFC49B5F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{944362E8-6184-4EB3-A61E-BF5A785ABB01}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VetSolutionRatio.DataProvider.UnitTests", "VetSolutionRatio.DataProvider.UnitTests\VetSolutionRatio.DataProvider.UnitTests.csproj", "{FB8F1F49-17F5-4280-A975-540F5BD955C2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VetSolutionRation.DataProvider.UnitTests", "VetSolutionRation.DataProvider.UnitTests\VetSolutionRation.DataProvider.UnitTests.csproj", "{FB8F1F49-17F5-4280-A975-540F5BD955C2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VetSolutionRatio.DataProvider", "VetSolutionRatio.DataProvider\VetSolutionRatio.DataProvider.csproj", "{7678A843-214C-4219-9988-9AFAEA525BEE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VetSolutionRation.DataProvider", "VetSolutionRation.DataProvider\VetSolutionRation.DataProvider.csproj", "{7678A843-214C-4219-9988-9AFAEA525BEE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
