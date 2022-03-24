@@ -3,9 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:VetSolutionRation.wpf.Views.RatioPanel.SubPanels"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-             xmlns:properties="clr-namespace:VetSolutionRation.wpf.Properties"
              xmlns:animalSelection="clr-namespace:VetSolutionRation.wpf.Views.RatioPanel.SubPanels.AnimalSelection"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
@@ -16,23 +14,17 @@
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-
-            <!-- SEARCH -->
-            <!-- <TextBox -->
-            <!--     Margin="5, 2" -->
-            <!--     Style="{StaticResource MaterialDesignOutlinedTextBox}" -->
-            <!--     VerticalAlignment="Center" -->
-            <!--     Height="50" -->
-            <!--     HorizontalAlignment="Stretch" -->
-            <!--     materialDesign:HintAssist.Hint="{Binding Hint, Mode=OneTime}"  -->
-            <!--     ToolTip="{Binding Tooltip, Mode=OneTime}"  -->
-            <!--     Text="{Binding SearchFilter, UpdateSourceTrigger=PropertyChanged, Delay=100}"/> -->
+            
             <ComboBox
                 materialDesign:HintAssist.Hint="Barre de recherche"
                 MinWidth="72"
+                Text="{Binding SearchFilter}"
+                IsTextSearchEnabled="False"
                 IsEditable="True"
+                IsDropDownOpen="{Binding IsDropDownOpen}"
+                StaysOpenOnEdit="True"
                 ItemsSource="{Binding AnimalAdaptersHoster.AvailableAnimals}">
                 <ComboBox.ItemsPanel>
                     <ItemsPanelTemplate>

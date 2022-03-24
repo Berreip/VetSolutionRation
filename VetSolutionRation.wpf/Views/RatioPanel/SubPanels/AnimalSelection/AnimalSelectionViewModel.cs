@@ -10,6 +10,9 @@ namespace VetSolutionRation.wpf.Views.RatioPanel.SubPanels.AnimalSelection
 
     internal sealed class AnimalSelectionViewModel : ViewModelBase, IAnimalSelectionViewModel
     {
+        private string? _searchFilter;
+        private bool _isDropDownOpen;
+        
         public IAnimalAdaptersHoster AnimalAdaptersHoster { get; }
 
         public AnimalSelectionViewModel(IAnimalAdaptersHoster animalAdaptersHoster)
@@ -17,7 +20,6 @@ namespace VetSolutionRation.wpf.Views.RatioPanel.SubPanels.AnimalSelection
             AnimalAdaptersHoster = animalAdaptersHoster;
         }
         
-        private string? _searchFilter;
 
         public string? SearchFilter
         {
@@ -26,6 +28,7 @@ namespace VetSolutionRation.wpf.Views.RatioPanel.SubPanels.AnimalSelection
             {
                 if (SetProperty(ref _searchFilter, value))
                 {
+                    IsDropDownOpen = true;
                     AnimalAdaptersHoster.FilterAnimal(value);
                 }
             }
@@ -34,5 +37,11 @@ namespace VetSolutionRation.wpf.Views.RatioPanel.SubPanels.AnimalSelection
         public string Hint => VetSolutionRatioRes.View_AnimalSelection_Search_Hint;
 
         public string Tooltip => VetSolutionRatioRes.View_AnimalSelection_Search_Tooltip;
+
+        public bool IsDropDownOpen
+        {
+            get => _isDropDownOpen;
+            set => SetProperty(ref _isDropDownOpen, value);
+        }
     }
 }

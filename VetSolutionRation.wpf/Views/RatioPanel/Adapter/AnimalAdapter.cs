@@ -3,17 +3,13 @@ using System.Linq;
 using PRF.Utils.CoreComponents.Extensions;
 using PRF.WPFCore;
 using VetSolutionRation.wpf.EnumExtensions;
+using VetSolutionRation.wpf.Services.Helpers;
 using VetSolutionRationLib.Enums;
 using VetSolutionRationLib.Helpers;
 
 namespace VetSolutionRation.wpf.Views.RatioPanel.Adapter
 {
-    internal interface IAnimalAdapter
-    {
-        bool ContainsAll(string[] searchText);
-    }
-
-    internal sealed class AnimalAdapter : ViewModelBase, IAnimalAdapter
+    internal sealed class AnimalAdapter : ViewModelBase, ISearcheable
     {
         private readonly AnimalKind _animalKind;
         private readonly AnimalSubKind _animalSubKind;

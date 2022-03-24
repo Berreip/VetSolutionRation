@@ -19,19 +19,19 @@ namespace VetSolutionRation.wpf.Views.RatioPanel.Components
 
     internal sealed class AnimalAdaptersHoster : IAnimalAdaptersHoster
     {
-        private ObservableCollectionRanged<AnimalAdapter> _availableAnimalKind;
         public ICollectionView AvailableAnimals { get; }
 
         public AnimalAdaptersHoster(IAnimalProvider animalProvider)
         {
-            AvailableAnimals = ObservableCollectionSource.GetDefaultView(animalProvider.GetAnimals().Select(o => new AnimalAdapter(o.Kind, o.SubKind, "toto toutou tata")), out _availableAnimalKind);
+            AvailableAnimals = ObservableCollectionSource.GetDefaultView(animalProvider.GetAnimals().Select(o => new AnimalAdapter(o.Kind, o.SubKind, "toto toutou tata")));
         }
         
         public void FilterAnimal(string? inputText)
         {
             if (inputText == null)
                 return;
-            AvailableAnimals.Filter = item => SearchFilters.FilterAnimalKind(item, SearchHelpers.SplitByWhitspace(inputText));
+            var splitByWhitspace = SearchHelpers.SplitByWhitspace(inputText);
+            AvailableAnimals.Filter = item => SearchFilters.FilterParts(item, splitByWhitspace);
         }
     }
 }

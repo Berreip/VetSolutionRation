@@ -1,20 +1,28 @@
-﻿using VetSolutionRation.wpf.Views.RatioPanel.Adapter;
-
-namespace VetSolutionRation.wpf.Services.Helpers;
+﻿namespace VetSolutionRation.wpf.Services.Helpers;
 
 internal static class SearchFilters
 {
-    public static bool FilterAnimalKind(object obj, string[] searchText)
+    public static bool FilterParts(object item, string[] searchText)
     {
         if (searchText.Length == 0)
         {
             // if no filter, show all.
             return true;
         }
-        if (obj is IAnimalAdapter animal)
+
+        if (item is ISearcheable animal)
         {
             return animal.ContainsAll(searchText);
         }
+
         return false;
     }
+}
+
+/// <summary>
+/// define a searcheable item
+/// </summary>
+internal interface ISearcheable
+{
+    bool ContainsAll(string[] searchText);
 }
