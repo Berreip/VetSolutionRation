@@ -2,17 +2,14 @@
 
 public sealed class ExcelDto
 {
-    private readonly ExcelRowDto _headerRowDto;
-    private readonly List<ExcelRowDto> _rows;
+    public IReadOnlyList<IExcelRowDto> IgnoredRows { get; }
+    public IExcelRowDto HeaderRowDto { get; }
+    public IReadOnlyList<IExcelRowDto> Rows { get; }
 
-    public ExcelDto(ExcelRowDto headerRowDto, List<ExcelRowDto> rows)
+    public ExcelDto(IExcelRowDto headerRowDto, IReadOnlyList<ExcelRowDto> rows, IReadOnlyList<ExcelRowDto> ignoredRows)
     {
-        _headerRowDto = headerRowDto;
-        _rows = rows;
-    }
-
-    public IExcelRowDto GetHeaderRow()
-    {
-        return _headerRowDto;
+        IgnoredRows = ignoredRows;
+        HeaderRowDto = headerRowDto;
+        Rows = rows;
     }
 }

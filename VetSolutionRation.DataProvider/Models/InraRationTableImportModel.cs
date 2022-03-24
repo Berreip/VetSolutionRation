@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using VetSolutionRation.DataProvider.Models.SubParts;
 using VetSolutionRation.DataProvider.Services.Excel.ExcelDto;
 using VetSolutionRation.DataProvider.Utils;
 
@@ -14,15 +15,17 @@ public sealed class InraRationTableImportModel : IInraRationTableImportModel
 
     public InraRationTableImportModel(ExcelDto excelDto)
     {
-        _inraHeader = MapInraHeaders(excelDto.GetHeaderRow());
+        // inra reader has a first row that act as a grouping category:
+        var groupingCategory = new InraGroupCategories(excelDto.IgnoredRows.Single());
+        _inraHeader = MapInraHeaders(groupingCategory, excelDto.HeaderRowDto);
     }
 
-    private static InraHeaderModel MapInraHeaders(IExcelRowDto getHeaderRow)
+    private static InraHeaderModel MapInraHeaders(InraGroupCategories groupingCategory, IExcelRowDto getHeaderRow)
     {
-        var dto = new InraHeaderModel();
+        var dto = new InraHeaderModel(groupingCategory);
         foreach (var cellWithPosition in getHeaderRow.Cells)
         {
-            if (InraHeaderExtensions.TryParseInraHeader(cellWithPosition.Value, out var inraHeader))
+            if (InraHeaderExtensions.TryParseInraHeader(cellWithPosition.Value, groupingCategory.GuessedCulture, out var inraHeader))
             {
                 dto.AddHeader(cellWithPosition.Key, inraHeader);
             }
@@ -41,12 +44,29 @@ public sealed class InraRationTableImportModel : IInraRationTableImportModel
 
     private sealed class InraHeaderModel
     {
-        private readonly Dictionary<InraHeader, int> _columnIndexByHeader = new Dictionary<InraHeader, int>();
+        private readonly InraGroupCategories _inraGroupCategories;
+        private readonly Dictionary<HeaderGroup, Dictionary<InraHeader, int>> _columnIndexByGroupAndHeader = new Dictionary<HeaderGroup,Dictionary<InraHeader, int>>();
         private readonly Dictionary<int, string> _labelParts = new Dictionary<int, string>();
+
+        public InraHeaderModel(InraGroupCategories inraGroupCategories)
+        {
+            _inraGroupCategories = inraGroupCategories;
+            foreach (var groups in inraGroupCategories.OrderedGroups)
+            {
+                _columnIndexByGroupAndHeader.Add(groups, new Dictionary<InraHeader, int>());
+            }
+        }
 
         public void AddHeader(int columnIndex, InraHeader inraHeader)
         {
-            _columnIndexByHeader.Add(inraHeader, columnIndex);
+            try
+            {
+                _columnIndexByGroupAndHeader[_inraGroupCategories.GetGroupByIndex(columnIndex)].Add(inraHeader, columnIndex);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
 
         public void AddLabelPart(int labelPosition, string value)

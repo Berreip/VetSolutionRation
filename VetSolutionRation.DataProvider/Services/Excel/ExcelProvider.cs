@@ -25,6 +25,7 @@ public static class ExcelProvider
 
             ExcelRowDto? headerRowDto = null;
             var rows = new List<ExcelRowDto>();
+            var ignoredRows = new List<ExcelRowDto>();
             // iterate over each row:
             foreach (var row in sheet.Descendants<Row>())
             {
@@ -40,13 +41,17 @@ public static class ExcelProvider
                         rows.Add(rowDto);
                     }
                 }
+                else
+                {
+                    ignoredRows.Add(GetRow(row, sst));
+                }
 
                 currentRow++;
             }
 
             if (headerRowDto != null)
             {
-                return new ExcelDto.ExcelDto(headerRowDto, rows);
+                return new ExcelDto.ExcelDto(headerRowDto, rows, ignoredRows);
             }
 
             throw new ArgumentException($"Unable too find any row header for the provided file {excelFile.FullName}");

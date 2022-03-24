@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using NUnit.Framework;
 using VetSolutionRation.DataProvider.Models;
 
@@ -8,14 +9,16 @@ namespace VetSolutionRation.DataProvider.UnitTests.Models;
 internal sealed class InraHeaderExtensionsTests
 {
     [Test]
-    public void GetInraHeaderLabel_returns_label_for_all_enum_value()
+    [TestCase(InraSourceFileCulture.French)]
+    [TestCase(InraSourceFileCulture.English)]
+    public void GetInraHeaderLabel_returns_label_for_all_enum_value(InraSourceFileCulture culture)
     {
         //Arrange
 
         //Act
         foreach (InraHeader inraHeader in Enum.GetValues(typeof(InraHeader)))
         {
-            var res = inraHeader.GetInraHeaderLabel();
+            var res = inraHeader.GetInraHeaderLabel(culture);
             Assert.IsNotNull(res);
         }
 
@@ -23,17 +26,40 @@ internal sealed class InraHeaderExtensionsTests
     }
 
     [Test]
-    public void TryParseInraHeader_returns_label_for_all_enum_value()
+    [TestCase(InraSourceFileCulture.French)]
+    [TestCase(InraSourceFileCulture.English)]
+    public void TryParseInraHeader_returns_label_for_all_enum_value(InraSourceFileCulture culture)
     {
         //Arrange
 
         //Act
         foreach (InraHeader inraHeader in Enum.GetValues(typeof(InraHeader)))
         {
-            var label = inraHeader.GetInraHeaderLabel();
-            var parseSuccess = InraHeaderExtensions.TryParseInraHeader(label, out var parsedHeader);
-            Assert.IsTrue(parseSuccess);
+            var label = inraHeader.GetInraHeaderLabel(culture);
+            var parseSuccess = InraHeaderExtensions.TryParseInraHeader(label, culture, out var parsedHeader);
+            Assert.IsTrue(parseSuccess, $"failed to parse {label}");
             Assert.AreEqual(inraHeader, parsedHeader);
+        }
+
+        //Assert
+    }
+
+    [Test]
+    [TestCase(InraSourceFileCulture.French)]
+    [TestCase(InraSourceFileCulture.English)]
+    public void TryParseInraHeader_returns_No_duplication_label_for_all_enum_value(InraSourceFileCulture culture)
+    {
+        //Arrange
+        var duplicateHash = new Dictionary<InraHeader, string>();
+
+        //Act
+        foreach (InraHeader inraHeader in Enum.GetValues(typeof(InraHeader)))
+        {
+            var label = inraHeader.GetInraHeaderLabel(culture);
+            var parseSuccess = InraHeaderExtensions.TryParseInraHeader(label, culture, out var parsedHeader);
+            Assert.IsTrue(parseSuccess);
+            Assert.IsFalse(duplicateHash.TryGetValue(parsedHeader, out var duplicated), $"the label {label} lead to a duplicate key: {parsedHeader} also used by {duplicated}");
+            duplicateHash.Add(parsedHeader, label);
         }
 
         //Assert
@@ -45,7 +71,7 @@ internal sealed class InraHeaderExtensionsTests
         //Arrange
 
         //Act
-        Assert.Throws<ArgumentOutOfRangeException>(() => ((InraHeader)(-1)).GetInraHeaderLabel());
+        Assert.Throws<ArgumentOutOfRangeException>(() => ((InraHeader)(-1)).GetInraHeaderLabel(InraSourceFileCulture.English));
 
         //Assert
     }
@@ -59,7 +85,7 @@ internal sealed class InraHeaderExtensionsTests
         //Arrange
 
         //Act
-        var parseSuccess = InraHeaderExtensions.TryParseInraHeader(str, out var parsedHeader);
+        var parseSuccess = InraHeaderExtensions.TryParseInraHeader(str, InraSourceFileCulture.French, out var parsedHeader);
 
         //Assert
         Assert.IsTrue(parseSuccess);

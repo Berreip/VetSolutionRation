@@ -117,7 +117,8 @@ internal enum InraHeader
 internal static class InraHeaderExtensions
 {
     private static readonly Dictionary<InraHeader, string[]> _inraHeaderToDisplayName;
-    private static readonly Dictionary<string, InraHeader> _inraDisplayNameToHeader;
+    private static readonly Dictionary<string, InraHeader> _inraDisplayNameToHeaderFr;
+    private static readonly Dictionary<string, InraHeader> _inraDisplayNameToHeaderEn;
 
     static InraHeaderExtensions()
     {
@@ -125,16 +126,16 @@ internal static class InraHeaderExtensions
         {
             { InraHeader.No, new[] { "No" } },
             { InraHeader.Etat, new[] { "Etat", "Status" } },
-            { InraHeader.CodeInra, new[] { "Code INRA" , "INRA Code"} },
-            { InraHeader.MS, new[] { "MS", "DM"} },
+            { InraHeader.CodeInra, new[] { "Code INRA", "INRA Code" } },
+            { InraHeader.MS, new[] { "MS", "DM" } },
             { InraHeader.UFL, new[] { "UFL" } },
             { InraHeader.UFV, new[] { "UFV" } },
             { InraHeader.PDIA, new[] { "PDIA" } },
             { InraHeader.PDI, new[] { "PDI" } },
-            { InraHeader.BPR, new[] { "BPR", "RPB", "RBP"} },
+            { InraHeader.BPR, new[] { "BPR", "RPB", "RBP" } },
             { InraHeader.bVEc, new[] { "bVEc", "bFVc" } },
             { InraHeader.MO, new[] { "MO", "OM" } },
-            { InraHeader.dMO, new[] { "dMO", "OMd"} },
+            { InraHeader.dMO, new[] { "dMO", "OMd" } },
             { InraHeader.MAT, new[] { "MAT", "CP" } },
             { InraHeader.dMA, new[] { "dMA", "CPd" } },
             { InraHeader.CB, new[] { "CB", "CF" } },
@@ -150,22 +151,22 @@ internal static class InraHeaderExtensions
             { InraHeader.Ca, new[] { "Ca" } },
             { InraHeader.Caabs, new[] { "Caabs" } },
             { InraHeader.Mg, new[] { "Mg" } },
-            { InraHeader.BE, new[] { "BE" } },
+            { InraHeader.BE, new[] { "BE", "EB"} },
             { InraHeader.EB, new[] { "EB", "GE" } },
             { InraHeader.dE, new[] { "dE", "Ed" } },
             { InraHeader.EM, new[] { "EM", "ME" } },
-            { InraHeader.DT_N, new[] { "DT_N", "ED_N" } },
-            { InraHeader.DT6_N, new[] { "DT6_N", "ED6_N" } },
-            { InraHeader.dr_N, new[] { "dr_N" } },
-            { InraHeader.DT_Ami, new[] { "DT_Ami" } },
-            { InraHeader.DT6_Ami, new[] { "DT6_Ami" } },
-            { InraHeader.DT_MS, new[] { "DT_MS" } },
-            { InraHeader.DT6_MS, new[] { "DT6_MS" } },
+            { InraHeader.DT_N, new[] { "DT_N", "ED N", "ED_N" } },
+            { InraHeader.DT6_N, new[] { "DT6_N", "ED6 N", "ED6_N" } },
+            { InraHeader.dr_N, new[] { "dr_N", "dr N", "dr_N" } },
+            { InraHeader.DT_Ami, new[] { "DT_Ami", "ED Starch" } },
+            { InraHeader.DT6_Ami, new[] { "DT6_Ami", "ED6 Starch" } },
+            { InraHeader.DT_MS, new[] { "DT_MS", "ED DM" } },
+            { InraHeader.DT6_MS, new[] { "DT6_MS", "ED6 DM" } },
             { InraHeader.S, new[] { "S" } },
             { InraHeader.Na, new[] { "Na" } },
             { InraHeader.K, new[] { "K" } },
             { InraHeader.Cl, new[] { "Cl" } },
-            { InraHeader.BACA, new[] { "BACA" } },
+            { InraHeader.BACA, new[] { "BACA", "DCAD" } },
             { InraHeader.Cu, new[] { "Cu" } },
             { InraHeader.Zn, new[] { "Zn" } },
             { InraHeader.Mn, new[] { "Mn" } },
@@ -230,28 +231,51 @@ internal static class InraHeaderExtensions
             { InraHeader.C24_0, new[] { "C24:0" } },
         };
 
-        _inraDisplayNameToHeader = new Dictionary<string, InraHeader>(_inraHeaderToDisplayName.Count,  StringComparer.OrdinalIgnoreCase);
+        _inraDisplayNameToHeaderFr = new Dictionary<string, InraHeader>(_inraHeaderToDisplayName.Count, StringComparer.OrdinalIgnoreCase);
+        _inraDisplayNameToHeaderEn = new Dictionary<string, InraHeader>(_inraHeaderToDisplayName.Count, StringComparer.OrdinalIgnoreCase);
         foreach (var (inraHeader, headersLabels) in _inraHeaderToDisplayName)
         {
-            foreach (var headerLabel in headersLabels)
+            _inraDisplayNameToHeaderFr.Add(headersLabels[0], inraHeader);
+            if (headersLabels.Length == 1)
             {
-                _inraDisplayNameToHeader.Add(headerLabel, inraHeader);
+                _inraDisplayNameToHeaderEn.Add(headersLabels[0], inraHeader);
+            }
+            else
+            {
+                for (var i = 1; i < headersLabels.Length; i++)
+                {
+                    // there is on case  where there is 2 traductions in EN (typo probably) ("BPR" => "RPB"/"RBP")
+                    _inraDisplayNameToHeaderEn.Add(headersLabels[i], inraHeader);
+                }
             }
         }
     }
 
-    public static string GetInraHeaderLabel(this InraHeader inraHeader)
+    public static string GetInraHeaderLabel(this InraHeader inraHeader, InraSourceFileCulture culture)
     {
         if (_inraHeaderToDisplayName.TryGetValue(inraHeader, out var label))
         {
-            return label[0];
+            if (label.Length == 1)
+            {
+                // same FR/EN
+                return label[0];
+            }
+            return label[culture == InraSourceFileCulture.French ? 0 : 1];
         }
 
         throw new ArgumentOutOfRangeException(nameof(inraHeader), inraHeader, null);
     }
 
-    public static bool TryParseInraHeader(string label, out InraHeader header)
+    public static bool TryParseInraHeader(string label, InraSourceFileCulture culture, out InraHeader header)
     {
-        return _inraDisplayNameToHeader.TryGetValue(label, out header);
+        return culture == InraSourceFileCulture.French
+            ? _inraDisplayNameToHeaderFr.TryGetValue(label, out header)
+            : _inraDisplayNameToHeaderEn.TryGetValue(label, out header);
     }
+}
+
+internal enum InraSourceFileCulture
+{
+    French,
+    English
 }
