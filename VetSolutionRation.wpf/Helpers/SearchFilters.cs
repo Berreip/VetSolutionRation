@@ -1,4 +1,4 @@
-﻿namespace VetSolutionRation.wpf.Services.Helpers;
+﻿namespace VetSolutionRation.wpf.Helpers;
 
 internal static class SearchFilters
 {

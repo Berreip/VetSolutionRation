@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFramework>net5.0-windows</TargetFramework>
+        <TargetFramework>net6.0-windows</TargetFramework>
         <UseWPF>true</UseWPF>
         <ApplicationIcon>main_icon_temp_.ico</ApplicationIcon>
         <Nullable>enable</Nullable>
@@ -31,6 +31,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\VetSolutionRation.DataProvider\VetSolutionRation.DataProvider.csproj" />
       <ProjectReference Include="..\VetSolutionRationLib\VetSolutionRationLib.csproj" />
     </ItemGroup>
 

@@ -9,30 +9,24 @@
              d:DesignHeight="300" d:DesignWidth="300"
              d:DataContext="{d:DesignInstance animalSelection:AnimalSelectionViewModel, IsDesignTimeCreatable=False}"
              x:ClassModifier="internal">
+    
     <materialDesign:Card Margin="10, 5" Padding="10" materialDesign:ShadowAssist.ShadowDepth="Depth2">
 
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            
-            <ComboBox
-                materialDesign:HintAssist.Hint="Barre de recherche"
-                MinWidth="72"
-                Text="{Binding SearchFilter}"
-                IsTextSearchEnabled="False"
-                IsEditable="True"
-                IsDropDownOpen="{Binding IsDropDownOpen}"
-                StaysOpenOnEdit="True"
-                ItemsSource="{Binding AnimalAdaptersHoster.AvailableAnimals}">
-                <ComboBox.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <VirtualizingStackPanel />
-                    </ItemsPanelTemplate>
-                </ComboBox.ItemsPanel>
-            </ComboBox>
-        </Grid>
+        <ComboBox
+            materialDesign:HintAssist.Hint="Barre de recherche"
+            MinWidth="72"
+            Text="{Binding SearchFilter}"
+            IsTextSearchEnabled="False"
+            IsEditable="True"
+            IsDropDownOpen="{Binding IsDropDownOpen}"
+            StaysOpenOnEdit="True"
+            ItemsSource="{Binding AnimalAdaptersHoster.AvailableAnimals}">
+            <ComboBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <VirtualizingStackPanel />
+                </ItemsPanelTemplate>
+            </ComboBox.ItemsPanel>
+        </ComboBox>
 
     </materialDesign:Card>
 </UserControl>

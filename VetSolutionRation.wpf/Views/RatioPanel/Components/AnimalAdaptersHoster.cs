@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Linq;
 using PRF.WPFCore.CustomCollections;
-using VetSolutionRation.wpf.Services.Helpers;
+using VetSolutionRation.wpf.Helpers;
 using VetSolutionRation.wpf.Views.RatioPanel.Adapter;
 using VetSolutionRationLib.DataProvider;
 using VetSolutionRationLib.Helpers;

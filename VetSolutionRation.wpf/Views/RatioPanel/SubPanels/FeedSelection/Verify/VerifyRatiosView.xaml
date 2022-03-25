@@ -4,11 +4,31 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:verify="clr-namespace:VetSolutionRation.wpf.Views.RatioPanel.SubPanels.FeedSelection.Verify"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d"
              d:DesignHeight="300" 
              d:DesignWidth="300"
              d:DataContext="{d:DesignInstance verify:VerifyRatiosViewModel, IsDesignTimeCreatable=False}" x:ClassModifier="internal">
-    <Grid Background="Green">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
         
+        <ComboBox
+            materialDesign:HintAssist.Hint="Barre de recherche"
+            MinWidth="72"
+            Text="{Binding VerifyFeedSearchFilter}"
+            IsTextSearchEnabled="False"
+            IsEditable="True"
+            IsDropDownOpen="{Binding VerifyFeedsDropDownOpen}"
+            StaysOpenOnEdit="True"
+            ItemsSource="{Binding FeedProviderHoster.AvailableFeedForVerify}">
+            <ComboBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <VirtualizingStackPanel />
+                </ItemsPanelTemplate>
+            </ComboBox.ItemsPanel>
+        </ComboBox>
     </Grid>
 </UserControl>

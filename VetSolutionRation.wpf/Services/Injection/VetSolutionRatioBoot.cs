@@ -4,7 +4,9 @@ using PRF.Utils.Injection.BootStrappers;
 using PRF.Utils.Injection.Containers;
 using PRF.Utils.Injection.Utils;
 using VetSolutionRation.wpf.Main;
+using VetSolutionRation.wpf.Services.Feed;
 using VetSolutionRation.wpf.Services.Navigation;
+using VetSolutionRation.wpf.Views.Import;
 using VetSolutionRation.wpf.Views.Parameters;
 using VetSolutionRation.wpf.Views.RatioPanel;
 using VetSolutionRation.wpf.Views.RatioPanel.Components;
@@ -48,6 +50,7 @@ namespace VetSolutionRation.wpf.Services.Injection
             _internalContainer.Register<IMainWindowViewModel, MainWindowViewModel>(LifeTime.Singleton);
 
             _internalContainer.Register<IMenuNavigator, MenuNavigator>(LifeTime.Singleton);
+            _internalContainer.Register<IFeedProvider, FeedProvider>(LifeTime.Singleton);
 
             // // views:
             _internalContainer.RegisterType<RatioPanelView>(LifeTime.Singleton);
@@ -73,9 +76,13 @@ namespace VetSolutionRation.wpf.Services.Injection
             
             _internalContainer.RegisterType<CalculateResultView>(LifeTime.Singleton);
             _internalContainer.Register<ICalculateResultViewModel, CalculateResultViewModel>(LifeTime.Singleton);
+            
+            _internalContainer.RegisterType<ImportView>(LifeTime.Singleton);
+            _internalContainer.Register<IImportViewModel, ImportViewModel>(LifeTime.Singleton);
 
             // // VM related services
             _internalContainer.Register<IAnimalAdaptersHoster, AnimalAdaptersHoster>(LifeTime.Singleton);
+            _internalContainer.Register<IFeedProviderHoster, FeedProviderHoster>(LifeTime.Singleton);
         }
 
         private void Initialize()

@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using PRF.Utils.Injection.Containers;
 using PRF.WPFCore;
+using VetSolutionRation.wpf.Views.Import;
 using VetSolutionRation.wpf.Views.Parameters;
 using VetSolutionRation.wpf.Views.RatioPanel;
 
@@ -38,7 +39,8 @@ namespace VetSolutionRation.wpf.Services.Navigation
             AvailableMenuCommands = new INavigationCommand[]
             {
                 new NavigationCommand("Ration Calculation", () => MainPanel = container.Resolve<RatioPanelView>()),
-                new NavigationCommand("Parameters", () => MainPanel = container.Resolve<ParametersView>())
+                new NavigationCommand("Import", () => MainPanel = container.Resolve<ImportView>()),
+                new NavigationCommand("Parameters", () => MainPanel = container.Resolve<ParametersView>()),
             };
         }
 

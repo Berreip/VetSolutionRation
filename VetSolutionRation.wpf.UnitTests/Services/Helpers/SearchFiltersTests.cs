@@ -1,7 +1,6 @@
 ﻿using Moq;
 using NUnit.Framework;
-using VetSolutionRation.wpf.Services.Helpers;
-using VetSolutionRation.wpf.Views.RatioPanel.Adapter;
+using VetSolutionRation.wpf.Helpers;
 
 namespace VetSolutionRation.wpf.UnitTests.Services.Helpers;
 
