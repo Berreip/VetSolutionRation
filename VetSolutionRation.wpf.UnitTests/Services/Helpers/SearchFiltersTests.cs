@@ -12,7 +12,7 @@ internal sealed class SearchFiltersTests
     {
         //Arrange
         var animal = new Mock<ISearcheable>();
-        animal.Setup(o => o.ContainsAll(It.IsAny<string[]>())).Returns(false);
+        animal.Setup(o => o.MatchSearch(It.IsAny<string[]>())).Returns(false);
 
         //Act
         var res = SearchFilters.FilterParts(animal.Object, Array.Empty<string>());

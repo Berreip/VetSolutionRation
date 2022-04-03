@@ -15,7 +15,7 @@ namespace VetSolutionRation.wpf.UnitTests.Adapters
             var sut = new AnimalAdapter(AnimalKind.BovineFemale, AnimalSubKind.Heifer, "1/2 ans et autre chose");
 
             //Act
-            var res = sut.ContainsAll(Array.Empty<string>());
+            var res = sut.MatchSearch(Array.Empty<string>());
 
             //Assert
             Assert.IsTrue(res);
@@ -28,7 +28,7 @@ namespace VetSolutionRation.wpf.UnitTests.Adapters
             var sut = new AnimalAdapter(AnimalKind.BovineFemale, AnimalSubKind.Heifer, "1/2 ans");
 
             //Act
-            var res = sut.ContainsAll(new []{"1/2"});
+            var res = sut.MatchSearch(new []{"1/2"});
 
             //Assert
             Assert.IsTrue(res);
@@ -41,7 +41,7 @@ namespace VetSolutionRation.wpf.UnitTests.Adapters
             var sut = new AnimalAdapter(AnimalKind.BovineFemale, AnimalSubKind.Heifer, "1/2 ans");
 
             //Act
-            var res = sut.ContainsAll(new [] { AnimalKind.BovineFemale.GetDisplayName()[..2] });
+            var res = sut.MatchSearch(new [] { AnimalKind.BovineFemale.GetDisplayName()[..2] });
 
             //Assert
             Assert.IsTrue(res);
@@ -54,7 +54,7 @@ namespace VetSolutionRation.wpf.UnitTests.Adapters
             var sut = new AnimalAdapter(AnimalKind.BovineFemale, AnimalSubKind.Heifer, "1/2 ans");
 
             //Act
-            var res = sut.ContainsAll(new [] { AnimalSubKind.Heifer.GetDisplayName()[..4] });
+            var res = sut.MatchSearch(new [] { AnimalSubKind.Heifer.GetDisplayName()[..4] });
 
             //Assert
             Assert.IsTrue(res);
@@ -67,7 +67,7 @@ namespace VetSolutionRation.wpf.UnitTests.Adapters
             var sut = new AnimalAdapter(AnimalKind.BovineFemale, AnimalSubKind.Heifer, "1/2 ans");
 
             //Act
-            var res = sut.ContainsAll(new [] { AnimalSubKind.Heifer.GetDisplayName()[..4], "1/2" });
+            var res = sut.MatchSearch(new [] { AnimalSubKind.Heifer.GetDisplayName()[..4], "1/2" });
 
             //Assert
             Assert.IsTrue(res);
@@ -80,7 +80,7 @@ namespace VetSolutionRation.wpf.UnitTests.Adapters
             var sut = new AnimalAdapter(AnimalKind.BovineFemale, AnimalSubKind.Heifer, "1/2 ans");
 
             //Act
-            var res = sut.ContainsAll(new [] { AnimalSubKind.Heifer.GetDisplayName()[..4], "foo" });
+            var res = sut.MatchSearch(new [] { AnimalSubKind.Heifer.GetDisplayName()[..4], "foo" });
 
             //Assert
             Assert.IsFalse(res);
@@ -93,7 +93,7 @@ namespace VetSolutionRation.wpf.UnitTests.Adapters
             var sut = new AnimalAdapter(AnimalKind.BovineFemale, AnimalSubKind.Heifer, "1/2 ans");
 
             //Act
-            var res = sut.ContainsAll(new []{"foooooooooo"});
+            var res = sut.MatchSearch(new []{"foooooooooo"});
 
             //Assert
             Assert.IsFalse(res);
@@ -106,7 +106,7 @@ namespace VetSolutionRation.wpf.UnitTests.Adapters
             var sut = new AnimalAdapter(AnimalKind.BovineFemale, AnimalSubKind.Heifer, "1/2 ans");
 
             //Act
-            var res = sut.ContainsAll(new []{"1/2", "1/2"});
+            var res = sut.MatchSearch(new []{"1/2", "1/2"});
 
             //Assert
             Assert.IsFalse(res);
@@ -119,7 +119,7 @@ namespace VetSolutionRation.wpf.UnitTests.Adapters
             var sut = new AnimalAdapter(AnimalKind.BovineFemale, AnimalSubKind.Heifer, AnimalSubKind.Heifer.GetDisplayName());
 
             //Act
-            var res = sut.ContainsAll(new []{AnimalSubKind.Heifer.GetDisplayName(), AnimalSubKind.Heifer.GetDisplayName()});
+            var res = sut.MatchSearch(new []{AnimalSubKind.Heifer.GetDisplayName(), AnimalSubKind.Heifer.GetDisplayName()});
 
             //Assert
             Assert.IsTrue(res);

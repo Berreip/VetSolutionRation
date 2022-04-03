@@ -17,7 +17,7 @@ internal abstract class SearcheableBase : ViewModelBase, ISearcheable
     }
 
     /// <inheritdoc />
-    public bool ContainsAll(string[] searchText)
+    public bool MatchSearch(string[] searchText)
     {
         // we create a search text object that will hold the 'isfound' during searching
         var parts = _searchPart.Select(o => new SearchText(o)).ToArray();

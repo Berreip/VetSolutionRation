@@ -15,7 +15,7 @@ internal sealed class AnialAdapterTest
         var sut = new AnimalAdapter(AnimalKind.BovineMale, AnimalSubKind.Undefined, "toto toutou tata");
 
         //Act
-        var res = sut.ContainsAll(new[]
+        var res = sut.MatchSearch(new[]
         {
             "Taureau",
             "toto",
@@ -25,6 +25,5 @@ internal sealed class AnialAdapterTest
 
         //Assert
         Assert.IsTrue(res);
-        
     }
 }

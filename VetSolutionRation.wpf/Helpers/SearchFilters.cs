@@ -12,7 +12,7 @@ internal static class SearchFilters
 
         if (item is ISearcheable searcheable)
         {
-            return searcheable.ContainsAll(searchText);
+            return searcheable.MatchSearch(searchText);
         }
 
         return false;
@@ -24,5 +24,5 @@ internal static class SearchFilters
 /// </summary>
 internal interface ISearcheable
 {
-    bool ContainsAll(string[] searchText);
+    bool MatchSearch(string[] searchText);
 }
