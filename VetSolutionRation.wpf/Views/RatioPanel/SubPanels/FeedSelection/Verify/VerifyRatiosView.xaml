@@ -5,8 +5,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:verify="clr-namespace:VetSolutionRation.wpf.Views.RatioPanel.SubPanels.FeedSelection.Verify"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:properties="clr-namespace:VetSolutionRation.wpf.Properties"
+             xmlns:adapters="clr-namespace:VetSolutionRation.wpf.Views.RatioPanel.SubPanels.FeedSelection.Verify.Adapters"
              mc:Ignorable="d"
-             d:DesignHeight="300" 
+             d:DesignHeight="300"
              d:DesignWidth="300"
              d:DataContext="{d:DesignInstance verify:VerifyRatiosViewModel, IsDesignTimeCreatable=False}" x:ClassModifier="internal">
     <Grid>
@@ -14,21 +16,89 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        
-        <ComboBox
-            materialDesign:HintAssist.Hint="Barre de recherche"
-            MinWidth="72"
-            Text="{Binding VerifyFeedSearchFilter}"
-            IsTextSearchEnabled="False"
-            IsEditable="True"
-            IsDropDownOpen="{Binding VerifyFeedsDropDownOpen}"
-            StaysOpenOnEdit="True"
-            ItemsSource="{Binding FeedProviderHoster.AvailableFeedForVerify}">
-            <ComboBox.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <VirtualizingStackPanel />
-                </ItemsPanelTemplate>
-            </ComboBox.ItemsPanel>
-        </ComboBox>
+
+        <!-- SEARCHBAR AND ADD BUTTON -->
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <ComboBox
+                Grid.Column="0"
+                VerticalAlignment="Center"
+                Margin="5"
+                materialDesign:HintAssist.Hint="Barre de recherche"
+                MinWidth="72"
+                Text="{Binding VerifyFeedSearchFilter}"
+                IsTextSearchEnabled="False"
+                IsEditable="True"
+                IsDropDownOpen="{Binding VerifyFeedsDropDownOpen}"
+                StaysOpenOnEdit="True"
+                ItemsSource="{Binding FeedProviderHoster.AvailableFeedForVerify}">
+                <ComboBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <VirtualizingStackPanel />
+                    </ItemsPanelTemplate>
+                </ComboBox.ItemsPanel>
+            </ComboBox>
+
+            <Button
+                Margin="8"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center"
+                Grid.Column="1"
+                Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
+                ToolTip="View_FeedSelection_Verify_AddToSelectionButton_ToolTip">
+
+                <materialDesign:PackIcon
+                    Kind="Plus"
+                    Height="19"
+                    Width="19" />
+            </Button>
+        </Grid>
+
+        <!-- SELECTED FEED PANEL -->
+        <materialDesign:Card Grid.Row="1" Margin="10, 5" Padding="10" materialDesign:ShadowAssist.ShadowDepth="Depth2">
+            <Grid>
+                <ItemsControl ItemsSource="{Binding SelectedFeedForVerify}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="{x:Type adapters:FeedForVerifyAdapter}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <!-- IS SELECTED -->
+                                    <ColumnDefinition Width="Auto"/>
+                                    <!-- NAME -->
+                                    <ColumnDefinition Width="*"/>
+                                    <!-- QUANTITY -->
+                                    <ColumnDefinition Width="Auto"/>
+                                    <!-- QUANTITY UNIT -->
+                                    <ColumnDefinition Width="75"/>
+                                </Grid.ColumnDefinitions>
+                                
+                                <CheckBox
+                                    Grid.Column="0"
+                                    IsChecked="{Binding IsSelected}"/>
+                                
+                                <!-- IsReadOnly = true to allow text selection -->
+                                <TextBox
+                                    Grid.Column="1" 
+                                    IsReadOnly="True"
+                                    Text="{Binding FeedName}"/>
+                                
+                                <TextBox 
+                                    Grid.Column="2"
+                                    Text="{Binding FeedQuantity.Quantity}"/>
+
+                                <TextBlock 
+                                    Grid.Column="3"
+                                    Text="{Binding FeedQuantity.Unit}"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+            </Grid>
+        </materialDesign:Card>
     </Grid>
 </UserControl>

@@ -57,4 +57,7 @@
     <data name="FeedSelectionModeCalculateRatiosTitle" xml:space="preserve">
         <value>Calculate rations</value>
     </data>
+    <data name="View_FeedSelection_Verify_AddToSelectionButton_ToolTip" xml:space="preserve">
+        <value>Add to selected feed</value>
+    </data>
 </root>

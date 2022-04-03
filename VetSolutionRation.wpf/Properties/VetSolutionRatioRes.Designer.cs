@@ -176,5 +176,14 @@ namespace VetSolutionRation.wpf.Properties {
                 return ResourceManager.GetString("View_AnimalSelection_Search_Tooltip", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add to selected feed.
+        /// </summary>
+        internal static string View_FeedSelection_Verify_AddToSelectionButton_ToolTip {
+            get {
+                return ResourceManager.GetString("View_FeedSelection_Verify_AddToSelectionButton_ToolTip", resourceCulture);
+            }
+        }
     }
 }
