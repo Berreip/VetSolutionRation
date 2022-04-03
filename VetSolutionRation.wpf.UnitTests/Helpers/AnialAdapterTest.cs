@@ -18,7 +18,6 @@ internal sealed class AnialAdapterTest
         var res = sut.ContainsAll(new[]
         {
             "Taureau",
-            "|",
             "toto",
             "toutou",
             "tata",
