@@ -36,7 +36,7 @@ internal abstract class SearcheableBase : ViewModelBase, ISearcheable
     {
         foreach (var part in parts)
         {
-            if (part.AlreadyFound == false)
+            if (!part.AlreadyFound)
             {
                 if (part.ContainsInsensitive(searchPart))
                 {

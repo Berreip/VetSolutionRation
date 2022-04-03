@@ -143,5 +143,52 @@ namespace VetSolutionRation.wpf.UnitTests.Adapters
             //Assert
             Assert.AreEqual(refResult, res);
         }
+        
+        [Test]
+        [TestCase("oto")]
+        [TestCase("ot")]
+        [TestCase("o")]
+        public void MatchSearch_returns_false_if_not_starting_by(string searchText)
+        {
+            //Arrange
+            var sut = new AnimalAdapter(AnimalKind.BovineFemale, AnimalSubKind.Heifer, "toto");
+            
+
+            //Act
+            var res = sut.MatchSearch(new []{AnimalSubKind.Heifer.GetDisplayName(), searchText});
+
+            //Assert
+            Assert.IsFalse(res);
+        }
+
+        [Test]
+        public void MatchSearch_returns_true_if_all_search_starts_with_input()
+        {
+            //Arrange
+            var sut = new AnimalAdapter(AnimalKind.BovineFemale, AnimalSubKind.Heifer, "toto tata toutou");
+            
+
+            //Act
+            var res = sut.MatchSearch(new []{AnimalSubKind.Heifer.GetDisplayName(), "tot", "tat", "tout"});
+
+            //Assert
+            Assert.IsTrue(res);
+        }
+
+        [Test]
+        public void MatchSearch_returns_false_if_searchable_item_contains_less_matches_than_requested_input()
+        {
+            //Arrange
+            var sut = new AnimalAdapter(AnimalKind.BovineFemale, AnimalSubKind.Heifer, "toto toto ototo");
+            
+
+            //Act
+            //We ask three times for "toto"'s beginning
+            var res = sut.MatchSearch(new []{AnimalSubKind.Heifer.GetDisplayName(), "tot", "tot", "tot"});
+
+            //Assert
+            Assert.IsFalse(res);
+        }
+
     }
 }
