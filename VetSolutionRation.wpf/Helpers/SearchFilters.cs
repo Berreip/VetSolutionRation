@@ -10,9 +10,9 @@ internal static class SearchFilters
             return true;
         }
 
-        if (item is ISearcheable animal)
+        if (item is ISearcheable searcheable)
         {
-            return animal.ContainsAll(searchText);
+            return searcheable.ContainsAll(searchText);
         }
 
         return false;
