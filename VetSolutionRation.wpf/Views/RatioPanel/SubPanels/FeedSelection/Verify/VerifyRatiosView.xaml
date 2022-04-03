@@ -10,11 +10,12 @@
              mc:Ignorable="d"
              d:DesignHeight="300"
              d:DesignWidth="300"
-             d:DataContext="{d:DesignInstance verify:VerifyRatiosViewModel, IsDesignTimeCreatable=False}" x:ClassModifier="internal">
+             d:DataContext="{d:DesignInstance verify:VerifyRatiosViewModel, IsDesignTimeCreatable=False}" x:ClassModifier="internal"
+             x:Name="VerifyRatiosPanel">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <!-- SEARCHBAR AND ADD BUTTON -->
@@ -24,76 +25,131 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
+            <!-- SEARCHBAR -->
             <ComboBox
                 Grid.Column="0"
+                Style="{StaticResource MaterialDesignOutlinedComboBox}"
                 VerticalAlignment="Center"
-                Margin="5"
-                materialDesign:HintAssist.Hint="Barre de recherche"
+                Margin="5, 10"
+                materialDesign:HintAssist.Hint="Aliment"
                 MinWidth="72"
                 Text="{Binding VerifyFeedSearchFilter}"
                 IsTextSearchEnabled="False"
                 IsEditable="True"
                 IsDropDownOpen="{Binding VerifyFeedsDropDownOpen}"
                 StaysOpenOnEdit="True"
-                ItemsSource="{Binding FeedProviderHoster.AvailableFeedForVerify}">
+                ItemsSource="{Binding FeedProviderHoster.AvailableFeedForVerify}"
+                SelectedItem="{Binding SelectedFeedFromAvailable}">
                 <ComboBox.ItemsPanel>
                     <ItemsPanelTemplate>
                         <VirtualizingStackPanel />
                     </ItemsPanelTemplate>
                 </ComboBox.ItemsPanel>
+                <ComboBox.InputBindings>
+                    <KeyBinding Gesture="Enter"
+                                Command="{Binding OnEnterFeedSearchPressCommand}">
+                    </KeyBinding>
+                </ComboBox.InputBindings>
             </ComboBox>
 
+            <!-- ADD FEED TO SELECTION BUTTON -->
             <Button
-                Margin="8"
-                VerticalAlignment="Center"
-                HorizontalAlignment="Center"
+                Margin="5"
+                Height="50" Width="50"
+                VerticalAlignment="Center" VerticalContentAlignment="Center"
+                HorizontalAlignment="Center" HorizontalContentAlignment="Center"
                 Grid.Column="1"
-                Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
-                ToolTip="View_FeedSelection_Verify_AddToSelectionButton_ToolTip">
+                Style="{StaticResource MaterialDesignRaisedLightButton}"
+                ToolTip="View_FeedSelection_Verify_AddToSelectionButton_ToolTip"
+                Command="{Binding AddFeedToSelectionCommand}">
 
-                <materialDesign:PackIcon
-                    Kind="Plus"
-                    Height="19"
-                    Width="19" />
+                <materialDesign:PackIcon Kind="Plus" Height="20" Width="20" />
             </Button>
         </Grid>
 
         <!-- SELECTED FEED PANEL -->
-        <materialDesign:Card Grid.Row="1" Margin="10, 5" Padding="10" materialDesign:ShadowAssist.ShadowDepth="Depth2">
+        <materialDesign:Card Grid.Row="1" Margin="0, 5, 0, 0"
+                             Padding="2"
+                             materialDesign:ShadowAssist.ShadowDepth="Depth2" 
+                             Background="{StaticResource MaterialDesignPaper}">
             <Grid>
-                <ItemsControl ItemsSource="{Binding SelectedFeedForVerify}">
+                <ItemsControl ItemsSource="{Binding SelectedFeedsForVerifyPanel}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate DataType="{x:Type adapters:FeedForVerifyAdapter}">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <!-- IS SELECTED -->
-                                    <ColumnDefinition Width="Auto"/>
-                                    <!-- NAME -->
-                                    <ColumnDefinition Width="*"/>
-                                    <!-- QUANTITY -->
-                                    <ColumnDefinition Width="Auto"/>
-                                    <!-- QUANTITY UNIT -->
-                                    <ColumnDefinition Width="75"/>
-                                </Grid.ColumnDefinitions>
-                                
-                                <CheckBox
-                                    Grid.Column="0"
-                                    IsChecked="{Binding IsSelected}"/>
-                                
-                                <!-- IsReadOnly = true to allow text selection -->
-                                <TextBox
-                                    Grid.Column="1" 
-                                    IsReadOnly="True"
-                                    Text="{Binding FeedName}"/>
-                                
-                                <TextBox 
-                                    Grid.Column="2"
-                                    Text="{Binding FeedQuantity.Quantity}"/>
+                            <materialDesign:Card 
+                                Margin="2" 
+                                Padding="5">
+                                <materialDesign:Card.Style>
+                                    <Style TargetType="{x:Type materialDesign:Card}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ElementName=ItemFeedCheckBox, Path=IsChecked}" Value="False">
+                                                <Setter Property="Opacity" Value="0.4"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </materialDesign:Card.Style>
 
-                                <TextBlock 
-                                    Grid.Column="3"
-                                    Text="{Binding FeedQuantity.Unit}"/>
-                            </Grid>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <!-- IS SELECTED AND FEED NAME -->
+                                        <ColumnDefinition Width="*" />
+                                        <!-- QUANTITY -->
+                                        <ColumnDefinition Width="70" />
+                                        <!-- QUANTITY UNIT -->
+                                        <ColumnDefinition Width="50" />
+                                        <!-- REMOVE FROM SELECTION BUTTON -->
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- CHECKBOW AND FEED NAME -->
+                                    <CheckBox
+                                        Grid.Column="0"
+                                        x:Name="ItemFeedCheckBox"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Left"
+                                        Margin="10, 2"
+                                        IsChecked="{Binding IsSelected}" >
+                                        
+                                        <TextBlock
+                                            VerticalAlignment="Center"
+                                            Margin="2"
+                                            Text="{Binding FeedName, Mode=OneTime}"
+                                            TextTrimming="CharacterEllipsis"
+                                            ToolTip="{Binding FeedName, Mode=OneTime}"/>
+                                    </CheckBox>
+
+                                    <!-- QUANTITY -->
+                                    <TextBox
+                                        Grid.Column="1"
+                                        VerticalAlignment="Center"
+                                        HorizontalContentAlignment="Right"
+                                        Margin="5, 2"
+                                        Text="{Binding FeedQuantity.Quantity}"/>
+
+                                    <!-- QUANTITY UNIT -->
+                                    <TextBlock
+                                        Grid.Column="2"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Left"
+                                        Margin="2"
+                                        Text="{Binding FeedQuantity.Unit}" />
+
+                                    <!-- REMOVE FEED FROM SELECTION BUTTON -->
+                                    <Button
+                                        Grid.Column="3"
+                                        Margin="8"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Center"
+                                        Style="{StaticResource MaterialDesignFlatButton}"
+                                        ToolTip="View_FeedSelection_Verify_AddToSelectionButton_ToolTip"
+                                        Command="{Binding Path=DataContext.RemoveFromSelectedFeedsCommand, ElementName=VerifyRatiosPanel}"
+                                        CommandParameter="{Binding .}">
+
+                                        <materialDesign:PackIcon Kind="Delete" Height="19" Width="19" />
+                                    </Button>
+
+                                </Grid>
+                            </materialDesign:Card>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

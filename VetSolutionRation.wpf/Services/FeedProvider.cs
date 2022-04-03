@@ -43,16 +43,16 @@ internal sealed class FeedProviderHoster : IFeedProviderHoster
 
 internal sealed class FeedVerificationAdapter : SearcheableBase
 {
-    private readonly string _inputText;
-
     public FeedVerificationAdapter(string inputText) : base(inputText)
     {
-        _inputText = inputText;
+        Name = inputText;
     }
+
+    public string Name { get; }
 
     /// <inheritdoc />
     public override string ToString()
     {
-        return _inputText;
+        return Name;
     }
 }
