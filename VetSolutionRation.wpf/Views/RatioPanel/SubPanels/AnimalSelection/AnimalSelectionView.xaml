@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:animalSelection="clr-namespace:VetSolutionRation.wpf.Views.RatioPanel.SubPanels.AnimalSelection"
+             xmlns:controls="clr-namespace:VetSolutionRation.wpf.Controls"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
              d:DataContext="{d:DesignInstance animalSelection:AnimalSelectionViewModel, IsDesignTimeCreatable=False}"
@@ -12,7 +13,8 @@
     
     <materialDesign:Card Margin="10, 5" Padding="10" materialDesign:ShadowAssist.ShadowDepth="Depth2">
 
-        <ComboBox
+        <controls:ComboboxCustomSearch
+            Style="{StaticResource MaterialDesignComboBox}"
             materialDesign:HintAssist.Hint="Barre de recherche"
             MinWidth="72"
             Text="{Binding SearchFilter}"
@@ -26,7 +28,21 @@
                     <VirtualizingStackPanel />
                 </ItemsPanelTemplate>
             </ComboBox.ItemsPanel>
-        </ComboBox>
+        </controls:ComboboxCustomSearch>
 
+        
+        
+        <!-- <controls:ComboboxCustomSearch -->
+        <!--     Style="{StaticResource MaterialDesignComboBox}" -->
+        <!--     materialDesign:HintAssist.Hint="Barre de recherche" -->
+        <!--     MinWidth="72" -->
+        <!--     ItemsSource="{Binding AnimalAdaptersHoster.AvailableAnimals}"> -->
+        <!--     <ComboBox.ItemsPanel> -->
+        <!--         <ItemsPanelTemplate> -->
+        <!--             <VirtualizingStackPanel /> -->
+        <!--         </ItemsPanelTemplate> -->
+        <!--     </ComboBox.ItemsPanel> -->
+        <!-- </controls:ComboboxCustomSearch> -->
+        
     </materialDesign:Card>
 </UserControl>
