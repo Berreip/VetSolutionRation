@@ -4,14 +4,59 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:VetSolutionRation.wpf.Views.Import"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:adapters="clr-namespace:VetSolutionRation.wpf.Views.Import.Adapters"
              mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="300" x:ClassModifier="internal"
+             d:DesignHeight="500" d:DesignWidth="600" x:ClassModifier="internal"
              d:DataContext="{d:DesignInstance local:ImportViewModel, IsDesignTimeCreatable=False}">
-    <Grid>
-        
-        <Button
-            Content="Import toto"
-            Command="{Binding ImportCommand}"/>
-        
-    </Grid>
+    <materialDesign:Card Margin="2" Padding="10">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <materialDesign:Card Margin="2"
+                                 Padding="2"
+                                 materialDesign:ShadowAssist.ShadowDepth="Depth2"
+                                 Background="{StaticResource MaterialDesignPaper}">
+                <ListBox x:Name="ImportedFilesList" 
+                         ItemsSource="{Binding ImportedFiles}"
+                         HorizontalContentAlignment="Stretch">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate DataType="{x:Type adapters:ImportedFileAdapter}">
+
+                            <materialDesign:Card Margin="5" Padding="2">
+                                <Grid Margin="5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Margin="10, 2" Text="{Binding ImportedFileName}" VerticalAlignment="Center" />
+                                    <Button Grid.Column="1"
+                                            VerticalAlignment="Center"
+                                            Style="{StaticResource MaterialDesignFlatButton}"
+                                            Content="{materialDesign:PackIcon Close}"
+                                            Command="{Binding ElementName=ImportedFilesList, Path=DataContext.DeleteFileCommand}"
+                                            CommandParameter="{Binding .}" />
+                                </Grid>
+                            </materialDesign:Card>
+
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+
+                </ListBox>
+            </materialDesign:Card>
+
+            <Grid Grid.Row="1" Margin="5">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Button MinWidth="150"
+                            Margin="5"
+                            Content="Import new data file source"
+                            Command="{Binding ImportCommand}" />
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </materialDesign:Card>
+
 </UserControl>

@@ -38,7 +38,7 @@ internal abstract class SearcheableBase : ViewModelBase, ISearcheable
         {
             if (!part.AlreadyFound)
             {
-                if (part.ContainsInsensitive(searchPart))
+                if (part.Found(searchPart))
                 {
                     part.AlreadyFound = true;
                     return true;
@@ -59,9 +59,9 @@ internal abstract class SearcheableBase : ViewModelBase, ISearcheable
             _text = text;
         }
 
-        public bool ContainsInsensitive(string searchPart)
+        public bool Found(string searchPart)
         {
-            return _text.ContainsInsensitive(searchPart);
+            return _text.StartsWithInsensitive(searchPart);
         }
 
         /// <inheritdoc />

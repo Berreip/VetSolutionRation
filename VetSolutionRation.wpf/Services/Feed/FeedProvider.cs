@@ -10,6 +10,7 @@ internal interface IFeedProvider
     IEnumerable<string> GetLabels();
     void LoadLabels(FileFeedSource fileFeedSource, IEnumerable<string> labels);
     event Action OnNewDataProvided;
+    void RemoveLabels(FileFeedSource fileFeedSource);
 }
 
 public sealed class FeedProvider : IFeedProvider
@@ -51,6 +52,21 @@ public sealed class FeedProvider : IFeedProvider
 
     /// <inheritdoc />
     public event Action? OnNewDataProvided;
+
+    /// <inheritdoc />
+    public void RemoveLabels(FileFeedSource fileFeedSource)
+    {
+        bool removed;
+        lock (_key)
+        {
+            removed = _labelsBySource.Remove(fileFeedSource);
+        }
+
+        if (removed)
+        {
+            RaiseOnNewDataProvided();
+        }
+    }
 
     private void RaiseOnNewDataProvided()
     {
