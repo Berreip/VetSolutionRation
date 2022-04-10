@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using PRF.Utils.CoreComponents.Extensions;
 using PRF.WPFCore;
@@ -61,7 +63,11 @@ internal abstract class SearcheableBase : ViewModelBase, ISearcheable
 
         public bool Found(string searchPart)
         {
-            return _text.StartsWithInsensitive(searchPart);
+            // do a start with equivalent with accent and case ignored
+            return CultureInfo.InvariantCulture.CompareInfo.IsPrefix(
+                _text, 
+                searchPart, 
+                CompareOptions.IgnoreCase | CompareOptions.IgnoreSymbols | CompareOptions.IgnoreNonSpace);
         }
 
         /// <inheritdoc />
