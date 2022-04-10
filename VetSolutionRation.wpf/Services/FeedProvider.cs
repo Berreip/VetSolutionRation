@@ -24,6 +24,7 @@ internal sealed class FeedProviderHoster : IFeedProviderHoster
     {
         _feedProvider = feedProvider;
         AvailableFeedForVerify = ObservableCollectionSource.GetDefaultView(feedProvider.GetLabels().Select(o => new FeedVerificationAdapter(o)), out _availableFeedForVerify);
+        AvailableFeedForVerify.SortDescriptions.Add(new SortDescription(nameof(FeedVerificationAdapter.Name), ListSortDirection.Ascending));
         feedProvider.OnNewDataProvided += OnNewDataProvided;
     }
 
