@@ -5,17 +5,17 @@ namespace VetSolutionRationLib.Models;
 public interface IAnimal
 {
     AnimalKind Kind { get; }
-    AnimalSubKind SubKind { get; }
+    string Description { get; }
 }
 
 internal sealed class Animal : IAnimal
 {
+    public string Description { get; }
     public AnimalKind Kind { get; }
-    public AnimalSubKind SubKind { get; }
 
-    public Animal(AnimalKind kind, AnimalSubKind subKind = AnimalSubKind.Undefined)
+    public Animal(AnimalKind kind, string description)
     {
+        Description = description;
         Kind = kind;
-        SubKind = subKind;
     }
 }

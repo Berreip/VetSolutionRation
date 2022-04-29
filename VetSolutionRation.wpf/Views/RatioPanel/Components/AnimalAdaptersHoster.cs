@@ -23,7 +23,7 @@ namespace VetSolutionRation.wpf.Views.RatioPanel.Components
 
         public AnimalAdaptersHoster(IAnimalProvider animalProvider)
         {
-            AvailableAnimals = ObservableCollectionSource.GetDefaultView(animalProvider.GetAnimals().Select(o => new AnimalAdapter(o.Kind, o.SubKind, "toto toutou tata")));
+            AvailableAnimals = ObservableCollectionSource.GetDefaultView(animalProvider.GetAnimals().Select(o => new AnimalAdapter(o.Description)));
         }
         
         public void FilterAnimal(string? inputText)

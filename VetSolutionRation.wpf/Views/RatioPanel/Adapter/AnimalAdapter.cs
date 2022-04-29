@@ -1,35 +1,18 @@
-﻿using System.Linq;
-using VetSolutionRation.wpf.EnumExtensions;
-using VetSolutionRation.wpf.Searcheable;
-using VetSolutionRationLib.Enums;
-using VetSolutionRationLib.Helpers;
+﻿using VetSolutionRation.wpf.Searcheable;
 
 namespace VetSolutionRation.wpf.Views.RatioPanel.Adapter
 {
     internal sealed class AnimalAdapter : SearcheableBase
     {
-        private readonly AnimalKind _animalKind;
-        private readonly AnimalSubKind _animalSubKind;
-        private readonly string _specificDetails;
+        public string DisplayName { get; }
 
-        public AnimalAdapter(AnimalKind animalKind, AnimalSubKind animalSubKind, string specificDetails) 
-            : base(animalKind.GetDisplayName() + " " + animalSubKind.GetDisplayName() + " " + specificDetails)
+        public AnimalAdapter(string animaldescription) : base(animaldescription)
         {
-            _animalKind = animalKind;
-            _animalSubKind = animalSubKind;
-            _specificDetails = specificDetails;
+            DisplayName = animaldescription;
+
         }
 
         /// <inheritdoc />
-        public override string ToString()
-        {
-            var parts = new[]
-            {
-                _animalKind.GetDisplayName(),
-                _animalSubKind.GetDisplayName(),
-                _specificDetails
-            };
-            return string.Join(" | ", parts.Where(s => !string.IsNullOrWhiteSpace(s)));
-        }
+        public override string ToString() => DisplayName;
     }
 }
