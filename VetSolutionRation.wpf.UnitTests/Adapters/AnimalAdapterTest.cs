@@ -11,7 +11,7 @@ namespace VetSolutionRation.wpf.UnitTests.Adapters
         public void ContainsAny_retuns_true_if_empty()
         {
             //Arrange
-            var sut = new AnimalAdapter("1/2 ans et autre chose");
+            var sut = new AnimalAdapter(AnimalKind.Bovine, "1/2 ans et autre chose");
 
             //Act
             var res = sut.MatchSearch(Array.Empty<string>());
@@ -24,7 +24,7 @@ namespace VetSolutionRation.wpf.UnitTests.Adapters
         public void ContainsAny_retuns_true_if_match()
         {
             //Arrange
-            var sut = new AnimalAdapter("bovin 1/2 ans");
+            var sut = new AnimalAdapter(AnimalKind.Bovine, "bovin 1/2 ans");
 
             //Act
             var res = sut.MatchSearch(new []{"1/2"});
@@ -37,7 +37,7 @@ namespace VetSolutionRation.wpf.UnitTests.Adapters
         public void ContainsAny_retuns_true_if_match_for_animal_kind()
         {
             //Arrange
-            var sut = new AnimalAdapter("bovin 1/2 ans");
+            var sut = new AnimalAdapter(AnimalKind.Bovine, "bovin 1/2 ans");
 
             //Act
             var res = sut.MatchSearch(new [] { "bovin" });
@@ -50,7 +50,7 @@ namespace VetSolutionRation.wpf.UnitTests.Adapters
         public void ContainsAny_retuns_true_if_multiple_match()
         {
             //Arrange
-            var sut = new AnimalAdapter("bovin 1/2 ans");
+            var sut = new AnimalAdapter(AnimalKind.Bovine, "bovin 1/2 ans");
 
             //Act
             var res = sut.MatchSearch(new [] { "1/2" });
@@ -63,7 +63,7 @@ namespace VetSolutionRation.wpf.UnitTests.Adapters
         public void ContainsAny_retuns_false_if_one_match_only_among_many()
         {
             //Arrange
-            var sut = new AnimalAdapter("bovin 1/2 ans");
+            var sut = new AnimalAdapter(AnimalKind.Bovine, "bovin 1/2 ans");
 
             //Act
             var res = sut.MatchSearch(new [] { "ovin", "foo" });
@@ -76,7 +76,7 @@ namespace VetSolutionRation.wpf.UnitTests.Adapters
         public void ContainsAny_retuns_false_if_no_match()
         {
             //Arrange
-            var sut = new AnimalAdapter("bovin 1/2 ans");
+            var sut = new AnimalAdapter(AnimalKind.Bovine, "bovin 1/2 ans");
 
             //Act
             var res = sut.MatchSearch(new []{"foooooooooo"});
@@ -89,7 +89,7 @@ namespace VetSolutionRation.wpf.UnitTests.Adapters
         public void ContainsAny_retuns_false_if_no_match_for_multiple_times()
         {
             //Arrange
-            var sut = new AnimalAdapter("bovin 1/2 ans");
+            var sut = new AnimalAdapter(AnimalKind.Bovine, "bovin 1/2 ans");
 
             //Act
             var res = sut.MatchSearch(new []{"1/2", "1/2"});
@@ -102,7 +102,7 @@ namespace VetSolutionRation.wpf.UnitTests.Adapters
         public void ContainsAny_retuns_false_if_match_for_multiple_times()
         {
             //Arrange
-            var sut = new AnimalAdapter("génisse génisse");
+            var sut = new AnimalAdapter(AnimalKind.Bovine, "génisse génisse");
 
             //Act
             var res = sut.MatchSearch(new []{"génisse", "génisse"});
@@ -118,7 +118,7 @@ namespace VetSolutionRation.wpf.UnitTests.Adapters
         public void MatchSearch_returns_false_if_not_starting_by(string searchText)
         {
             //Arrange
-            var sut = new AnimalAdapter("génisse toto");
+            var sut = new AnimalAdapter(AnimalKind.Bovine, "génisse toto");
             
 
             //Act
@@ -132,7 +132,7 @@ namespace VetSolutionRation.wpf.UnitTests.Adapters
         public void MatchSearch_returns_true_if_all_search_starts_with_input()
         {
             //Arrange
-            var sut = new AnimalAdapter("toto tata toutou");
+            var sut = new AnimalAdapter(AnimalKind.Bovine, "toto tata toutou");
             
 
             //Act
@@ -146,7 +146,7 @@ namespace VetSolutionRation.wpf.UnitTests.Adapters
         public void MatchSearch_returns_false_if_searchable_item_contains_less_matches_than_requested_input()
         {
             //Arrange
-            var sut = new AnimalAdapter("toto toto ototo");
+            var sut = new AnimalAdapter(AnimalKind.Bovine, "toto toto ototo");
             
 
             //Act

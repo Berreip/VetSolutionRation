@@ -8,6 +8,7 @@
              xmlns:adapter="clr-namespace:VetSolutionRation.wpf.Views.RatioPanel.Adapter"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
+             x:Name="AnimalSelectionUserControlName"
              d:DataContext="{d:DesignInstance animalSelection:AnimalSelectionViewModel, IsDesignTimeCreatable=False}"
              x:ClassModifier="internal">
 
@@ -15,11 +16,18 @@
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
+            <TextBlock
+                Margin="10, 2"
+                Style="{StaticResource MaterialDesignBody1TextBlock}"
+                Text="{Binding AnimalAdaptersHoster.SelectedAnimals}" />
+
             <!-- SEARCH BAR -->
             <TextBox
+                Grid.Row="1" 
                 Margin="5, 2"
                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
                 materialDesign:HintAssist.Hint="Chercher un animal"
@@ -29,117 +37,51 @@
                 Text="{Binding SearchFilter, UpdateSourceTrigger=PropertyChanged, Delay=100}" />
 
             <!-- AVAILABLE ANIMALS -->
-            <ListBox Grid.Row="1" Margin="10, 5" Padding="10"
-                     Style="{StaticResource MaterialDesignToolVerticalToggleListBox}"
-                     ItemsSource="{Binding AnimalAdaptersHoster.AvailableAnimals}">
-                <ListBox.ItemTemplate>
+            <ItemsControl Grid.Row="2" Margin="2, 5" Padding="5"
+                          HorizontalAlignment="Stretch"
+                          ItemsSource="{Binding AnimalAdaptersHoster.AvailableAnimals}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <VirtualizingStackPanel IsVirtualizing="True"
+                                                VirtualizationMode="Recycling" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.Template>
+                    <ControlTemplate TargetType="ItemsControl">
+                        <ScrollViewer CanContentScroll="True"
+                                      VerticalScrollBarVisibility="Auto"
+                                      HorizontalScrollBarVisibility="Hidden"
+                                      Padding="{TemplateBinding Padding}"
+                                      Focusable="False">
+                            <ItemsPresenter />
+                        </ScrollViewer>
+                    </ControlTemplate>
+                </ItemsControl.Template>
+                <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="{x:Type adapter:AnimalAdapter}">
-                        <TextBlock Margin="2"
-                                   MaxWidth="250"
-                                   TextTrimming="CharacterEllipsis"
-                                   ToolTip="{Binding DisplayName}"
-                                   Text="{Binding DisplayName}"
-                                   HorizontalAlignment="Left"
-                                   VerticalAlignment="Center"
-                                   Style="{StaticResource MaterialDesignBody2TextBlock}">
-                        </TextBlock>
+                        <Button Grid.Column="1" Margin="2"
+                                HorizontalContentAlignment="Left"
+                                Command="{Binding DataContext.AnimalAdaptersHoster.SelectAnimalCommand, ElementName=AnimalSelectionUserControlName}"
+                                CommandParameter="{Binding .}"
+                                Style="{StaticResource MaterialDesignFlatButton}">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Check"
+                                                     HorizontalAlignment="Center"
+                                                     VerticalAlignment="Center"
+                                                     Height="25" Width="25" 
+                                                     Visibility="{Binding IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                            <TextBlock Margin="2"
+                                       TextTrimming="CharacterEllipsis"
+                                       ToolTip="{Binding DisplayName}"
+                                       Text="{Binding DisplayName}"
+                                       HorizontalAlignment="Left"
+                                       VerticalAlignment="Center"
+                                       Style="{StaticResource MaterialDesignBody2TextBlock}" />
+                        </StackPanel>
+                        </Button>
                     </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
-
-            <!-- <ItemsControl -->
-            <!--     Grid.Row="1" ItemsSource="{Binding AnimalAdaptersHoster.AvailableAnimals}"> -->
-            <!--     <ItemsControl.ItemsPanel> -->
-            <!--         <ItemsPanelTemplate> -->
-            <!--             <VirtualizingStackPanel IsVirtualizing="True" VirtualizationMode="Recycling" /> -->
-            <!--         </ItemsPanelTemplate> -->
-            <!--     </ItemsControl.ItemsPanel> -->
-            <!--     <ItemsControl.Template> -->
-            <!--         <ControlTemplate TargetType="ItemsControl"> -->
-            <!--             <ScrollViewer CanContentScroll="True" -->
-            <!--                           VerticalScrollBarVisibility="Auto" -->
-            <!--                           HorizontalScrollBarVisibility="Hidden" -->
-            <!--                           Padding="{TemplateBinding Padding}" -->
-            <!--                           Focusable="False"> -->
-            <!--                 <ItemsPresenter /> -->
-            <!--             </ScrollViewer> -->
-            <!--         </ControlTemplate> -->
-            <!--     </ItemsControl.Template> -->
-            <!--     <ItemsControl.ItemTemplate> -->
-            <!--         <DataTemplate DataType="{x:Type adapter:AnimalAdapter}"> -->
-            <!--             <Grid> -->
-            <!--                 <Grid.ColumnDefinitions> -->
-            <!--                     <ColumnDefinition Width="Auto" /> -->
-            <!--                     <ColumnDefinition Width="*" /> -->
-            <!--                     <ColumnDefinition Width="Auto" /> -->
-            <!--                 </Grid.ColumnDefinitions> -->
-            <!-- -->
-            <!--                 <StackPanel Orientation="Horizontal"> -->
-            <!--                     <RadioButton -->
-            <!--                         GroupName="GroupDiff1" -->
-            <!--                         Style="{StaticResource MaterialDesignChoiceChipOutlineRadioButton}" -->
-            <!--                         Margin="2" -->
-            <!--                         ToolTip="the reference diff for comparison" -->
-            <!--                         IsChecked="{Binding IsSelectedAsFirstDiff}" -->
-            <!--                         Content="REF" /> -->
-            <!--                     <RadioButton -->
-            <!--                         GroupName="GroupDiff2" -->
-            <!--                         Style="{StaticResource MaterialDesignChoiceChipOutlineRadioButton}" -->
-            <!--                         Margin="2" -->
-            <!--                         IsChecked="{Binding IsSelectedAsSecondDiff}" -->
-            <!--                         Content="C" -->
-            <!--                         ToolTip="The diff which is compared with the selected reference" /> -->
-            <!--                 </StackPanel> -->
-            <!-- -->
-            <!--                 <Border Grid.Column="1" BorderBrush="Orchid" BorderThickness="{Binding FirstDiffBorderThickness}"> -->
-            <!--                     <Border BorderBrush="Teal" BorderThickness="{Binding SecondDiffBorderThickness}"> -->
-            <!--                         <TextBlock Margin="2" -->
-            <!--                                    MaxWidth="250" -->
-            <!--                                    TextTrimming="CharacterEllipsis" -->
-            <!--                                    ToolTip="{Binding DiffToolTip}" -->
-            <!--                                    Text="{Binding DiffName}" -->
-            <!--                                    HorizontalAlignment="Center" -->
-            <!--                                    VerticalAlignment="Center" -->
-            <!--                                    Style="{StaticResource MaterialDesignBody2TextBlock}"> -->
-            <!--                         </TextBlock> -->
-            <!--                     </Border> -->
-            <!--                 </Border> -->
-            <!-- -->
-            <!--                 <Button -->
-            <!--                     Grid.Column="2" ToolTip="remove the diff file" -->
-            <!--                     Margin="2" Height="35" Width="35" Padding="0" -->
-            <!--                     HorizontalContentAlignment="Center" -->
-            <!--                     VerticalContentAlignment="Center" -->
-            <!--                     Style="{StaticResource MaterialDesignFlatButton}" -->
-            <!--                     Command="{Binding DataContext.DiffFilesListHolder.RemoveDiffCommand, ElementName=QuadrantControlUserControlName}" -->
-            <!--                     CommandParameter="{Binding .}"> -->
-            <!--                     <materialDesign:PackIcon Kind="Delete" Height="25" Width="25" /> -->
-            <!--                 </Button> -->
-            <!--             </Grid> -->
-            <!--         </DataTemplate> -->
-            <!--     </ItemsControl.ItemTemplate> -->
-            <!-- </ItemsControl> -->
-
-
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
         </Grid>
-        <!-- -->
-        <!-- <controls:ComboboxCustomSearch -->
-        <!--     Style="{StaticResource MaterialDesignComboBox}" -->
-        <!--     materialDesign:HintAssist.Hint="Barre de recherche" -->
-        <!--     MinWidth="72" -->
-        <!--     Text="{Binding SearchFilter}" -->
-        <!--     IsTextSearchEnabled="False" -->
-        <!--     IsEditable="True" -->
-        <!--     IsDropDownOpen="{Binding IsDropDownOpen}" -->
-        <!--     StaysOpenOnEdit="True" -->
-        <!--     ItemsSource="{Binding AnimalAdaptersHoster.AvailableAnimals}"> -->
-        <!--     <ComboBox.ItemsPanel> -->
-        <!--         <ItemsPanelTemplate> -->
-        <!--             <VirtualizingStackPanel /> -->
-        <!--         </ItemsPanelTemplate> -->
-        <!--     </ComboBox.ItemsPanel> -->
-        <!-- </controls:ComboboxCustomSearch> -->
-
-
     </materialDesign:Card>
 </UserControl>

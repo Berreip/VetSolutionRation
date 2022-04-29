@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using VetSolutionRation.wpf.Views.RatioPanel.Adapter;
+using VetSolutionRationLib.Enums;
 
 namespace VetSolutionRation.wpf.UnitTests.Helpers;
 
@@ -10,7 +11,7 @@ internal sealed class AnialAdapterTest
     public void Animal_contains_all_returns_true_when_all_contains()
     {
         //Arrange
-        var sut = new AnimalAdapter("Taureau toto toutou tata");
+        var sut = new AnimalAdapter(AnimalKind.Bovine, "Taureau toto toutou tata");
 
         //Act
         var res = sut.MatchSearch(new[]

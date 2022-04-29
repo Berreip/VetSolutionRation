@@ -4,44 +4,51 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:VetSolutionRation.wpf.Views.RatioPanel"
-             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
              d:DataContext="{d:DesignInstance local:RatioPanelViewModel, IsDesignTimeCreatable=False}"
              x:ClassModifier="internal">
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width=".66*" />
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width=".34*" />
-        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.4*" />
+            <RowDefinition Height="3" />
+            <RowDefinition Height="0.6*" />
+        </Grid.RowDefinitions>
 
         <!-- ANIMAL AND FEED SELECTION PANELS -->
-        <Grid Grid.Column="0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width=".3*" />
+                <ColumnDefinition Width=".7*" />
+            </Grid.ColumnDefinitions>
 
             <!-- ANIMAL SELECTION PANEL -->
-            <ContentControl Grid.Row="0" Content="{Binding AnimalSelectionView}" />
-            
+            <ContentControl Grid.Column="0" Content="{Binding AnimalSelectionView}" />
+
             <!-- FEED SELECTION PANEL -->
-            <ContentControl Grid.Row="1" Content="{Binding FeedSelectionView}" />
+            <ContentControl Grid.Column="1" Content="{Binding FeedSelectionView}" />
         </Grid>
 
         <!-- SEPARATOR -->
-        <GridSplitter Grid.Column="1"
+        <GridSplitter Grid.Row="1"
                       Margin="0"
-                      HorizontalAlignment="Center"
-                      VerticalAlignment="Stretch"
+                      Padding="0"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Center"
                       Background="Transparent"
                       ShowsPreview="False"
-                      Width="4" />
+                      Height="4" />
 
-        <!-- RESULTS PANEL -->
-        <Grid Grid.Column="2">
-            <ContentControl Grid.Row="0" Content="{Binding FeedSelectionViewModel.SelectedResultView}" />
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <!-- RESULTS PANEL -->
+            <Grid Grid.Column="1">
+                <ContentControl Grid.Row="0" Content="{Binding FeedSelectionViewModel.SelectedResultView}" />
+            </Grid>
         </Grid>
     </Grid>
 
