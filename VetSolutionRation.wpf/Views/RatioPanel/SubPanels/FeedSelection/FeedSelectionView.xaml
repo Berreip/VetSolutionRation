@@ -4,44 +4,67 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:VetSolutionRation.wpf.Views.RatioPanel.SubPanels.FeedSelection"
-             xmlns:feedSelection="clr-namespace:VetSolutionRation.wpf.Views.RatioPanel.Adapter.FeedSelection"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:adapter="clr-namespace:VetSolutionRation.wpf.Views.RatioPanel.SubPanels.FeedSelection.Adapters"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance local:FeedSelectionViewModel, IsDesignTimeCreatable=False}"
              d:DesignHeight="300"
              d:DesignWidth="300"
+             x:Name="FeedSelectionUserControlName"
              x:ClassModifier="internal">
-    <materialDesign:Card Margin="10, 5" Padding="10" materialDesign:ShadowAssist.ShadowDepth="Depth2">
+    <materialDesign:Card Margin="2" Padding="5, 10, 5, 5" materialDesign:ShadowAssist.ShadowDepth="Depth2">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <ItemsControl
+            <!-- SEARCH BAR -->
+            <TextBox
                 Grid.Row="0"
-                ItemsSource="{Binding AvailableFeedSelectionModes}">
+                Margin="5, 2"
+                Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                materialDesign:HintAssist.Hint="Chercher un aliment"
+                VerticalAlignment="Center"
+                Height="50"
+                HorizontalAlignment="Stretch"
+                Text="{Binding FeedProviderHoster.SearchFilter, UpdateSourceTrigger=PropertyChanged, Delay=100}" />
+
+            <!-- AVAILABLE FEEDS -->
+            <ItemsControl Grid.Row="1" Margin="2, 5" Padding="5"
+                          HorizontalAlignment="Stretch"
+                          ItemsSource="{Binding FeedProviderHoster.AvailableFeeds}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <UniformGrid Columns="2" HorizontalAlignment="Stretch" />
+                        <VirtualizingStackPanel IsVirtualizing="True"
+                                                VirtualizationMode="Recycling" />
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
-
+                <ItemsControl.Template>
+                    <ControlTemplate TargetType="ItemsControl">
+                        <ScrollViewer CanContentScroll="True"
+                                      VerticalScrollBarVisibility="Auto"
+                                      HorizontalScrollBarVisibility="Hidden"
+                                      Padding="{TemplateBinding Padding}"
+                                      Background="{DynamicResource MaterialDesignPaper}"
+                                      Focusable="False">
+                            <ItemsPresenter />
+                        </ScrollViewer>
+                    </ControlTemplate>
+                </ItemsControl.Template>
                 <ItemsControl.ItemTemplate>
-                    <DataTemplate DataType="{x:Type feedSelection:FeedSelectionModeAdapter}">
-                        <RadioButton
-                            GroupName="FeedSelectionModes"
-                            Style="{StaticResource MaterialDesignTabRadioButton}"
-                            Margin="4"
-                            IsChecked="{Binding IsSelected}"
-                            Content="{Binding TabHeader}"/>
+                    <DataTemplate DataType="{x:Type adapter:FeedAdapter}">
+                        <Button Grid.Column="1" Margin="2"
+                                HorizontalContentAlignment="Left"
+                                ToolTip="Cliquez pour ajouter l'aliment"
+                                Content="{Binding FeedName}"
+                                Command="{Binding DataContext.SelectFeedCommand, ElementName=FeedSelectionUserControlName}"
+                                CommandParameter="{Binding .}"
+                                Style="{StaticResource MaterialDesignFlatButton}">
+                        </Button>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
-
-            <ContentControl
-                Grid.Row="1"
-                Content="{Binding SelectedFeedSelectionMode}" />
         </Grid>
     </materialDesign:Card>
 </UserControl>

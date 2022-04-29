@@ -31,9 +31,11 @@ public sealed class InraRationTableImportModel : IInraRationTableImportModel
             var labels = _inraHeader
                 .GetLabelPositions()
                 .Select(i => row.GetContent(i))
-                .Where(o => !string.IsNullOrWhiteSpace(o));
-            var labelJoined = string.Join(" | ", labels);
-            _labels.Add(labelJoined);
+                .Where(o => !string.IsNullOrWhiteSpace(o)).ToArray();
+            if (labels.Length != 0)
+            {
+                _labels.Add(string.Join(" | ", labels));
+            }
         }
     }
 

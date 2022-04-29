@@ -12,7 +12,7 @@
              d:DataContext="{d:DesignInstance animalSelection:AnimalSelectionViewModel, IsDesignTimeCreatable=False}"
              x:ClassModifier="internal">
 
-    <materialDesign:Card Margin="10, 5" Padding="10" materialDesign:ShadowAssist.ShadowDepth="Depth2">
+    <materialDesign:Card Margin="2" Padding="5, 10, 5, 5" materialDesign:ShadowAssist.ShadowDepth="Depth2">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -20,22 +20,24 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <TextBlock
-                Margin="10, 2"
-                Style="{StaticResource MaterialDesignBody1TextBlock}"
-                Text="{Binding AnimalAdaptersHoster.SelectedAnimals}" />
-
             <!-- SEARCH BAR -->
             <TextBox
-                Grid.Row="1" 
+                Grid.Row="0" 
                 Margin="5, 2"
                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
                 materialDesign:HintAssist.Hint="Chercher un animal"
                 VerticalAlignment="Center"
                 Height="50"
                 HorizontalAlignment="Stretch"
-                Text="{Binding SearchFilter, UpdateSourceTrigger=PropertyChanged, Delay=100}" />
+                Text="{Binding SearchFilter, UpdateSourceTrigger=PropertyChanged}" />
 
+
+            <!-- CURRENTLy SELECTED -->
+            <TextBlock
+                Grid.Row="1" Margin="10, 2"
+                Style="{StaticResource MaterialDesignBody1TextBlock}"
+                Text="{Binding AnimalAdaptersHoster.SelectedAnimals}" />
+            
             <!-- AVAILABLE ANIMALS -->
             <ItemsControl Grid.Row="2" Margin="2, 5" Padding="5"
                           HorizontalAlignment="Stretch"
@@ -52,6 +54,7 @@
                                       VerticalScrollBarVisibility="Auto"
                                       HorizontalScrollBarVisibility="Hidden"
                                       Padding="{TemplateBinding Padding}"
+                                      Background="{DynamicResource MaterialDesignPaper}"
                                       Focusable="False">
                             <ItemsPresenter />
                         </ScrollViewer>

@@ -4,9 +4,12 @@ namespace VetSolutionRation.wpf.Views.RatioPanel.SubPanels.FeedSelection.Calcula
 
 internal sealed partial class CalculateRatiosView : IFeedSelectionModeView
 {
+    public ICalculateRatiosViewModel ViewModel { get; }
+    
     public CalculateRatiosView(ICalculateRatiosViewModel vm)
     {
         InitializeComponent();
         DataContext = vm;
+        ViewModel = vm;
     }
 }

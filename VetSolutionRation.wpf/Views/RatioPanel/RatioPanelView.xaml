@@ -4,6 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:VetSolutionRation.wpf.Views.RatioPanel"
+             xmlns:feedSelection="clr-namespace:VetSolutionRation.wpf.Views.RatioPanel.Adapter.FeedSelection"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
              d:DataContext="{d:DesignInstance local:RatioPanelViewModel, IsDesignTimeCreatable=False}"
@@ -19,14 +21,25 @@
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width=".3*" />
+                <ColumnDefinition Width="3" />
                 <ColumnDefinition Width=".7*" />
             </Grid.ColumnDefinitions>
 
             <!-- ANIMAL SELECTION PANEL -->
             <ContentControl Grid.Column="0" Content="{Binding AnimalSelectionView}" />
-
+            
+            <!-- SEPARATOR -->
+            <GridSplitter Grid.Column="1"
+                          Margin="0"
+                          Padding="0"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Stretch"
+                          Background="Transparent"
+                          ShowsPreview="False"
+                          Width="4" />
+            
             <!-- FEED SELECTION PANEL -->
-            <ContentControl Grid.Column="1" Content="{Binding FeedSelectionView}" />
+            <ContentControl Grid.Column="2" Content="{Binding FeedSelectionView}" />
         </Grid>
 
         <!-- SEPARATOR -->
@@ -44,6 +57,40 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
+            
+            <!-- FEED TABS  -->
+            <materialDesign:Card Margin="2" Padding="10" materialDesign:ShadowAssist.ShadowDepth="Depth2">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <ItemsControl
+                        Grid.Row="0"
+                        ItemsSource="{Binding FeedSelectionViewModel.AvailableFeedSelectionModes}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <UniformGrid Columns="2" HorizontalAlignment="Stretch" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="{x:Type feedSelection:FeedSelectionModeAdapter}">
+                                <RadioButton
+                                    GroupName="FeedSelectionModes"
+                                    Style="{StaticResource MaterialDesignTabRadioButton}"
+                                    Margin="4"
+                                    IsChecked="{Binding IsSelected}"
+                                    Content="{Binding TabHeader}" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <!-- DISPLAYED TAB CONTENT -->
+                    <ContentControl Grid.Row="1" Content="{Binding FeedSelectionViewModel.SelectedFeedSelectionMode}" />
+                </Grid>
+            </materialDesign:Card>
 
             <!-- RESULTS PANEL -->
             <Grid Grid.Column="1">

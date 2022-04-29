@@ -1,59 +1,58 @@
 ﻿using System.ComponentModel;
 using System.Linq;
+using PRF.WPFCore;
 using PRF.WPFCore.CustomCollections;
 using VetSolutionRation.wpf.Helpers;
-using VetSolutionRation.wpf.Searcheable;
 using VetSolutionRation.wpf.Services.Feed;
+using VetSolutionRation.wpf.Views.RatioPanel.SubPanels.FeedSelection.Adapters;
 using VetSolutionRationLib.Helpers;
 
 namespace VetSolutionRation.wpf.Services;
 
 internal interface IFeedProviderHoster
 {
-    ICollectionView AvailableFeedForVerify { get; }
-    void FilterAvailableFeedForVerify(string? inputText);
+    ICollectionView AvailableFeeds { get; }
+    string? SearchFilter { get; set; }
 }
 
-internal sealed class FeedProviderHoster : IFeedProviderHoster
+internal sealed class FeedProviderHoster : ViewModelBase, IFeedProviderHoster
 {
     private readonly IFeedProvider _feedProvider;
-    private readonly ObservableCollectionRanged<FeedVerificationAdapter> _availableFeedForVerify;
-    public ICollectionView AvailableFeedForVerify { get; }
+    private string? _searchText;
+    private readonly ObservableCollectionRanged<FeedAdapter> _availableFeeds;
+    public ICollectionView AvailableFeeds { get; }
 
     public FeedProviderHoster(IFeedProvider feedProvider)
     {
         _feedProvider = feedProvider;
-        AvailableFeedForVerify = ObservableCollectionSource.GetDefaultView(feedProvider.GetLabels().Select(o => new FeedVerificationAdapter(o)), out _availableFeedForVerify);
-        AvailableFeedForVerify.SortDescriptions.Add(new SortDescription(nameof(FeedVerificationAdapter.Name), ListSortDirection.Ascending));
+        AvailableFeeds = ObservableCollectionSource.GetDefaultView(feedProvider.GetLabels().Select(o => new FeedAdapter(o)), out _availableFeeds);
+        AvailableFeeds.SortDescriptions.Add(new SortDescription(nameof(FeedAdapter.FeedName), ListSortDirection.Ascending));
+       
         feedProvider.OnNewDataProvided += OnNewDataProvided;
     }
 
     private void OnNewDataProvided()
     {
-        _availableFeedForVerify.Reset(_feedProvider.GetLabels().Select(o => new FeedVerificationAdapter(o)));
+        _availableFeeds.Reset(_feedProvider.GetLabels().Select(o => new FeedAdapter(o)));
     }
 
-    public void FilterAvailableFeedForVerify(string? inputText)
+    public void FilterAvailableFeeds(string? inputText)
     {
         if (inputText == null)
             return;
         var splitByWhitspace = SearchHelpers.SplitByWhitspace(inputText);
-        AvailableFeedForVerify.Filter = item => SearchFilters.FilterParts(item, splitByWhitspace);
+        AvailableFeeds.Filter = item => SearchFilters.FilterParts(item, splitByWhitspace);
     }
-}
-
-internal sealed class FeedVerificationAdapter : SearcheableBase
-{
-    public FeedVerificationAdapter(string inputText) : base(inputText)
+    
+    public string? SearchFilter
     {
-        Name = inputText;
-    }
-
-    public string Name { get; }
-
-    /// <inheritdoc />
-    public override string ToString()
-    {
-        return Name;
+        get => _searchText;
+        set
+        {
+            if (SetProperty(ref _searchText, value))
+            {
+                FilterAvailableFeeds(value);
+            }
+        }
     }
 }

@@ -1,5 +1,8 @@
 ﻿using PRF.WPFCore;
+using PRF.WPFCore.Commands;
+using VetSolutionRation.wpf.Services;
 using VetSolutionRation.wpf.Views.RatioPanel.Adapter.FeedSelection;
+using VetSolutionRation.wpf.Views.RatioPanel.SubPanels.FeedSelection.Adapters;
 using VetSolutionRation.wpf.Views.RatioPanel.SubPanels.FeedSelection.Calculate;
 using VetSolutionRation.wpf.Views.RatioPanel.SubPanels.FeedSelection.Verify;
 using VetSolutionRation.wpf.Views.RatioPanel.SubPanels.ResultPanels.Calculate;
@@ -11,21 +14,31 @@ internal interface IFeedSelectionViewModel
 {
     IFeedSelectionModeAdapter[] AvailableFeedSelectionModes { get; }
     IResultView SelectedResultView { get; }
+    IFeedSelectionModeView SelectedFeedSelectionMode { get; }
 }
 
 internal sealed class FeedSelectionViewModel : ViewModelBase, IFeedSelectionViewModel
 {
+    private readonly CalculateRatiosView _calculateRatiosView;
+    private readonly VerifyRatiosView _verifyRatiosView;
     private IFeedSelectionModeView _selectedFeedSelectionMode;
     private IResultView _selectedResultView;
     public IFeedSelectionModeAdapter[] AvailableFeedSelectionModes { get; }
+    public IFeedProviderHoster FeedProviderHoster { get; }
+    public IDelegateCommandLight<FeedAdapter> SelectFeedCommand { get; }
 
-    // ReSharper disable SuggestBaseTypeForParameterInConstructor
-    public FeedSelectionViewModel(CalculateRatiosView calculateRatiosView,
-            VerifyRatiosView verifyRatiosView,
-            CalculateResultView calculateResultView,
-            VerifyResultView verifyResultView)
+    public FeedSelectionViewModel(
+        // ReSharper disable SuggestBaseTypeForParameterInConstructor
+        CalculateRatiosView calculateRatiosView,
+        VerifyRatiosView verifyRatiosView,
+        CalculateResultView calculateResultView,
+        VerifyResultView verifyResultView,
         // ReSharper restore SuggestBaseTypeForParameterInConstructor
+        IFeedProviderHoster feedProviderHoster)
     {
+        _calculateRatiosView = calculateRatiosView;
+        _verifyRatiosView = verifyRatiosView;
+        FeedProviderHoster = feedProviderHoster;
         AvailableFeedSelectionModes = new IFeedSelectionModeAdapter[]
         {
             new FeedSelectionModeAdapter(Properties.VetSolutionRatioRes.FeedSelectionModeVerifyRatiosTitle, verifyRatiosView, verifyResultView),
@@ -40,6 +53,14 @@ internal sealed class FeedSelectionViewModel : ViewModelBase, IFeedSelectionView
         _selectedFeedSelectionMode = AvailableFeedSelectionModes[0].SelectionView;
         _selectedResultView = AvailableFeedSelectionModes[0].ResultView;
         AvailableFeedSelectionModes[0].IsSelected = true;
+        
+        SelectFeedCommand = new DelegateCommandLight<FeedAdapter>(ExecuteSelectFeedCommand);
+    }
+
+    private void ExecuteSelectFeedCommand(FeedAdapter feedAdapter)
+    {
+        _calculateRatiosView.ViewModel.AddSelectedFeed(feedAdapter);
+        _verifyRatiosView.ViewModel.AddSelectedFeed(feedAdapter);
     }
 
     private void OnFeedSelectionModeSelected(IFeedSelectionModeAdapter adapter)
