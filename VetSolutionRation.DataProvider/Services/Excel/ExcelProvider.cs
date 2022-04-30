@@ -1,7 +1,10 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
+using PRF.Utils.CoreComponents.Diagnostic;
 using VetSolutionRation.DataProvider.Services.Excel.ExcelDto;
+using VetSolutionRation.DataProvider.Services.Excel.ExcelUtils;
 
 namespace VetSolutionRation.DataProvider.Services.Excel;
 
@@ -62,15 +65,21 @@ public static class ExcelProvider
     private static ExcelRowDto GetRow(Row row, SharedStringTable sst)
     {
         var rowDto =  new ExcelRowDto();
-        var cellposition = 0;
         foreach (var cell in row.Elements<Cell>())
         {
-            if (TryGetCellValue(sst, cell, out var cellValue))
+            if (cell.CellReference != null && cell.CellReference.Value != null)
             {
-                rowDto.AddCell(cellposition, cellValue);
+                string header = cell.CellReference.Value;
+                if (TryGetCellValue(sst, cell, out var cellValue))
+                {
+                    var columnPosition = ExcelHelpers.GetColumnPositionFromCellReference(header);
+                    rowDto.AddCell(cellValue, columnPosition);
+                }
             }
-
-            cellposition++;
+            else
+            {
+                DebugCore.Fail($"celle {cell} has no header");
+            }
         }
 
         return rowDto;

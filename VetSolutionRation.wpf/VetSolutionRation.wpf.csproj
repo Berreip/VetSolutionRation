@@ -27,10 +27,11 @@
       <PackageReference Include="MaterialDesignThemes" Version="4.3.0" />
       <PackageReference Include="PRF.Utils.CoreComponents" Version="2.2.1" />
       <PackageReference Include="PRF.Utils.Injection" Version="2.0.0" />
-      <PackageReference Include="PRF.WPFCore" Version="2.1.1" />
+      <PackageReference Include="PRF.WPFCore" Version="3.0.0" />
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\VetSolutionRation.Common\VetSolutionRation.Common.csproj" />
       <ProjectReference Include="..\VetSolutionRation.DataProvider\VetSolutionRation.DataProvider.csproj" />
       <ProjectReference Include="..\VetSolutionRationLib\VetSolutionRationLib.csproj" />
     </ItemGroup>

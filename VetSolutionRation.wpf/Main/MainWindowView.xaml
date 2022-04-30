@@ -18,7 +18,7 @@
         FontFamily="{DynamicResource MaterialDesignFont}"
         Height="720"
         Width="1280"
-        WindowState="Maximized"
+        WindowState="Normal"
         d:DataContext="{d:DesignInstance main:MainWindowViewModel, IsDesignTimeCreatable=False}">
 
     <materialDesign:DrawerHost IsLeftDrawerOpen="{Binding ElementName=MenuToggleButton, Path=IsChecked}">

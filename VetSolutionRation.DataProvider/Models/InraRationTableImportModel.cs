@@ -1,48 +1,36 @@
-﻿using VetSolutionRation.DataProvider.Models.Helpers;
-using VetSolutionRation.DataProvider.Models.SubParts;
-using VetSolutionRation.DataProvider.Services.Excel.ExcelDto;
-
-namespace VetSolutionRation.DataProvider.Models;
+﻿namespace VetSolutionRation.DataProvider.Models;
 
 public interface IInraRationTableImportModel
 {
     /// <summary>
     /// Returns all available label in the file
     /// </summary>
-    IReadOnlyList<string> GetLabels();
+    IReadOnlyList<string> GetAllLabels();
+
+    /// <summary>
+    /// Returns all lines in the inraTable
+    /// </summary>
+    IReadOnlyCollection<IInraRationLineImportModel> GetAllLines();
 }
 
 public sealed class InraRationTableImportModel : IInraRationTableImportModel
 {
-    private readonly ExcelDto _excelDto;
-    private readonly InraHeaderModel _inraHeader;
-    private readonly HashSet<string> _labels = new HashSet<string>();
+    private readonly IEnumerable<IInraRationLineImportModel> _lines;
 
-    public InraRationTableImportModel(ExcelDto excelDto)
+    public InraRationTableImportModel(IEnumerable<IInraRationLineImportModel> lines)
     {
-        _excelDto = excelDto;
-        // inra reader has a first row that act as a grouping category:
-        var groupingCategory = new InraGroupCategories(excelDto.IgnoredRows.Single());
-        _inraHeader = InraRationTableImportHelper.MapInraHeaders(groupingCategory, excelDto.HeaderRowDto);
-
-        //build access dictionary
-        foreach (var row in excelDto.Rows)
-        {
-            var labels = _inraHeader
-                .GetLabelPositions()
-                .Select(i => row.GetContent(i))
-                .Where(o => !string.IsNullOrWhiteSpace(o)).ToArray();
-            if (labels.Length != 0)
-            {
-                _labels.Add(string.Join(" | ", labels));
-            }
-        }
+        _lines = lines;
     }
 
+    /// <inheritdoc />
+    public IReadOnlyList<string> GetAllLabels()
+    {
+        return _lines.Select(o => o.JoinedLabel).ToArray();
+    }
 
     /// <inheritdoc />
-    public IReadOnlyList<string> GetLabels()
+    public IReadOnlyCollection<IInraRationLineImportModel> GetAllLines()
     {
-        return _labels.ToArray();
+        return _lines.ToArray();
     }
 }

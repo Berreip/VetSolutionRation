@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Threading;
+using PRF.Utils.CoreComponents.Diagnostic;
 using VetSolutionRation.wpf.Main;
 using VetSolutionRation.wpf.Services.Injection;
+using VetSolutionRation.wpf.Views.Assertions;
 
 namespace VetSolutionRation.wpf
 {
@@ -19,6 +21,8 @@ namespace VetSolutionRation.wpf
                     //close the app when the main window is closed (default value is lastWindow)
                     ShutdownMode = ShutdownMode.OnMainWindowClose
                 };
+                DebugCore.SetAssertionFailedCallback(OnAssertionFailed);
+                
                 app.DispatcherUnhandledException += OnUnhandledException;
                 AppDomain.CurrentDomain.UnhandledException += AppDomainOnUnhandledException;
                 app.Exit += mainBoot.OnExit;
@@ -30,6 +34,15 @@ namespace VetSolutionRation.wpf
             {
                 MessageBox.Show($"Unhandled Exception (will exit after close): {ex} ");
             }
+        }
+
+        private static AssertionResponse OnAssertionFailed(AssertionFailedResult assertionfailedResult)
+        {
+            var assertionVm = new AssertionFailedViewModel(assertionfailedResult);
+            var view = new AssertionFailedView(assertionVm);
+            assertionVm.OnResponseSet += () => view.Close();
+            view.ShowDialog();
+            return assertionVm.GetResponse();
         }
 
         private static void AppDomainOnUnhandledException(object sender, UnhandledExceptionEventArgs e)

@@ -38,38 +38,25 @@ internal sealed class Tests
     }
     
     [Test]
-    [TestCase(AvailableFile.InraRatioForageTable_FR, 173)]
-    [TestCase(AvailableFile.InraRatioForageTable_EN, 173)]
-    [TestCase(AvailableFile.InraRatioConcentrateTable_FR, 173)]
-    [TestCase(AvailableFile.InraRatioConcentrateTable_EN, 173)]
+    [TestCase(AvailableFile.InraRatioForageTable_FR, 913)]
+    [TestCase(AvailableFile.InraRatioForageTable_EN, 913)]
+    [TestCase(AvailableFile.InraRatioConcentrateTable_FR, 172)]
+    [TestCase(AvailableFile.InraRatioConcentrateTable_EN, 172)]
     public void ImportInraTable_return_expected_label(AvailableFile forageFile, int expectedCount)
     {
         //Arrange
-        var file = FileGetter.GetFile(AvailableFile.InraRatioConcentrateTable_FR);
+        var file = FileGetter.GetFile(forageFile);
 
         //Act
         var res = InraRatioTableImporter.ImportInraTable(file);
 
         //Assert
-        Assert.AreEqual(expectedCount, res.GetLabels().Count, $"COUNT:; {res.GetLabels().Count} {Environment.NewLine}{string.Join(Environment.NewLine, res.GetLabels())}");
+        Assert.AreEqual(expectedCount, res.GetAllLabels().Count, $"COUNT:; {res.GetAllLabels().Count} {Environment.NewLine}{string.Join(Environment.NewLine, res.GetAllLabels())}");
     }
-    
-    [Test]
-    public void ImportInraTable_return_expected_label()
-    {
-        //Arrange
-        var file = FileGetter.GetFile(AvailableFile.InraRatioConcentrateTable_FR);
 
-        //Act
-        var res = InraRatioTableImporter.ImportInraTable(file);
-
-        //Assert
-        Assert.AreEqual(173, res.GetLabels().Count, string.Join(Environment.NewLine, res.GetLabels()));
-    }
-    
     [Test]
     [TestCase(78, @"Graines de légumineuses et d'oléagineux | Graine de coton extrudée")]
-    public void ImportInraTable_return_expected_label(int position, string value)
+    public void ImportInraTable_return_expected_label_when_requested_by_position(int position, string value)
     {
         //Arrange
         var file = FileGetter.GetFile(AvailableFile.InraRatioConcentrateTable_FR);
@@ -78,7 +65,7 @@ internal sealed class Tests
         var res = InraRatioTableImporter.ImportInraTable(file);
 
         //Assert
-        Assert.AreEqual(value, res.GetLabels()[position]);
+        Assert.AreEqual(value, res.GetAllLabels()[position]);
     }
 
 

@@ -1,7 +1,7 @@
 ﻿namespace VetSolutionRation.DataProvider.Models;
 
 // ReSharper disable InconsistentNaming
-internal enum InraHeader
+public enum InraHeader
 {
     No,
     Etat,
@@ -119,6 +119,7 @@ internal static class InraHeaderExtensions
     private static readonly Dictionary<InraHeader, string[]> _inraHeaderToDisplayName;
     private static readonly Dictionary<string, InraHeader> _inraDisplayNameToHeaderFr;
     private static readonly Dictionary<string, InraHeader> _inraDisplayNameToHeaderEn;
+    private static readonly Dictionary<string, InraHeader> _inraDtoToHeader;
 
     static InraHeaderExtensions()
     {
@@ -231,6 +232,7 @@ internal static class InraHeaderExtensions
             { InraHeader.C24_0, new[] { "C24:0" } },
         };
 
+        _inraDtoToHeader = Enum.GetValues(typeof(InraHeader)).Cast<InraHeader>().ToDictionary(o => o.ToDtoKey());
         _inraDisplayNameToHeaderFr = new Dictionary<string, InraHeader>(_inraHeaderToDisplayName.Count, StringComparer.OrdinalIgnoreCase);
         _inraDisplayNameToHeaderEn = new Dictionary<string, InraHeader>(_inraHeaderToDisplayName.Count, StringComparer.OrdinalIgnoreCase);
         foreach (var (inraHeader, headersLabels) in _inraHeaderToDisplayName)
@@ -251,6 +253,12 @@ internal static class InraHeaderExtensions
         }
     }
 
+    public static string ToDtoKey(this InraHeader inraHeader)
+    {
+        // just a to string for now
+        return inraHeader.ToString();
+    }
+    
     public static string GetInraHeaderLabel(this InraHeader inraHeader, InraSourceFileCulture culture)
     {
         if (_inraHeaderToDisplayName.TryGetValue(inraHeader, out var label))
@@ -271,6 +279,11 @@ internal static class InraHeaderExtensions
         return culture == InraSourceFileCulture.French
             ? _inraDisplayNameToHeaderFr.TryGetValue(label, out header)
             : _inraDisplayNameToHeaderEn.TryGetValue(label, out header);
+    }
+    
+    public static bool TryParseDtoInraHeader(string label, out InraHeader header)
+    {
+        return _inraDtoToHeader.TryGetValue(label, out header);
     }
 }
 

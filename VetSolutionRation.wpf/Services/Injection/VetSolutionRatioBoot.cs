@@ -4,6 +4,7 @@ using PRF.Utils.Injection.BootStrappers;
 using PRF.Utils.Injection.Containers;
 using PRF.Utils.Injection.Utils;
 using VetSolutionRation.wpf.Main;
+using VetSolutionRation.wpf.Services.Configuration;
 using VetSolutionRation.wpf.Services.Feed;
 using VetSolutionRation.wpf.Services.Navigation;
 using VetSolutionRation.wpf.Views.Import;
@@ -51,6 +52,7 @@ namespace VetSolutionRation.wpf.Services.Injection
 
             _internalContainer.Register<IMenuNavigator, MenuNavigator>(LifeTime.Singleton);
             _internalContainer.Register<IFeedProvider, FeedProvider>(LifeTime.Singleton);
+            _internalContainer.Register<IConfigurationManager, ConfigurationManager>(LifeTime.Singleton);
 
             // // views:
             _internalContainer.RegisterType<RatioPanelView>(LifeTime.Singleton);

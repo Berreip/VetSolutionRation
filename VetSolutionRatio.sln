@@ -14,6 +14,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VetSolutionRation.DataProvi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VetSolutionRation.DataProvider", "VetSolutionRation.DataProvider\VetSolutionRation.DataProvider.csproj", "{7678A843-214C-4219-9988-9AFAEA525BEE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VetSolutionRation.Common", "VetSolutionRation.Common\VetSolutionRation.Common.csproj", "{E83260E6-F2B3-4213-860A-2803206BE0D6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,6 +46,10 @@ Global
 		{7678A843-214C-4219-9988-9AFAEA525BEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7678A843-214C-4219-9988-9AFAEA525BEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7678A843-214C-4219-9988-9AFAEA525BEE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E83260E6-F2B3-4213-860A-2803206BE0D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E83260E6-F2B3-4213-860A-2803206BE0D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E83260E6-F2B3-4213-860A-2803206BE0D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E83260E6-F2B3-4213-860A-2803206BE0D6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{151B7C62-C1E7-4572-B0FB-4DB99ABDB2E8} = {944362E8-6184-4EB3-A61E-BF5A785ABB01}

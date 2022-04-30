@@ -18,6 +18,28 @@ internal sealed class InraHeaderModel
         }
     }
 
+
+    public IEnumerable<(InraHeader HeaderKind, string HeaderGroupLabel, int HeaderPosition)> GetDefinedHeaders()
+    {
+        var results = new List<(InraHeader HeaderKind, string HeaderGroupLabel, int HeaderPosition)>();
+        foreach (var groups in _columnIndexByGroupAndHeader)
+        {
+            // pas de filtre des duplicats par groupe
+            foreach (var data in groups.Value)
+            {
+                try
+                {
+                    results.Add((data.Key, groups.Key.GroupHeader, data.Value));
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+        return results;
+    }
+    
     public void AddHeader(int columnIndex, InraHeader inraHeader)
     {
         try

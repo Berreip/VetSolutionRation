@@ -5,7 +5,8 @@ namespace VetSolutionRation.wpf.Helpers;
 public enum FileFeedSource
 {
     Forage, 
-    Concentrate
+    Concentrate,
+    Custom
 }
 
 public static class FileFeedSourceExtensions
@@ -31,7 +32,7 @@ public static class FileFeedSourceExtensions
             }
         }
 
-        fileFeedParsed = default;
+        fileFeedParsed = FileFeedSource.Custom;
         return false;
     }
 }

@@ -91,4 +91,22 @@ internal sealed class InraHeaderExtensionsTests
         Assert.IsTrue(parseSuccess);
         Assert.AreEqual(expectedInraHeader, parsedHeader);
     }
+    
+    [Test]
+    public void TryParseDtoInraHeader_returns_expected_values_for_all_enums_members()
+    {
+        //Arrange
+
+        //Act
+        foreach (InraHeader inraHeader in Enum.GetValues(typeof(InraHeader)))
+        {
+            var label = inraHeader.ToDtoKey();
+            Assert.IsNotEmpty(label);
+            var parseSuccess = InraHeaderExtensions.TryParseDtoInraHeader(label, out var parsedHeader);
+            Assert.IsTrue(parseSuccess, $"failed to parse {label}");
+            Assert.AreEqual(inraHeader, parsedHeader);
+        }
+
+        //Assert
+    }
 }

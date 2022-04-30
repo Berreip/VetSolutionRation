@@ -9,28 +9,87 @@
              mc:Ignorable="d"
              d:DesignHeight="500" d:DesignWidth="600" x:ClassModifier="internal"
              d:DataContext="{d:DesignInstance local:ImportViewModel, IsDesignTimeCreatable=False}">
-    <materialDesign:Card Margin="2" Padding="10">
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
 
-            <materialDesign:Card Margin="2"
-                                 Padding="2"
-                                 materialDesign:ShadowAssist.ShadowDepth="Depth2"
-                                 Background="{StaticResource MaterialDesignPaper}">
-                <ListBox x:Name="ImportedFilesList" 
+    <!-- LEFT PART = list of file dropped or added -->
+    <materialDesign:Card Margin="10, 2, 2, 2" Padding="2"
+                         materialDesign:ShadowAssist.ShadowDepth="Depth2">
+
+        <Grid ToolTip="Glissez-déposez un fichier de données de l'INRAE pour l'importer"
+              AllowDrop="True" Drop="DropDiffFile" DragEnter="DragDiffEnter">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" MinWidth="200" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Grid Margin="5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <!--Drop Zone (in fact all grid is droppable but just to show user that drop is allowed here) -->
+                <materialDesign:ColorZone Mode="PrimaryDark" Opacity="0.6"
+                                          Margin="5"
+                                          Padding="10" CornerRadius="5"
+                                          materialDesign:ShadowAssist.ShadowDepth="Depth3"
+                                          ClipToBounds="False"
+                                          VerticalAlignment="Stretch"
+                                          HorizontalAlignment="Stretch">
+                    <TextBlock FontSize="16"
+                               Text="Glissez-déposez un fichier de données de l'INRAE pour l'importer"
+                               MaxWidth="200"
+                               TextWrapping="Wrap"
+                               ToolTip="Note: le glissez-déposez est actif sur toute la liste"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center" />
+                </materialDesign:ColorZone>
+
+                <Button Grid.Row="1" Margin="5"
+                        Content="Importer de nouveaux fichiers"
+                        Command="{Binding ImportCommand}" />
+            </Grid>
+
+            <Grid Grid.Column="1" Margin="5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                
+                <!-- header -->
+                <Grid Margin="5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0" Margin="10"
+                               Style="{StaticResource MaterialDesignHeadline5TextBlock}"
+                               Text="Données pré-chargées"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Center" />
+                    <Button
+                        Grid.Column="1" ToolTip="ouvrir l'emplacement des données chargées"
+                        Margin="20, 2, 2, 2" Height="45" Width="45"
+                        Padding="0"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        Style="{StaticResource MaterialDesignFlatButton}"
+                        Foreground="{StaticResource MaterialDesignBody}"
+                        Command="{Binding OpenCacheFolderCommand}">
+                        <materialDesign:PackIcon Kind="FolderOpenOutline" Height="35" Width="35" />
+                    </Button>
+                </Grid>
+                
+                <ListBox Grid.Row="1" x:Name="ImportedFilesList"
                          ItemsSource="{Binding ImportedFiles}"
                          HorizontalContentAlignment="Stretch">
                     <ListBox.ItemTemplate>
                         <DataTemplate DataType="{x:Type adapters:ImportedFileAdapter}">
-
                             <materialDesign:Card Margin="5" Padding="2">
                                 <Grid Margin="5">
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Margin="10, 2" Text="{Binding ImportedFileName}" VerticalAlignment="Center" />
                                     <Button Grid.Column="1"
@@ -41,22 +100,11 @@
                                             CommandParameter="{Binding .}" />
                                 </Grid>
                             </materialDesign:Card>
-
                         </DataTemplate>
                     </ListBox.ItemTemplate>
-
                 </ListBox>
-            </materialDesign:Card>
-
-            <Grid Grid.Row="1" Margin="5">
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <Button MinWidth="150"
-                            Margin="5"
-                            Content="Import new data file source"
-                            Command="{Binding ImportCommand}" />
-                </StackPanel>
             </Grid>
+
         </Grid>
     </materialDesign:Card>
-
 </UserControl>

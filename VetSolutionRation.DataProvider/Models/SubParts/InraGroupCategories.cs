@@ -14,7 +14,6 @@ internal sealed class InraGroupCategories
         {
             _orderedGroups.Add(new HeaderGroup(rowCell.Key, rowCell.Value));
         }
-
         GuessedCulture = _orderedGroups[0].GroupHeader.StartsWith("Valeurs de la table") ? InraSourceFileCulture.French : InraSourceFileCulture.English;
     }
 
