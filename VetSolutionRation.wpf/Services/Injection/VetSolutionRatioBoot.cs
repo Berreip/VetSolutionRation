@@ -51,7 +51,7 @@ namespace VetSolutionRation.wpf.Services.Injection
             _internalContainer.Register<IMainWindowViewModel, MainWindowViewModel>(LifeTime.Singleton);
 
             _internalContainer.Register<IMenuNavigator, MenuNavigator>(LifeTime.Singleton);
-            _internalContainer.Register<IFeedProvider, FeedProvider>(LifeTime.Singleton);
+            _internalContainer.RegisterWithInitializer<IFeedProvider, FeedProvider>(LifeTime.Singleton, o => o.LoadInitialSavedFeeds());
             _internalContainer.Register<IConfigurationManager, ConfigurationManager>(LifeTime.Singleton);
 
             // // views:

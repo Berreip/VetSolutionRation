@@ -1,5 +1,8 @@
 ﻿using System.Diagnostics;
 using PRF.Utils.CoreComponents.Diagnostic;
+using VetSolutionRation.DataProvider.Utils;
+using VetSolutionRationLib.Enums;
+using VetSolutionRationLib.Helpers;
 
 namespace VetSolutionRation.DataProvider.Models;
 
@@ -23,7 +26,7 @@ public sealed class InraRationLineImportModel : IInraRationLineImportModel
     {
         _labels = labels;
         DebugCore.Assert(labels.Count != 0, "should have at least one label");
-        JoinedLabel = string.Join(" | ", labels);
+        JoinedLabel = labels.JoinAsLabel();
         foreach (var cell in feedCellModels)
         {
             if(_feedCellModels.TryGetValue(cell.HeaderKind, out var value))

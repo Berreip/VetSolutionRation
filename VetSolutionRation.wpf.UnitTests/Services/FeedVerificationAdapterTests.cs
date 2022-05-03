@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using VetSolutionRation.wpf.Views.RatioPanel.SubPanels.FeedSelection.Adapters;
+using VetSolutionRationLib.Models.Feed;
 
 namespace VetSolutionRation.wpf.UnitTests.Services;
 
@@ -16,7 +17,7 @@ internal sealed class FeedVerificationAdapterTests
     public void SearchReturns_expected_results(string adapterName, string searchText, bool expectedMatch)
     {
         //Arrange
-        var feed = new FeedAdapter(adapterName);
+        var feed = new ReferenceFeedAdapter(new ReferenceFeed(new[] { adapterName }, Array.Empty<INutritionalFeedDetails>(), Array.Empty<IStringDetailsContent>()));
 
         //Act
         var res = feed.MatchSearch(new[] { searchText });

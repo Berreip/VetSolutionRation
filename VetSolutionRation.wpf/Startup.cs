@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Threading;
 using PRF.Utils.CoreComponents.Diagnostic;
+using PRF.WPFCore.UiWorkerThread;
 using VetSolutionRation.wpf.Main;
 using VetSolutionRation.wpf.Services.Injection;
 using VetSolutionRation.wpf.Views.Assertions;
@@ -38,11 +39,14 @@ namespace VetSolutionRation.wpf
 
         private static AssertionResponse OnAssertionFailed(AssertionFailedResult assertionfailedResult)
         {
-            var assertionVm = new AssertionFailedViewModel(assertionfailedResult);
-            var view = new AssertionFailedView(assertionVm);
-            assertionVm.OnResponseSet += () => view.Close();
-            view.ShowDialog();
-            return assertionVm.GetResponse();
+            return UiThreadDispatcher.ExecuteOnUI(() =>
+            {
+                var assertionVm = new AssertionFailedViewModel(assertionfailedResult);
+                var view = new AssertionFailedView(assertionVm);
+                assertionVm.OnResponseSet += () => view.Close();
+                view.ShowDialog();
+                return assertionVm.GetResponse();
+            });
         }
 
         private static void AppDomainOnUnhandledException(object sender, UnhandledExceptionEventArgs e)

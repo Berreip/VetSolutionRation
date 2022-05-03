@@ -7,15 +7,15 @@ internal sealed class FileFeedSourceExtensionsTests
 {
     [Test]
     // En-US
-    [TestCase(@"INRA2018_ConcentrateFeedTables_08022018.xlsx", FileFeedSource.Concentrate)]
-    [TestCase(@"INRA2022_ConcentrateFeedTables_08022022.xlsx", FileFeedSource.Concentrate)]
-    [TestCase(@"INRA2018_ForageFeedTables_17042019.xlsx", FileFeedSource.Forage)]
-    [TestCase(@"INRA2022_ForageFeedTables_17042022.xlsx", FileFeedSource.Forage)]
+    [TestCase(@"INRA2018_ConcentrateFeedTables_08022018.xlsx", FileFeedSource.Reference)]
+    [TestCase(@"INRA2022_ConcentrateFeedTables_08022022.xlsx", FileFeedSource.Reference)]
+    [TestCase(@"INRA2018_ForageFeedTables_17042019.xlsx", FileFeedSource.Reference)]
+    [TestCase(@"INRA2022_ForageFeedTables_17042022.xlsx", FileFeedSource.Reference)]
     // fr-FR
-    [TestCase(@"INRA2018_TablesConcentres_08022018.xlsx", FileFeedSource.Concentrate)]
-    [TestCase(@"INRA2022_TablesConcentres_08022022.xlsx", FileFeedSource.Concentrate)]
-    [TestCase(@"INRA2018_TablesFourrages_17042019.xlsx", FileFeedSource.Forage)]
-    [TestCase(@"INRA2022_TablesFourrages_17042022.xlsx", FileFeedSource.Forage)]
+    [TestCase(@"INRA2018_TablesConcentres_08022018.xlsx", FileFeedSource.Reference)]
+    [TestCase(@"INRA2022_TablesConcentres_08022022.xlsx", FileFeedSource.Reference)]
+    [TestCase(@"INRA2018_TablesFourrages_17042019.xlsx", FileFeedSource.Reference)]
+    [TestCase(@"INRA2022_TablesFourrages_17042022.xlsx", FileFeedSource.Reference)]
     // failed
     [TestCase(@"file.xlsx", null)]
     [TestCase(@"", null)]

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using NUnit.Framework;
 using VetSolutionRation.DataProvider.Models;
+using VetSolutionRationLib.Enums;
 
 namespace VetSolutionRation.DataProvider.UnitTests.Models;
 

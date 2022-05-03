@@ -5,7 +5,7 @@ using VetSolutionRation.wpf.Helpers;
 
 namespace VetSolutionRation.wpf.Services.Configuration;
 
-internal interface IConfigurationManager
+public interface IConfigurationManager
 {
     DirectoryInfo GetCacheDataFolder();
 }

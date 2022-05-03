@@ -13,14 +13,14 @@ namespace VetSolutionRation.wpf.Views.RatioPanel.SubPanels.FeedSelection.Verify;
 
 internal interface IVerifyRatiosViewModel
 {
-    void AddSelectedFeed(FeedAdapter feedAdapter);
+    void AddSelectedFeed(ReferenceFeedAdapter feedAdapter);
 }
 
 internal sealed class VerifyRatiosViewModel : ViewModelBase, IVerifyRatiosViewModel
 {
     public ICollectionView SelectedFeedsForVerifyPanel { get; }
     private readonly ObservableCollectionRanged<FeedVerifySpecificAdapter> _selectedFeedForVerifyPanel;
-    private readonly HashSet<FeedAdapter> _alreadyAddedHash = new HashSet<FeedAdapter>();
+    private readonly HashSet<ReferenceFeedAdapter> _alreadyAddedHash = new HashSet<ReferenceFeedAdapter>();
 
     public IDelegateCommandLight<FeedVerifySpecificAdapter> RemoveFromSelectedFeedsCommand { get; }
     
@@ -32,7 +32,7 @@ internal sealed class VerifyRatiosViewModel : ViewModelBase, IVerifyRatiosViewMo
     }
 
     /// <inheritdoc />
-    public void AddSelectedFeed(FeedAdapter feedAdapter)
+    public void AddSelectedFeed(ReferenceFeedAdapter feedAdapter)
     {
         if (_alreadyAddedHash.Add(feedAdapter))
         {

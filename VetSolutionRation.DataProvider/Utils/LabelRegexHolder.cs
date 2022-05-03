@@ -9,7 +9,7 @@ internal static class LabelRegexHolder
 {
     private static readonly Regex _labelRegexFr = new Regex("^Libellé ([0-9]*)$", RegexOptions.Compiled);
     private static readonly Regex _labelRegexEn = new Regex("^Label([0-9]*)$", RegexOptions.Compiled);
-    
+
     public static bool Match(string str, out int labelPosition)
     {
         var matchFr = _labelRegexFr.Match(str);
@@ -25,4 +25,6 @@ internal static class LabelRegexHolder
         labelPosition = -1;
         return false;
     }
+    
+    
 }

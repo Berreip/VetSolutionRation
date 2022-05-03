@@ -3,18 +3,18 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using PRF.Utils.CoreComponents.Diagnostic;
 using PRF.WPFCore;
 using PRF.WPFCore.Browsers;
 using PRF.WPFCore.Commands;
 using PRF.WPFCore.CustomCollections;
 using VetSolutionRation.Common.Async;
 using VetSolutionRation.DataProvider;
-using VetSolutionRation.DataProvider.Models;
+using VetSolutionRation.DataProvider.Models.Helpers;
 using VetSolutionRation.wpf.Helpers;
 using VetSolutionRation.wpf.Services.Configuration;
 using VetSolutionRation.wpf.Services.Feed;
 using VetSolutionRation.wpf.Views.Import.Adapters;
+using VetSolutionRationLib.Models.Feed;
 
 namespace VetSolutionRation.wpf.Views.Import;
 
@@ -29,92 +29,139 @@ internal interface IImportViewModel
 internal sealed class ImportViewModel : ViewModelBase, IImportViewModel
 {
     private readonly IFeedProvider _feedProvider;
-    private readonly ObservableCollectionRanged<ImportedFileAdapter> _importedFiles;
     private readonly IConfigurationManager _configurationManager;
     public IDelegateCommandLight ImportCommand { get; }
-    public IDelegateCommandLight<ImportedFileAdapter> DeleteFileCommand { get; }
-    public ICollectionView ImportedFiles { get; }
     public IDelegateCommandLight OpenCacheFolderCommand { get; }
+    private RegisteredDataAdapter[] _allLoadedData = Array.Empty<RegisteredDataAdapter>();
+
+    private readonly object _key = new object();
+    private bool _isIdle = true;
+    private RegisteredDataAdapter? _selectedData;
+    private RegisteredNutrionalDetailsAdapter[]? _selectedDataDetails;
 
     public ImportViewModel(IFeedProvider feedProvider, IConfigurationManager configurationManager)
     {
         _feedProvider = feedProvider;
         _configurationManager = configurationManager;
         ImportCommand = new DelegateCommandLight(ExecuteImportCommand);
-        DeleteFileCommand = new DelegateCommandLight<ImportedFileAdapter>(ExecuteDeleteFileCommand);
-        ImportedFiles = ObservableCollectionSource.GetDefaultView(out _importedFiles);
         OpenCacheFolderCommand = new DelegateCommandLight(ExecuteOpenCacheFolderCommand);
+        RefreshAllLoadedData();
+        feedProvider.OnNewDataProvided += OnNewDataProvided;
     }
 
-    private void ExecuteDeleteFileCommand(ImportedFileAdapter selectedImportedFile)
+    public RegisteredDataAdapter[] AllLoadedData
     {
-        if (_importedFiles.Remove(selectedImportedFile))
-        {
-            _feedProvider.RemoveLabels(selectedImportedFile.FileFeedSource);
-        }
+        get => _allLoadedData;
+        private set => SetProperty(ref _allLoadedData, value);
     }
 
-    private void ExecuteImportCommand()
+    private async void ExecuteImportCommand()
     {
-        var file = BrowserDialogManager.OpenFileBrowser("Fichiers (*.*)|*.*", null);
-        if (file != null)
+        IsIdle = false;
+        await AsyncWrapper.DispatchAndWrapAsync(() =>
         {
-            LoadInraeFile(file);
-        }
-    }    
-    
+            var file = BrowserDialogManager.OpenFileBrowser("Fichiers (*.*)|*.*", null);
+            if (file != null)
+            {
+                LoadInraeFile(file);
+            }
+        }, () => IsIdle = true).ConfigureAwait(false);
+    }
+
     private void ExecuteOpenCacheFolderCommand()
     {
-        AsyncWrapper.Wrap(() =>
+        AsyncWrapper.Wrap(() => { _configurationManager.GetCacheDataFolder().OpenFolderInExplorer(); });
+    }
+    
+
+    private async void OnNewDataProvided()
+    {
+        await AsyncWrapper.DispatchAndWrapAsync(RefreshAllLoadedData).ConfigureAwait(false);
+    }
+
+    private void RefreshAllLoadedData()
+    {
+        lock (_key)
         {
-            _configurationManager.GetCacheDataFolder().OpenFolderInExplorer();
-        });
+            SelectedData = null;
+            AllLoadedData = _feedProvider.GetFeeds()
+                .Select(o => new RegisteredDataAdapter(o))
+                .OrderBy(o => o.LoadedDataLabel)
+                .ToArray();
+        }
     }
 
     private void LoadInraeFile(FileInfo file)
     {
-        try
+        lock (_key)
         {
             if (!FileFeedSourceExtensions.TryParseFromFileName(file.Name, out FileFeedSource feedSource))
             {
                 MessageBox.Show($@"Le nom de fichier {file.Name} ne permet pas de lui attribuer une catégorie. il sera considéré comme un fichier de type 'Custom' par défaut");
             }
 
-            IInraRationTableImportModel inraFile = InraRatioTableImporter.ImportInraTable(file);
+            var inraFile = InraRatioTableImporter.ImportInraTable(file);
 
-            // remove other file of same type if they are not custom:
-            RemoveExistingReferenceFile(feedSource);
-
-            _importedFiles.Add(new ImportedFileAdapter(file.Name, feedSource));
-            _feedProvider.LoadLabels(feedSource, inraFile.GetAllLabels());
-        }
-        catch (Exception e)
-        {
-            DebugCore.Fail($@"Erreur : {e}");
+            // for reference feeds:
+            if (feedSource == FileFeedSource.Reference)
+            {
+                _feedProvider.AddFeeds(inraFile.GetAllLines().Select(o => o.ToReferenceFeed()));
+            }
+            else
+            {
+                _feedProvider.AddFeeds(inraFile.GetAllLines().Select(o => o.ToCustomFeed()));
+            }
         }
     }
 
-    private void RemoveExistingReferenceFile(FileFeedSource feedSource)
+    public bool IsIdle
     {
-        if (feedSource == FileFeedSource.Custom)
+        get => _isIdle;
+        set
         {
-            // for custom, don't remove duplicates file
-            return;
+            if (SetProperty(ref _isIdle, value))
+            {
+                ImportCommand.RaiseCanExecuteChanged();
+                OpenCacheFolderCommand.RaiseCanExecuteChanged();
+            }
         }
-        var sameKindExistingFile = _importedFiles.FirstOrDefault(o => o.FileFeedSource == feedSource);
-        if (sameKindExistingFile != null)
+    }
+
+    public RegisteredDataAdapter? SelectedData
+    {
+        get => _selectedData;
+        set
         {
-            _importedFiles.Remove(sameKindExistingFile);
-            _feedProvider.RemoveLabels(sameKindExistingFile.FileFeedSource);
+            if (SetProperty(ref _selectedData, value))
+            {
+                if (_selectedData == null)
+                {
+                    SelectedDataDetails = null;
+                }
+                else
+                {
+                    SelectedDataDetails = _selectedData.GetDetails();
+                }
+            }
         }
+    }
+
+    public RegisteredNutrionalDetailsAdapter[]? SelectedDataDetails
+    {
+        get => _selectedDataDetails;
+        private set => SetProperty(ref _selectedDataDetails, value);
     }
 
     /// <inheritdoc />
-    public void LoadDroppedFiles(FileInfo[] matchingFiles)
+    public async void LoadDroppedFiles(FileInfo[] matchingFiles)
     {
-        foreach (var file in matchingFiles)
+        IsIdle = false;
+        await AsyncWrapper.DispatchAndWrapAsync(() =>
         {
-            LoadInraeFile(file);
-        }
+            foreach (var file in matchingFiles)
+            {
+                LoadInraeFile(file);
+            }
+        }, () => IsIdle = true).ConfigureAwait(false);
     }
 }

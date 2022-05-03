@@ -2,15 +2,11 @@
 
 public interface IInraRationTableImportModel
 {
-    /// <summary>
-    /// Returns all available label in the file
-    /// </summary>
-    IReadOnlyList<string> GetAllLabels();
 
     /// <summary>
     /// Returns all lines in the inraTable
     /// </summary>
-    IReadOnlyCollection<IInraRationLineImportModel> GetAllLines();
+    IReadOnlyList<IInraRationLineImportModel> GetAllLines();
 }
 
 public sealed class InraRationTableImportModel : IInraRationTableImportModel
@@ -23,13 +19,7 @@ public sealed class InraRationTableImportModel : IInraRationTableImportModel
     }
 
     /// <inheritdoc />
-    public IReadOnlyList<string> GetAllLabels()
-    {
-        return _lines.Select(o => o.JoinedLabel).ToArray();
-    }
-
-    /// <inheritdoc />
-    public IReadOnlyCollection<IInraRationLineImportModel> GetAllLines()
+    public IReadOnlyList<IInraRationLineImportModel> GetAllLines()
     {
         return _lines.ToArray();
     }

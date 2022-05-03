@@ -20,4 +20,8 @@
       <PackageReference Include="PRF.Utils.CoreComponents" Version="2.2.1" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\VetSolutionRationLib\VetSolutionRationLib.csproj" />
+    </ItemGroup>
+
 </Project>

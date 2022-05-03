@@ -4,8 +4,14 @@ namespace VetSolutionRation.wpf.Helpers;
 
 public enum FileFeedSource
 {
-    Forage, 
-    Concentrate,
+    /// <summary>
+    /// Official reference (INRAE) source file (not deleteable)
+    /// </summary>
+    Reference, 
+    
+    /// <summary>
+    /// Custom reference
+    /// </summary>
     Custom
 }
 
@@ -22,12 +28,13 @@ public static class FileFeedSourceExtensions
         {
             if (fileName.ContainsInsensitive(FR_CONCENTRATES) || fileName.ContainsInsensitive(EN_CONCENTRATES))
             {
-                fileFeedParsed = FileFeedSource.Concentrate;
+                fileFeedParsed = FileFeedSource.Reference;
                 return true;
             }
-            else if (fileName.ContainsInsensitive(FR_FORAGES) || fileName.ContainsInsensitive(EN_FORAGES))
+
+            if (fileName.ContainsInsensitive(FR_FORAGES) || fileName.ContainsInsensitive(EN_FORAGES))
             {
-                fileFeedParsed = FileFeedSource.Forage;
+                fileFeedParsed = FileFeedSource.Reference;
                 return true;
             }
         }

@@ -52,18 +52,89 @@
                         </ScrollViewer>
                     </ControlTemplate>
                 </ItemsControl.Template>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate DataType="{x:Type adapter:FeedAdapter}">
+                <ItemsControl.Resources>
+                    <DataTemplate DataType="{x:Type adapter:ReferenceFeedAdapter}">
                         <Button Grid.Column="1" Margin="2"
                                 HorizontalContentAlignment="Left"
+                                VerticalContentAlignment="Center"
                                 ToolTip="Cliquez pour ajouter l'aliment"
-                                Content="{Binding FeedName}"
                                 Command="{Binding DataContext.SelectFeedCommand, ElementName=FeedSelectionUserControlName}"
                                 CommandParameter="{Binding .}"
                                 Style="{StaticResource MaterialDesignFlatButton}">
+                            <Grid HorizontalAlignment="Stretch">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                
+                                <!-- REFERENCE FEED NAME -->
+                                <TextBlock Text="{Binding FeedName}" 
+                                           VerticalAlignment="Center"/>
+                                
+                                <!-- DUPLICATE AND EDIT -->
+                                <Button Grid.Column="1" Margin="2"
+                                        VerticalAlignment="Center"
+                                        ToolTip="Cliquez pour ajouter l'aliment"
+                                        Command="{Binding DataContext.DuplicateFeedCommand, ElementName=FeedSelectionUserControlName}"
+                                        CommandParameter="{Binding .}"
+                                        Style="{StaticResource MaterialDesignFlatButton}">
+                                    <materialDesign:PackIcon Kind="PencilBoxMultipleOutline" Height="25" Width="25" />
+                                </Button>
+                            </Grid>
                         </Button>
                     </DataTemplate>
-                </ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="{x:Type adapter:CustomUserFeedAdapter}">
+                        <Button Grid.Column="1" Margin="2"
+                                HorizontalContentAlignment="Left"
+                                ToolTip="Cliquez pour ajouter l'aliment"
+                                Command="{Binding DataContext.SelectFeedCommand, ElementName=FeedSelectionUserControlName}"
+                                CommandParameter="{Binding .}"
+                                Style="{StaticResource MaterialDesignFlatButton}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                
+                                <!-- CUSTOM FEED NAME -->
+                                <TextBlock Text="{Binding FeedName}"/>
+                                
+                                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                    <!-- EDIT -->
+                                    <Button Margin="2"
+                                            HorizontalContentAlignment="Left"
+                                            ToolTip="Cliquez pour ajouter l'aliment"
+                                            Command="{Binding DataContext.EditFeedCommand, ElementName=FeedSelectionUserControlName}"
+                                            CommandParameter="{Binding .}"
+                                            Style="{StaticResource MaterialDesignFlatButton}">
+                                        <materialDesign:PackIcon Kind="PencilOutline" Height="35" Width="35" />
+                                    </Button>
+                                    
+                                    <!-- DUPLICATE AND EDIT -->
+                                    <Button Margin="2"
+                                            HorizontalContentAlignment="Left"
+                                            ToolTip="Cliquez pour ajouter l'aliment"
+                                            Command="{Binding DataContext.DuplicateFeedCommand, ElementName=FeedSelectionUserControlName}"
+                                            CommandParameter="{Binding .}"
+                                            Style="{StaticResource MaterialDesignFlatButton}">
+                                        <materialDesign:PackIcon Kind="PencilBoxMultipleOutline" Height="35" Width="35" />
+                                    </Button>
+                                    
+                                    <!-- DELETE -->
+                                    <Button Margin="2"
+                                            HorizontalContentAlignment="Left"
+                                            ToolTip="Cliquez pour ajouter l'aliment"
+                                            Command="{Binding DataContext.DeleteFeedCommand, ElementName=FeedSelectionUserControlName}"
+                                            CommandParameter="{Binding .}"
+                                            Style="{StaticResource MaterialDesignFlatButton}">
+                                        <materialDesign:PackIcon Kind="PencilOutline" Height="35" Width="35" />
+                                    </Button>
+                                    
+                                </StackPanel>
+                            </Grid>
+                        </Button>
+                    </DataTemplate>
+                </ItemsControl.Resources>
             </ItemsControl>
         </Grid>
     </materialDesign:Card>

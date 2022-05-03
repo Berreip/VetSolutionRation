@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using NUnit.Framework;
 using VetSolutionRation.DataProvider.UnitTests.Data;
 
@@ -51,7 +52,8 @@ internal sealed class Tests
         var res = InraRatioTableImporter.ImportInraTable(file);
 
         //Assert
-        Assert.AreEqual(expectedCount, res.GetAllLabels().Count, $"COUNT:; {res.GetAllLabels().Count} {Environment.NewLine}{string.Join(Environment.NewLine, res.GetAllLabels())}");
+        var allLines = res.GetAllLines();
+        Assert.AreEqual(expectedCount, allLines.Count, $"COUNT:; {allLines.Count} {Environment.NewLine}{string.Join(Environment.NewLine, allLines.Select(o => o.JoinedLabel))}");
     }
 
     [Test]
@@ -65,7 +67,7 @@ internal sealed class Tests
         var res = InraRatioTableImporter.ImportInraTable(file);
 
         //Assert
-        Assert.AreEqual(value, res.GetAllLabels()[position]);
+        Assert.AreEqual(value, res.GetAllLines()[position].JoinedLabel);
     }
 
 

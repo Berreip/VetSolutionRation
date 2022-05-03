@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Linq;
 using PRF.WPFCore;
 using PRF.WPFCore.CustomCollections;
@@ -6,6 +7,7 @@ using VetSolutionRation.wpf.Helpers;
 using VetSolutionRation.wpf.Services.Feed;
 using VetSolutionRation.wpf.Views.RatioPanel.SubPanels.FeedSelection.Adapters;
 using VetSolutionRationLib.Helpers;
+using VetSolutionRationLib.Models.Feed;
 
 namespace VetSolutionRation.wpf.Services;
 
@@ -19,21 +21,34 @@ internal sealed class FeedProviderHoster : ViewModelBase, IFeedProviderHoster
 {
     private readonly IFeedProvider _feedProvider;
     private string? _searchText;
-    private readonly ObservableCollectionRanged<FeedAdapter> _availableFeeds;
+    private readonly ObservableCollectionRanged<IFeedAdapter> _availableFeeds;
     public ICollectionView AvailableFeeds { get; }
 
     public FeedProviderHoster(IFeedProvider feedProvider)
     {
         _feedProvider = feedProvider;
-        AvailableFeeds = ObservableCollectionSource.GetDefaultView(feedProvider.GetLabels().Select(o => new FeedAdapter(o)), out _availableFeeds);
-        AvailableFeeds.SortDescriptions.Add(new SortDescription(nameof(FeedAdapter.FeedName), ListSortDirection.Ascending));
+        AvailableFeeds = ObservableCollectionSource.GetDefaultView(feedProvider.GetFeeds().Select(CreateAdapter), out _availableFeeds);
+        AvailableFeeds.SortDescriptions.Add(new SortDescription(nameof(ReferenceFeedAdapter.FeedName), ListSortDirection.Ascending));
        
         feedProvider.OnNewDataProvided += OnNewDataProvided;
     }
 
+    private static IFeedAdapter CreateAdapter(IFeed o)
+    {
+        switch (o)
+        {
+            case ICustomFeed customFeed:
+                return new CustomUserFeedAdapter(customFeed);
+            case IReferenceFeed referenceFeed:
+                return new ReferenceFeedAdapter(referenceFeed);
+            default:
+                throw new ArgumentOutOfRangeException(nameof(o));
+        }
+    }
+
     private void OnNewDataProvided()
     {
-        _availableFeeds.Reset(_feedProvider.GetLabels().Select(o => new FeedAdapter(o)));
+        _availableFeeds.Reset(_feedProvider.GetFeeds().Select(CreateAdapter));
     }
 
     public void FilterAvailableFeeds(string? inputText)

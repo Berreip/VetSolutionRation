@@ -25,7 +25,10 @@ internal sealed class FeedSelectionViewModel : ViewModelBase, IFeedSelectionView
     private IResultView _selectedResultView;
     public IFeedSelectionModeAdapter[] AvailableFeedSelectionModes { get; }
     public IFeedProviderHoster FeedProviderHoster { get; }
-    public IDelegateCommandLight<FeedAdapter> SelectFeedCommand { get; }
+    public IDelegateCommandLight<ReferenceFeedAdapter> SelectFeedCommand { get; }
+    public IDelegateCommandLight<FeedAdapterBase> DuplicateFeedCommand { get; }
+    public IDelegateCommandLight<CustomUserFeedAdapter> EditFeedCommand { get; }
+    public IDelegateCommandLight<CustomUserFeedAdapter> DeleteFeedCommand { get; }
 
     public FeedSelectionViewModel(
         // ReSharper disable SuggestBaseTypeForParameterInConstructor
@@ -54,10 +57,28 @@ internal sealed class FeedSelectionViewModel : ViewModelBase, IFeedSelectionView
         _selectedResultView = AvailableFeedSelectionModes[0].ResultView;
         AvailableFeedSelectionModes[0].IsSelected = true;
         
-        SelectFeedCommand = new DelegateCommandLight<FeedAdapter>(ExecuteSelectFeedCommand);
+        SelectFeedCommand = new DelegateCommandLight<ReferenceFeedAdapter>(ExecuteSelectFeedCommand);
+        DuplicateFeedCommand = new DelegateCommandLight<FeedAdapterBase>(ExecuteDuplicateFeedCommand);
+        EditFeedCommand = new DelegateCommandLight<FeedAdapterBase>(ExecuteEditFeedCommand);
+        DeleteFeedCommand = new DelegateCommandLight<FeedAdapterBase>(ExecuteDeleteFeedCommand);
     }
 
-    private void ExecuteSelectFeedCommand(FeedAdapter feedAdapter)
+    private void ExecuteDeleteFeedCommand(FeedAdapterBase obj)
+    {
+        // TODO PBO
+    }
+
+    private void ExecuteEditFeedCommand(FeedAdapterBase obj)
+    {
+        // TODO PBO
+    }
+
+    private void ExecuteDuplicateFeedCommand(FeedAdapterBase obj)
+    {
+        // TODO PBO
+    }
+
+    private void ExecuteSelectFeedCommand(ReferenceFeedAdapter feedAdapter)
     {
         _calculateRatiosView.ViewModel.AddSelectedFeed(feedAdapter);
         _verifyRatiosView.ViewModel.AddSelectedFeed(feedAdapter);

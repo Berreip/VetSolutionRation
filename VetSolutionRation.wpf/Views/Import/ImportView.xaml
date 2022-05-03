@@ -11,7 +11,7 @@
              d:DataContext="{d:DesignInstance local:ImportViewModel, IsDesignTimeCreatable=False}">
 
     <!-- LEFT PART = list of file dropped or added -->
-    <materialDesign:Card Margin="10, 2, 2, 2" Padding="2"
+    <materialDesign:Card Margin="10, 2, 2, 2" Padding="2" IsEnabled="{Binding IsIdle}"
                          materialDesign:ShadowAssist.ShadowDepth="Depth2">
 
         <Grid ToolTip="Glissez-déposez un fichier de données de l'INRAE pour l'importer"
@@ -19,6 +19,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" MinWidth="200" />
                 <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
             <Grid Margin="5">
@@ -36,7 +37,7 @@
                                           VerticalAlignment="Stretch"
                                           HorizontalAlignment="Stretch">
                     <TextBlock FontSize="16"
-                               Text="Glissez-déposez un fichier de données de l'INRAE pour l'importer"
+                               Text="Glissez-déposez un fichier de données de l'INRAE ou un fichier de sauvegarde pour l'importer"
                                MaxWidth="200"
                                TextWrapping="Wrap"
                                ToolTip="Note: le glissez-déposez est actif sur toute la liste"
@@ -49,12 +50,13 @@
                         Command="{Binding ImportCommand}" />
             </Grid>
 
+            <!-- ALL LOADED FEED -->
             <Grid Grid.Column="1" Margin="5">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
-                
+
                 <!-- header -->
                 <Grid Margin="5">
                     <Grid.ColumnDefinitions>
@@ -79,32 +81,65 @@
                         <materialDesign:PackIcon Kind="FolderOpenOutline" Height="35" Width="35" />
                     </Button>
                 </Grid>
-                
+
                 <ListBox Grid.Row="1" x:Name="ImportedFilesList"
-                         ItemsSource="{Binding ImportedFiles}"
+                         ItemsSource="{Binding AllLoadedData}"
+                         SelectedItem="{Binding SelectedData}"
                          HorizontalContentAlignment="Stretch">
                     <ListBox.ItemTemplate>
-                        <DataTemplate DataType="{x:Type adapters:ImportedFileAdapter}">
-                            <materialDesign:Card Margin="5" Padding="2">
-                                <Grid Margin="5">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Margin="10, 2" Text="{Binding ImportedFileName}" VerticalAlignment="Center" />
-                                    <Button Grid.Column="1"
-                                            VerticalAlignment="Center"
-                                            Style="{StaticResource MaterialDesignFlatButton}"
-                                            Content="{materialDesign:PackIcon Close}"
-                                            Command="{Binding ElementName=ImportedFilesList, Path=DataContext.DeleteFileCommand}"
-                                            CommandParameter="{Binding .}" />
-                                </Grid>
-                            </materialDesign:Card>
+                        <DataTemplate DataType="{x:Type adapters:RegisteredDataAdapter}">
+                            <Grid Margin="5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions> 
+                                <materialDesign:PackIcon Grid.Column="0"
+                                                         VerticalAlignment="Center"
+                                                         Kind="{Binding DataIconKind}" />
+                                <TextBlock Grid.Column="1" Margin="10, 2" Text="{Binding LoadedDataLabel}" VerticalAlignment="Center" />
+                           
+                            </Grid>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
             </Grid>
 
+            <!-- DETAILS ON CURRENTLY SELECTED FEED -->
+            <Grid Grid.Column="2"
+                  Visibility="{Binding SelectedData, Converter={StaticResource NullToVisibilityConverter}}">
+
+                <DataGrid
+                    Margin="2"
+                    AutoGenerateColumns="False"
+                    ItemsSource="{Binding SelectedDataDetails, FallbackValue='/'}"
+                    HorizontalContentAlignment="Stretch">
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn
+                            Header="Référence"
+                            IsReadOnly="True"
+                            SortMemberPath="HeaderKind"
+                            CanUserSort="True">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate DataType="{x:Type adapters:RegisteredNutrionalDetailsAdapter}">
+                                    <TextBlock Margin="10, 2" Text="{Binding HeaderKind}" VerticalAlignment="Center" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn
+                            Header="Valeur"
+                            IsReadOnly="True"
+                            SortMemberPath="Value"
+                            CanUserSort="True">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate DataType="{x:Type adapters:RegisteredNutrionalDetailsAdapter}">
+                                    <TextBlock Margin="10, 2" Text="{Binding Value}" VerticalAlignment="Center" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
         </Grid>
     </materialDesign:Card>
 </UserControl>

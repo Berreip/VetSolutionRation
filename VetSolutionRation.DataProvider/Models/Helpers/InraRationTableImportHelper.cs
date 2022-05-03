@@ -2,12 +2,12 @@
 using VetSolutionRation.DataProvider.Models.SubParts;
 using VetSolutionRation.DataProvider.Services.Excel.ExcelDto;
 using VetSolutionRation.DataProvider.Utils;
+using VetSolutionRationLib.Enums;
 
 namespace VetSolutionRation.DataProvider.Models.Helpers;
 
-internal class InraRationTableImportHelper
+internal static class InraRationTableImportHelper
 {
-    
     public static InraHeaderModel MapInraHeaders(InraGroupCategories groupingCategory, IExcelRowDto getHeaderRow)
     {
         var dto = new InraHeaderModel(groupingCategory);

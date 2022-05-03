@@ -1,4 +1,8 @@
-﻿namespace VetSolutionRation.DataProvider.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace VetSolutionRationLib.Enums;
 
 // ReSharper disable InconsistentNaming
 public enum InraHeader
@@ -6,7 +10,6 @@ public enum InraHeader
     No,
     Etat,
     CodeInra,
-
     MS,
     UFL,
     UFV,
@@ -114,12 +117,20 @@ public enum InraHeader
 }
 // ReSharper restore InconsistentNaming
 
-internal static class InraHeaderExtensions
+public static class InraHeaderExtensions
 {
     private static readonly Dictionary<InraHeader, string[]> _inraHeaderToDisplayName;
     private static readonly Dictionary<string, InraHeader> _inraDisplayNameToHeaderFr;
     private static readonly Dictionary<string, InraHeader> _inraDisplayNameToHeaderEn;
     private static readonly Dictionary<string, InraHeader> _inraDtoToHeader;
+    
+    // inra header that should be converted to string
+    private static readonly HashSet<InraHeader> _stringInraContent = new HashSet<InraHeader>
+    {
+        InraHeader.No,
+        InraHeader.Etat,
+        InraHeader.CodeInra
+    };
 
     static InraHeaderExtensions()
     {
@@ -253,13 +264,18 @@ internal static class InraHeaderExtensions
         }
     }
 
+    public static bool IsStringContent(this InraHeader inraHeader)
+    {
+        return _stringInraContent.Contains(inraHeader);
+    }
+    
     public static string ToDtoKey(this InraHeader inraHeader)
     {
         // just a to string for now
         return inraHeader.ToString();
     }
     
-    public static string GetInraHeaderLabel(this InraHeader inraHeader, InraSourceFileCulture culture)
+    public static string GetInraHeaderLabel(this InraHeader inraHeader, InraSourceFileCulture culture = InraSourceFileCulture.French)
     {
         if (_inraHeaderToDisplayName.TryGetValue(inraHeader, out var label))
         {
@@ -287,7 +303,7 @@ internal static class InraHeaderExtensions
     }
 }
 
-internal enum InraSourceFileCulture
+public enum InraSourceFileCulture
 {
     French,
     English

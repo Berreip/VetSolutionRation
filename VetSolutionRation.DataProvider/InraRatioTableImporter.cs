@@ -4,6 +4,7 @@ using VetSolutionRation.DataProvider.Models.Helpers;
 using VetSolutionRation.DataProvider.Models.SubParts;
 using VetSolutionRation.DataProvider.Services.Excel;
 using VetSolutionRation.DataProvider.Services.Excel.ExcelDto;
+using VetSolutionRationLib.Enums;
 
 namespace VetSolutionRation.DataProvider;
 
