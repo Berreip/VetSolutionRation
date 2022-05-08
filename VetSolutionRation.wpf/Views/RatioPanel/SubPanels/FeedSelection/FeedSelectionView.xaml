@@ -106,7 +106,7 @@
                                     <!-- EDIT -->
                                     <Button Margin="2"
                                             HorizontalContentAlignment="Left"
-                                            ToolTip="Cliquez pour ajouter l'aliment"
+                                            ToolTip="Editer l'aliment"
                                             Command="{Binding DataContext.EditFeedCommand, ElementName=FeedSelectionUserControlName}"
                                             CommandParameter="{Binding .}"
                                             Style="{StaticResource MaterialDesignFlatButton}">
@@ -116,7 +116,7 @@
                                     <!-- DUPLICATE AND EDIT -->
                                     <Button Margin="2"
                                             HorizontalContentAlignment="Left"
-                                            ToolTip="Cliquez pour ajouter l'aliment"
+                                            ToolTip="Créer une copie de cet aliment pour édition"
                                             Command="{Binding DataContext.DuplicateFeedCommand, ElementName=FeedSelectionUserControlName}"
                                             CommandParameter="{Binding .}"
                                             Style="{StaticResource MaterialDesignFlatButton}">
@@ -126,7 +126,7 @@
                                     <!-- DELETE -->
                                     <Button Margin="2"
                                             HorizontalContentAlignment="Left"
-                                            ToolTip="Cliquez pour ajouter l'aliment"
+                                            ToolTip="Supprimer l'aliment"
                                             Command="{Binding DataContext.DeleteFeedCommand, ElementName=FeedSelectionUserControlName}"
                                             CommandParameter="{Binding .}"
                                             Style="{StaticResource MaterialDesignFlatButton}">

@@ -4,6 +4,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:duplicatesAndEditFeed="clr-namespace:VetSolutionRation.wpf.Views.Popups.DuplicatesAndEditFeed"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:adapter="clr-namespace:VetSolutionRation.wpf.Views.Popups.Adapters"
         mc:Ignorable="d"
         Title="Duplication et édition aliment"
         Height="450" Width="800"
@@ -14,8 +16,132 @@
         TextOptions.TextRenderingMode="Auto"
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}"
+        x:Name="DuplicateAndEditPopup"
         d:DataContext="{d:DesignInstance duplicatesAndEditFeed:DuplicateAndEditFeedPopupViewModel, IsDesignTimeCreatable=true}" x:ClassModifier="internal">
+
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- FEED NAME -->
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock
+                Margin="10"
+                Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
+                Text="Nom : "
+                VerticalAlignment="Center" />
+
+            <TextBox Grid.Column="1"
+                     Margin="10"
+                     VerticalAlignment="Center"
+                     Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                     Text="{Binding FeedEditedName}" />
+        </Grid>
+
+        <!-- ADD NEW HEADER KIND -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- SEARCH BAR -->
+            <TextBox
+                Grid.Row="0"
+                Margin="5, 2"
+                Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                materialDesign:HintAssist.Hint="Chercher un aliment"
+                VerticalAlignment="Center"
+                Height="50"
+                HorizontalAlignment="Stretch"
+                Text="{Binding SearchFilter, UpdateSourceTrigger=PropertyChanged, Delay=100}" />
+
+            <ComboBox
+                Grid.Column="1"
+                Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                materialDesign:HintAssist.Hint="Ajouter des catégories"
+                ItemsSource="{Binding AvailableHeaders}"
+                IsEditable="True">
+                <ComboBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <VirtualizingStackPanel />
+                    </ItemsPanelTemplate>
+                </ComboBox.ItemsPanel>
+            </ComboBox>
+        </Grid>
+
+        <!-- ALL SELECTED FEED DETAILS -->
+        <ItemsControl Grid.Row="2" Margin="2, 5" Padding="5"
+                      HorizontalAlignment="Stretch"
+                      ItemsSource="{Binding FeedDetailsInEdition}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <VirtualizingStackPanel IsVirtualizing="True"
+                                            VirtualizationMode="Recycling" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.Template>
+                <ControlTemplate TargetType="ItemsControl">
+                    <ScrollViewer CanContentScroll="True"
+                                  VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Hidden"
+                                  Padding="{TemplateBinding Padding}"
+                                  Background="{DynamicResource MaterialDesignPaper}"
+                                  Focusable="False">
+                        <ItemsPresenter />
+                    </ScrollViewer>
+                </ControlTemplate>
+            </ItemsControl.Template>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate DataType="{x:Type adapter:FeedDetailInEditionAdapter}">
+                    <Button Grid.Column="1" Margin="2"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Stretch"
+                            ToolTip="Cliquez pour ajouter l'aliment"
+                            Command="{Binding DataContext.SelectFeedCommand, ElementName=FeedSelectionUserControlName}"
+                            CommandParameter="{Binding .}"
+                            Style="{StaticResource MaterialDesignFlatButton}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="120" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <!-- HEADER NAME -->
+                            <TextBlock Text="{Binding HeaderName}" />
+
+                            <!-- CELL VALUE -->
+                            <TextBox Grid.Column="1" Text="{Binding CellValue}" />
+
+                            <!-- DELETE -->
+                            <Button Grid.Column="2"
+                                    Margin="2"
+                                    HorizontalContentAlignment="Left"
+                                    ToolTip="Cliquez pour ajouter l'aliment"
+                                    Command="{Binding DataContext.DeleteFeedCommand, ElementName=FeedSelectionUserControlName}"
+                                    CommandParameter="{Binding .}"
+                                    Style="{StaticResource MaterialDesignFlatButton}">
+                                <materialDesign:PackIcon Kind="PencilOutline" Height="35" Width="35" />
+                            </Button>
+                        </Grid>
+                    </Button>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
         
+        <Button Grid.Row="3" Style="{StaticResource MaterialDesignFlatButton}"
+                Content="Valider"
+                Command="{Binding ValidateDuplicateAndEditCommand}"/>
     </Grid>
 </Window>
