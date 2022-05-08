@@ -1,4 +1,5 @@
-﻿using PRF.WPFCore;
+﻿using System;
+using PRF.WPFCore;
 using VetSolutionRation.wpf.Searcheable;
 using VetSolutionRationLib.Models.Feed;
 
@@ -47,4 +48,21 @@ internal sealed class CustomUserFeedAdapter : FeedAdapterBase
     public CustomUserFeedAdapter(ICustomFeed feed) : base(feed.Label)
     {
     }
+}
+
+internal static class FeedAdapterExtensions
+{
+    public static IFeedAdapter CreateAdapter(this IFeed feed)
+    {
+        switch (feed)
+        {
+            case ICustomFeed customFeed:
+                return new CustomUserFeedAdapter(customFeed);
+            case IReferenceFeed referenceFeed:
+                return new ReferenceFeedAdapter(referenceFeed);
+            default:
+                throw new ArgumentOutOfRangeException(nameof(feed));
+        }
+    }
+
 }

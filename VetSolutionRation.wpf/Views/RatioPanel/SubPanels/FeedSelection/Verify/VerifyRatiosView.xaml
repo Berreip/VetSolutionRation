@@ -5,8 +5,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:verify="clr-namespace:VetSolutionRation.wpf.Views.RatioPanel.SubPanels.FeedSelection.Verify"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-             xmlns:properties="clr-namespace:VetSolutionRation.wpf.Properties"
-             xmlns:controls="clr-namespace:VetSolutionRation.wpf.Controls"
              xmlns:adapters="clr-namespace:VetSolutionRation.wpf.Views.RatioPanel.SubPanels.FeedSelection.Adapters"
              mc:Ignorable="d"
              d:DesignHeight="400"

@@ -2,7 +2,7 @@
 
 namespace VetSolutionRation.wpf.Views.RatioPanel.SubPanels.FeedSelection;
 
-internal partial class FeedSelectionView : UserControl
+internal sealed partial class FeedSelectionView : UserControl
 {
     public FeedSelectionView(IFeedSelectionViewModel vm)
     {

@@ -1,12 +1,18 @@
 ﻿using PRF.WPFCore;
 using PRF.WPFCore.Commands;
+using PRF.WPFCore.PopupManager;
+using PRF.WPFCore.UiWorkerThread;
+using VetSolutionRation.Common.Async;
 using VetSolutionRation.wpf.Services;
+using VetSolutionRation.wpf.Views.Popups;
+using VetSolutionRation.wpf.Views.Popups.DuplicatesAndEditFeed;
 using VetSolutionRation.wpf.Views.RatioPanel.Adapter.FeedSelection;
 using VetSolutionRation.wpf.Views.RatioPanel.SubPanels.FeedSelection.Adapters;
 using VetSolutionRation.wpf.Views.RatioPanel.SubPanels.FeedSelection.Calculate;
 using VetSolutionRation.wpf.Views.RatioPanel.SubPanels.FeedSelection.Verify;
 using VetSolutionRation.wpf.Views.RatioPanel.SubPanels.ResultPanels.Calculate;
 using VetSolutionRation.wpf.Views.RatioPanel.SubPanels.ResultPanels.Verify;
+using VetSolutionRationLib.Models.Feed;
 
 namespace VetSolutionRation.wpf.Views.RatioPanel.SubPanels.FeedSelection;
 
@@ -56,29 +62,37 @@ internal sealed class FeedSelectionViewModel : ViewModelBase, IFeedSelectionView
         _selectedFeedSelectionMode = AvailableFeedSelectionModes[0].SelectionView;
         _selectedResultView = AvailableFeedSelectionModes[0].ResultView;
         AvailableFeedSelectionModes[0].IsSelected = true;
-        
-        SelectFeedCommand = new DelegateCommandLight<ReferenceFeedAdapter>(ExecuteSelectFeedCommand);
+
+        SelectFeedCommand = new DelegateCommandLight<FeedAdapterBase>(ExecuteSelectFeedCommand);
         DuplicateFeedCommand = new DelegateCommandLight<FeedAdapterBase>(ExecuteDuplicateFeedCommand);
-        EditFeedCommand = new DelegateCommandLight<FeedAdapterBase>(ExecuteEditFeedCommand);
-        DeleteFeedCommand = new DelegateCommandLight<FeedAdapterBase>(ExecuteDeleteFeedCommand);
+        EditFeedCommand = new DelegateCommandLight<CustomUserFeedAdapter>(ExecuteEditFeedCommand);
+        DeleteFeedCommand = new DelegateCommandLight<CustomUserFeedAdapter>(ExecuteDeleteFeedCommand);
     }
 
-    private void ExecuteDeleteFeedCommand(FeedAdapterBase obj)
+    private void ExecuteDeleteFeedCommand(CustomUserFeedAdapter obj)
     {
         // TODO PBO
     }
 
-    private void ExecuteEditFeedCommand(FeedAdapterBase obj)
+    private void ExecuteEditFeedCommand(CustomUserFeedAdapter obj)
     {
         // TODO PBO
     }
 
-    private void ExecuteDuplicateFeedCommand(FeedAdapterBase obj)
+    private void ExecuteDuplicateFeedCommand(FeedAdapterBase feed)
     {
-        // TODO PBO
+        var vm = new DuplicateAndEditFeedPopupViewModel(feed, OnDuplicateValidated);
+        var view = new DuplicateAndEditFeedPopupView(vm);
+        view.ShowDialog();
     }
 
-    private void ExecuteSelectFeedCommand(ReferenceFeedAdapter feedAdapter)
+    private void OnDuplicateValidated(IFeed newFeed)
+    {
+        var adapter = newFeed.CreateAdapter();
+        // TODO PBO;
+    }
+
+    private void ExecuteSelectFeedCommand(FeedAdapterBase feedAdapter)
     {
         _calculateRatiosView.ViewModel.AddSelectedFeed(feedAdapter);
         _verifyRatiosView.ViewModel.AddSelectedFeed(feedAdapter);

@@ -27,28 +27,15 @@ internal sealed class FeedProviderHoster : ViewModelBase, IFeedProviderHoster
     public FeedProviderHoster(IFeedProvider feedProvider)
     {
         _feedProvider = feedProvider;
-        AvailableFeeds = ObservableCollectionSource.GetDefaultView(feedProvider.GetFeeds().Select(CreateAdapter), out _availableFeeds);
+        AvailableFeeds = ObservableCollectionSource.GetDefaultView(feedProvider.GetFeeds().Select(o => o.CreateAdapter()), out _availableFeeds);
         AvailableFeeds.SortDescriptions.Add(new SortDescription(nameof(ReferenceFeedAdapter.FeedName), ListSortDirection.Ascending));
        
         feedProvider.OnNewDataProvided += OnNewDataProvided;
     }
 
-    private static IFeedAdapter CreateAdapter(IFeed o)
-    {
-        switch (o)
-        {
-            case ICustomFeed customFeed:
-                return new CustomUserFeedAdapter(customFeed);
-            case IReferenceFeed referenceFeed:
-                return new ReferenceFeedAdapter(referenceFeed);
-            default:
-                throw new ArgumentOutOfRangeException(nameof(o));
-        }
-    }
-
     private void OnNewDataProvided()
     {
-        _availableFeeds.Reset(_feedProvider.GetFeeds().Select(CreateAdapter));
+        _availableFeeds.Reset(_feedProvider.GetFeeds().Select(o => o.CreateAdapter()));
     }
 
     public void FilterAvailableFeeds(string? inputText)

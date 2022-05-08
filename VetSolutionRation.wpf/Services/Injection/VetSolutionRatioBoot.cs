@@ -9,6 +9,7 @@ using VetSolutionRation.wpf.Services.Feed;
 using VetSolutionRation.wpf.Services.Navigation;
 using VetSolutionRation.wpf.Views.Import;
 using VetSolutionRation.wpf.Views.Parameters;
+using VetSolutionRation.wpf.Views.Popups;
 using VetSolutionRation.wpf.Views.RatioPanel;
 using VetSolutionRation.wpf.Views.RatioPanel.Components;
 using VetSolutionRation.wpf.Views.RatioPanel.SubPanels.AnimalSelection;

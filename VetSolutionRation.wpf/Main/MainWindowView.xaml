@@ -8,7 +8,7 @@
         xmlns:navigation="clr-namespace:VetSolutionRation.wpf.Services.Navigation"
         xmlns:main="clr-namespace:VetSolutionRation.wpf.Main"
         mc:Ignorable="d"
-        Title="VetSolution Ratio Calculation"
+        Title="VetSolution Calcul de Ration"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="Regular"
         TextElement.FontSize="13"
