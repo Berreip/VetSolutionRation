@@ -26,13 +26,13 @@ public sealed class FeedDto
     /// <summary>
     /// Feed details characteristics
     /// </summary>
-    [JsonProperty("NutritionDetails")]
+    [JsonProperty("Nutrition")]
     public List<NutritionDetailDto>? NutritionDetails { get; set; }
     
     /// <summary>
     /// Feed string details characteristics
     /// </summary>
-    [JsonProperty("StringDetails")]
+    [JsonProperty("Details")]
     public List<StringDetailDto>? StringDetails { get; set; }
 
     /// <summary>
@@ -48,20 +48,20 @@ public sealed class FeedDto
 [JsonObject("StringDetail")]
 public sealed class StringDetailDto
 {
-    [JsonProperty("CellContent")]
+    [JsonProperty("v")]
     public string? CellContent { get; set;}
     
-    [JsonProperty("HeaderKind")]
+    [JsonProperty("k")]
     public string? HeaderKind { get;set;}
 }
 
 [JsonObject("NutritionDetails")]
 public sealed class NutritionDetailDto
 {
-    [JsonProperty("CellContent")]
+    [JsonProperty("v")]
     public double? CellContent { get; set;}
     
-    [JsonProperty("HeaderKind")]
+    [JsonProperty("k")]
     public string? HeaderKind { get;set;}
 }
 
