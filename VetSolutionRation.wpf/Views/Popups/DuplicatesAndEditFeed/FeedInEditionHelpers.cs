@@ -64,8 +64,8 @@ internal class FeedInEditionHelpers
         };
     }
 
-        public static bool FilterAvailableHeaders(object item, HashSet<InraHeader> availableFeed)
+        public static bool FilterAvailableHeaders(object item, HashSet<InraHeader> presentFeeds)
         {
-            return item is HeaderAdapter headerAdapter && availableFeed.Contains(headerAdapter.HeaderKind);
+            return item is HeaderAdapter headerAdapter && !presentFeeds.Contains(headerAdapter.HeaderKind);
         }
 }

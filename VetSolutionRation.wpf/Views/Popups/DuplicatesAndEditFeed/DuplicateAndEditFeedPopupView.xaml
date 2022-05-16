@@ -21,11 +21,14 @@
 
     <Grid>
         <Grid.RowDefinitions>
+            <!-- NAME -->
             <RowDefinition Height="Auto" />
+            <!-- SEARCH -->
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
+            <!-- CONTent -->
             <RowDefinition Height="*" />
+            <!-- VALIDATE -->
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <!-- FEED NAME -->
@@ -48,29 +51,40 @@
                      Text="{Binding FeedEditedName}" />
         </Grid>
 
-        <!-- ADD NEW HEADER KIND -->
+        <!-- SEARCH + ADD NEW CATEGORIES -->
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
             <!-- SEARCH BAR -->
+            <materialDesign:PackIcon
+                Margin="10, 2, 2, 2"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Kind="Magnify" Height="25" Width="25" />
+
             <TextBox
-                Grid.Row="0"
+                Grid.Column="1"
                 Margin="5, 2"
                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                materialDesign:HintAssist.Hint="Chercher un aliment"
+                materialDesign:HintAssist.Hint="Recherche"
                 VerticalAlignment="Center"
                 Height="50"
                 HorizontalAlignment="Stretch"
                 Text="{Binding SearchFilter, UpdateSourceTrigger=PropertyChanged, Delay=100}" />
 
+            <!-- ADD NEW CATEGORIES  -->
             <ComboBox
-                Grid.Column="1"
+                Margin="5, 2"
+                Grid.Column="2"
                 Style="{StaticResource MaterialDesignOutlinedComboBox}"
                 materialDesign:HintAssist.Hint="Ajouter des catégories"
                 ItemsSource="{Binding AvailableHeaders}"
+                SelectedItem="{Binding SelectedHeader}"
                 IsEditable="True">
                 <ComboBox.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -78,6 +92,21 @@
                     </ItemsPanelTemplate>
                 </ComboBox.ItemsPanel>
             </ComboBox>
+
+            <!-- ADD SELECTED -->
+            <Button Grid.Column="3"
+                    Margin="5, 2"
+                    HorizontalContentAlignment="Left"
+                    ToolTip="Ajouter à la composition de l'aliment"
+                    Command="{Binding AddCategoryCommand}"
+                    CommandParameter="{Binding .}"
+                    Style="{StaticResource MaterialDesignFlatButton}">
+                <materialDesign:PackIcon
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Kind="PlusBox"
+                    Height="25" Width="25" />
+            </Button>
         </Grid>
 
         <!-- ALL SELECTED FEED DETAILS -->
@@ -104,44 +133,40 @@
             </ItemsControl.Template>
             <ItemsControl.ItemTemplate>
                 <DataTemplate DataType="{x:Type adapter:FeedDetailInEditionAdapter}">
-                    <Button Grid.Column="1" Margin="2"
-                            HorizontalAlignment="Stretch"
-                            HorizontalContentAlignment="Stretch"
-                            ToolTip="Cliquez pour ajouter l'aliment"
-                            Command="{Binding DataContext.SelectFeedCommand, ElementName=FeedSelectionUserControlName}"
-                            CommandParameter="{Binding .}"
-                            Style="{StaticResource MaterialDesignFlatButton}">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="120" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="120" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
 
-                            <!-- HEADER NAME -->
-                            <TextBlock Text="{Binding HeaderName}" />
+                        <!-- HEADER NAME -->
+                        <TextBlock Text="{Binding HeaderName}" 
+                                   VerticalAlignment="Center"
+                                   Margin="10, 2"/>
 
-                            <!-- CELL VALUE -->
-                            <TextBox Grid.Column="1" Text="{Binding CellValue}" />
+                        <!-- CELL VALUE -->
+                        <TextBox Grid.Column="1" Text="{Binding CellValue}"
+                                 VerticalContentAlignment="Center"
+                                 VerticalAlignment="Center"/>
 
-                            <!-- DELETE -->
-                            <Button Grid.Column="2"
-                                    Margin="2"
-                                    HorizontalContentAlignment="Left"
-                                    ToolTip="Cliquez pour ajouter l'aliment"
-                                    Command="{Binding DataContext.DeleteFeedCommand, ElementName=FeedSelectionUserControlName}"
-                                    CommandParameter="{Binding .}"
-                                    Style="{StaticResource MaterialDesignFlatButton}">
-                                <materialDesign:PackIcon Kind="PencilOutline" Height="35" Width="35" />
-                            </Button>
-                        </Grid>
-                    </Button>
+                        <!-- DELETE -->
+                        <Button Grid.Column="2"
+                                Margin="2"
+                                HorizontalContentAlignment="Left"
+                                ToolTip="Supprimer la ligne"
+                                Command="{Binding DataContext.DeleteFeedCommand, ElementName=DuplicateAndEditPopup}"
+                                CommandParameter="{Binding .}"
+                                Style="{StaticResource MaterialDesignFlatButton}">
+                            <materialDesign:PackIcon Kind="Close" Height="20" Width="20" />
+                        </Button>
+                    </Grid>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
-        
+
         <Button Grid.Row="3" Style="{StaticResource MaterialDesignFlatButton}"
                 Content="Valider"
-                Command="{Binding ValidateDuplicateAndEditCommand}"/>
+                Command="{Binding ValidateDuplicateAndEditCommand}" />
     </Grid>
 </Window>

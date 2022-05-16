@@ -22,12 +22,15 @@ internal sealed class DuplicateAndEditFeedPopupViewModel : ViewModelBase, IDupli
     private readonly FeedAdapterBase _currentData;
     private readonly Action<IFeed> _onDuplicateFeedValidated;
     private string _feedEditedName;
-    private ObservableCollectionRanged<FeedDetailInEditionAdapter> _feedDetailsInEdition;
+    private readonly ObservableCollectionRanged<FeedDetailInEditionAdapter> _feedDetailsInEdition;
     private string? _searchFilter;
+    private HeaderAdapter? _selectedHeader;
     public ICollectionView FeedDetailsInEdition { get; }
     public IDelegateCommandLight ValidateDuplicateAndEditCommand { get; }
     public ICollectionView AvailableHeaders { get; }
-
+    public IDelegateCommandLight AddCategoryCommand { get; }
+    public DelegateCommandLight<FeedDetailInEditionAdapter> DeleteFeedCommand { get; }
+    
     public DuplicateAndEditFeedPopupViewModel(FeedAdapterBase feed, Action<IFeed> onDuplicateFeedValidated)
     {
         _currentData = feed;
@@ -39,14 +42,42 @@ internal sealed class DuplicateAndEditFeedPopupViewModel : ViewModelBase, IDupli
         AvailableHeaders.SortDescriptions.Add(new SortDescription(nameof(HeaderAdapter.Header), ListSortDirection.Ascending));
         
         ValidateDuplicateAndEditCommand = new DelegateCommandLight(ExecuteValidateDuplicateAndEditCommand, CanExecuteValidateDuplicateAndEditCommand);
+        AddCategoryCommand = new DelegateCommandLight(ExecuteAddCategoryCommand, CanExecuteAddCategoryCommand);
+        DeleteFeedCommand = new DelegateCommandLight<FeedDetailInEditionAdapter>(ExecuteDeleteFeedCommand);
         LoadDefaultHeader();
+    }
+
+    private void ExecuteDeleteFeedCommand(FeedDetailInEditionAdapter feedDetailsToRemove)
+    {
+        _feedDetailsInEdition.Remove(feedDetailsToRemove);
+    }
+
+    private bool CanExecuteAddCategoryCommand()
+    {
+        return _selectedHeader != null;
+    }
+
+    private void ExecuteAddCategoryCommand()
+    {
+        var header = _selectedHeader;
+        if (header != null)
+        {
+            _feedDetailsInEdition.Add(new FeedDetailInEditionAdapter(header.HeaderKind));
+            RefreshAvailableFeeds();
+        }
+        
     }
 
     private void LoadDefaultHeader()
     {
         _feedDetailsInEdition.AddRange(FeedInEditionHelpers.GetDefaultHeaderForEdition());
-        var availableFeed = _feedDetailsInEdition.Select(o => o.Header).ToHashSet();
-        AvailableHeaders.Filter =  item => FeedInEditionHelpers.FilterAvailableHeaders(item, availableFeed);
+        RefreshAvailableFeeds();
+    }
+
+    private void RefreshAvailableFeeds()
+    {
+        var presentFeeds = _feedDetailsInEdition.Select(o => o.Header).ToHashSet();
+        AvailableHeaders.Filter = item => FeedInEditionHelpers.FilterAvailableHeaders(item, presentFeeds);
     }
 
     private bool CanExecuteValidateDuplicateAndEditCommand()
@@ -87,6 +118,18 @@ internal sealed class DuplicateAndEditFeedPopupViewModel : ViewModelBase, IDupli
                 {
                     FeedDetailsInEdition.Filter = item => FeedInEditionHelpers.FilterDetailsParts(item, value);
                 }
+            }
+        }
+    }
+
+    public HeaderAdapter? SelectedHeader
+    {
+        get => _selectedHeader;
+        set
+        {
+            if (SetProperty(ref _selectedHeader, value))
+            {
+                AddCategoryCommand.RaiseCanExecuteChanged();
             }
         }
     }
