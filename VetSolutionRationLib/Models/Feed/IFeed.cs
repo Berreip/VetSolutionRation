@@ -16,7 +16,7 @@ public interface IFeed
     string Label { get; }
     
     /// <summary>
-    /// The list of string details
+    /// The list of string details (like INRA code, inra NUMBER) if they exists
     /// </summary>
     IReadOnlyList<IStringDetailsContent> StringDetailsContent { get; }
     
@@ -26,6 +26,7 @@ public interface IFeed
     IReadOnlyList<INutritionalFeedDetails> NutritionalDetails { get; }
 
     List<string> GetLabels();
+    bool TryGetInraValue(InraHeader inraHeader, out double currentValue);
 }
 
 
@@ -33,6 +34,7 @@ public interface IFeed
 public abstract class FeedBase : IFeed
 {
     private readonly IReadOnlyCollection<string> _labels;
+    private readonly Dictionary<InraHeader, INutritionalFeedDetails> _nutritionByInraHeader;
 
     protected FeedBase(IReadOnlyCollection<string> labels,
         IEnumerable<INutritionalFeedDetails> nutritionalDetails,
@@ -41,6 +43,7 @@ public abstract class FeedBase : IFeed
         _labels = labels;
         Label = labels.JoinAsLabel();
         NutritionalDetails = nutritionalDetails.ToArray();
+        _nutritionByInraHeader = NutritionalDetails.ToDictionary(o => o.Header);
         StringDetailsContent = stringDetails.ToArray();
     }
 
@@ -53,10 +56,28 @@ public abstract class FeedBase : IFeed
     /// <inheritdoc />
     public IReadOnlyList<INutritionalFeedDetails> NutritionalDetails { get; }
 
+    public bool TryGetInraValue(InraHeader inraHeader, out double currentValue)
+    {
+        if (_nutritionByInraHeader.TryGetValue(inraHeader, out var nutritionalFeedDetails))
+        {
+            currentValue = nutritionalFeedDetails.Value;
+            return true;
+        }
+
+        currentValue = 0;
+        return false;
+    }
+    
     /// <inheritdoc />
     public List<string> GetLabels()
     {
         return _labels.ToList();
+    }
+
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return Label;
     }
 }
 

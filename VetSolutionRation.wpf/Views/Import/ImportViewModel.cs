@@ -105,11 +105,11 @@ internal sealed class ImportViewModel : ViewModelBase, IImportViewModel
             // for reference feeds:
             if (feedSource == FileFeedSource.Reference)
             {
-                _feedProvider.AddFeeds(inraFile.GetAllLines().Select(o => o.ToReferenceFeed()));
+                _feedProvider.AddFeedsAndSave(inraFile.GetAllLines().Select(o => o.ToReferenceFeed()).ToArray());
             }
             else
             {
-                _feedProvider.AddFeeds(inraFile.GetAllLines().Select(o => o.ToCustomFeed()));
+                _feedProvider.AddFeedsAndSave(inraFile.GetAllLines().Select(o => o.ToCustomFeed()).ToArray());
             }
         }
     }

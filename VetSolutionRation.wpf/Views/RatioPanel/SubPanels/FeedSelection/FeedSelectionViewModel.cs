@@ -4,6 +4,7 @@ using PRF.WPFCore.PopupManager;
 using PRF.WPFCore.UiWorkerThread;
 using VetSolutionRation.Common.Async;
 using VetSolutionRation.wpf.Services;
+using VetSolutionRation.wpf.Services.Feed;
 using VetSolutionRation.wpf.Views.Popups;
 using VetSolutionRation.wpf.Views.Popups.DuplicatesAndEditFeed;
 using VetSolutionRation.wpf.Views.RatioPanel.Adapter.FeedSelection;
@@ -27,6 +28,7 @@ internal sealed class FeedSelectionViewModel : ViewModelBase, IFeedSelectionView
 {
     private readonly CalculateRatiosView _calculateRatiosView;
     private readonly VerifyRatiosView _verifyRatiosView;
+    private readonly IFeedProvider _feedProvider;
     private IFeedSelectionModeView _selectedFeedSelectionMode;
     private IResultView _selectedResultView;
     public IFeedSelectionModeAdapter[] AvailableFeedSelectionModes { get; }
@@ -43,10 +45,12 @@ internal sealed class FeedSelectionViewModel : ViewModelBase, IFeedSelectionView
         CalculateResultView calculateResultView,
         VerifyResultView verifyResultView,
         // ReSharper restore SuggestBaseTypeForParameterInConstructor
+        IFeedProvider feedProvider,
         IFeedProviderHoster feedProviderHoster)
     {
         _calculateRatiosView = calculateRatiosView;
         _verifyRatiosView = verifyRatiosView;
+        _feedProvider = feedProvider;
         FeedProviderHoster = feedProviderHoster;
         AvailableFeedSelectionModes = new IFeedSelectionModeAdapter[]
         {
@@ -81,15 +85,9 @@ internal sealed class FeedSelectionViewModel : ViewModelBase, IFeedSelectionView
 
     private void ExecuteDuplicateFeedCommand(FeedAdapterBase feed)
     {
-        var vm = new DuplicateAndEditFeedPopupViewModel(feed, OnDuplicateValidated);
+        var vm = new DuplicateAndEditFeedPopupViewModel(_feedProvider, feed);
         var view = new DuplicateAndEditFeedPopupView(vm);
         view.ShowDialog();
-    }
-
-    private void OnDuplicateValidated(IFeed newFeed)
-    {
-        var adapter = newFeed.CreateAdapter();
-        // TODO PBO;
     }
 
     private void ExecuteSelectFeedCommand(FeedAdapterBase feedAdapter)

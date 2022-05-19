@@ -6,6 +6,7 @@ using PRF.WPFCore;
 using PRF.WPFCore.Commands;
 using PRF.WPFCore.CustomCollections;
 using VetSolutionRation.wpf.Helpers;
+using VetSolutionRation.wpf.Services.Feed;
 using VetSolutionRation.wpf.Views.Popups.Adapters;
 using VetSolutionRation.wpf.Views.RatioPanel.SubPanels.FeedSelection.Adapters;
 using VetSolutionRationLib.Enums;
@@ -19,8 +20,8 @@ internal interface IDuplicateAndEditFeedPopupViewModel
 
 internal sealed class DuplicateAndEditFeedPopupViewModel : ViewModelBase, IDuplicateAndEditFeedPopupViewModel
 {
+    private readonly IFeedProvider _feedProvider;
     private readonly FeedAdapterBase _currentData;
-    private readonly Action<IFeed> _onDuplicateFeedValidated;
     private string _feedEditedName;
     private readonly ObservableCollectionRanged<FeedDetailInEditionAdapter> _feedDetailsInEdition;
     private string? _searchFilter;
@@ -31,10 +32,10 @@ internal sealed class DuplicateAndEditFeedPopupViewModel : ViewModelBase, IDupli
     public IDelegateCommandLight AddCategoryCommand { get; }
     public DelegateCommandLight<FeedDetailInEditionAdapter> DeleteFeedCommand { get; }
     
-    public DuplicateAndEditFeedPopupViewModel(FeedAdapterBase feed, Action<IFeed> onDuplicateFeedValidated)
+    public DuplicateAndEditFeedPopupViewModel(IFeedProvider feedProvider, FeedAdapterBase feed)
     {
+        _feedProvider = feedProvider;
         _currentData = feed;
-        _onDuplicateFeedValidated = onDuplicateFeedValidated;
         _feedEditedName = $"{_currentData.FeedName}(2)";
         FeedDetailsInEdition = ObservableCollectionSource.GetDefaultView(out _feedDetailsInEdition);
         
@@ -44,12 +45,18 @@ internal sealed class DuplicateAndEditFeedPopupViewModel : ViewModelBase, IDupli
         ValidateDuplicateAndEditCommand = new DelegateCommandLight(ExecuteValidateDuplicateAndEditCommand, CanExecuteValidateDuplicateAndEditCommand);
         AddCategoryCommand = new DelegateCommandLight(ExecuteAddCategoryCommand, CanExecuteAddCategoryCommand);
         DeleteFeedCommand = new DelegateCommandLight<FeedDetailInEditionAdapter>(ExecuteDeleteFeedCommand);
-        LoadDefaultHeader();
+        
+        // LoadDefaultHeader:
+        _feedDetailsInEdition.AddRange(FeedInEditionHelpers.GetDefaultHeaderForEdition(feed, RefreshValidity));
+        RefreshAvailableFeeds();
     }
 
     private void ExecuteDeleteFeedCommand(FeedDetailInEditionAdapter feedDetailsToRemove)
     {
-        _feedDetailsInEdition.Remove(feedDetailsToRemove);
+        if (_feedDetailsInEdition.Remove(feedDetailsToRemove))
+        {
+            RefreshValidity();
+        }
     }
 
     private bool CanExecuteAddCategoryCommand()
@@ -62,33 +69,29 @@ internal sealed class DuplicateAndEditFeedPopupViewModel : ViewModelBase, IDupli
         var header = _selectedHeader;
         if (header != null)
         {
-            _feedDetailsInEdition.Add(new FeedDetailInEditionAdapter(header.HeaderKind));
+            _feedDetailsInEdition.Add(new FeedDetailInEditionAdapter(header.HeaderKind, _currentData.GetInraValue(header.HeaderKind), RefreshValidity));
             RefreshAvailableFeeds();
         }
-        
-    }
-
-    private void LoadDefaultHeader()
-    {
-        _feedDetailsInEdition.AddRange(FeedInEditionHelpers.GetDefaultHeaderForEdition());
-        RefreshAvailableFeeds();
     }
 
     private void RefreshAvailableFeeds()
     {
         var presentFeeds = _feedDetailsInEdition.Select(o => o.Header).ToHashSet();
         AvailableHeaders.Filter = item => FeedInEditionHelpers.FilterAvailableHeaders(item, presentFeeds);
+        RefreshValidity();
     }
 
     private bool CanExecuteValidateDuplicateAndEditCommand()
     {
-        return !string.IsNullOrWhiteSpace(_feedEditedName);
+        return !string.IsNullOrWhiteSpace(_feedEditedName) &&
+               _feedDetailsInEdition.Count != 0 && 
+               _feedDetailsInEdition.All(o => o.IsValid);
     }
 
     private void ExecuteValidateDuplicateAndEditCommand()
     {
-        // TODO PBO 
-        _onDuplicateFeedValidated.Invoke(new CustomFeed(new[] { _feedEditedName }, new List<INutritionalFeedDetails>(), new List<IStringDetailsContent>()));
+        var customFeed = new CustomFeed(new[] { _feedEditedName }, _feedDetailsInEdition.Select(o => o.CreateNutritionalFeedDetails()));
+        _feedProvider.AddFeedsAndSave(new []{customFeed});
     }
 
     public string FeedEditedName

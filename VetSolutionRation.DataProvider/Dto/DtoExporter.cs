@@ -67,8 +67,7 @@ public static class DtoExporter
 
         return new CustomFeed(
             dto.Labels ?? throw new InvalidOperationException(),
-            ConvertFromDto(dto.NutritionDetails),
-            ConvertFromDto(dto.StringDetails));
+            ConvertFromDto(dto.NutritionDetails));
     }
 
     private static IEnumerable<IStringDetailsContent> ConvertFromDto(IEnumerable<StringDetailDto>? dtoStringDetails)

@@ -26,7 +26,7 @@ public static class InraRationImportModelExtensions
     public static ICustomFeed ToCustomFeed(this IInraRationLineImportModel lineImportModel)
     {
         var details = GetAllNutritionalDetails(lineImportModel);
-        return new CustomFeed(lineImportModel.GetLabels(), details.NutritionalDetails, details.StringDetails);
+        return new CustomFeed(lineImportModel.GetLabels(), details.NutritionalDetails);
     }
     
     private static (IReadOnlyList<INutritionalFeedDetails> NutritionalDetails, IReadOnlyList<IStringDetailsContent> StringDetails) GetAllNutritionalDetails(IInraRationLineImportModel lineImportModel)

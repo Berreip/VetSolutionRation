@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace VetSolutionRationLib.Models.Feed;
 
@@ -13,9 +14,8 @@ public interface ICustomFeed: IFeed
 public sealed class CustomFeed : FeedBase, ICustomFeed
 {
     public CustomFeed(IReadOnlyCollection<string> labels, 
-        IEnumerable<INutritionalFeedDetails> nutritionalDetails, 
-        IEnumerable<IStringDetailsContent> stringDetails) 
-        : base(labels, nutritionalDetails, stringDetails)
+        IEnumerable<INutritionalFeedDetails> nutritionalDetails) 
+        : base(labels, nutritionalDetails, Array.Empty<IStringDetailsContent>())
     {
     }
 }

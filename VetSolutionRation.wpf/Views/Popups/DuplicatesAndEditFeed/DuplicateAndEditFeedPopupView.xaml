@@ -8,7 +8,7 @@
         xmlns:adapter="clr-namespace:VetSolutionRation.wpf.Views.Popups.Adapters"
         mc:Ignorable="d"
         Title="Duplication et édition aliment"
-        Height="450" Width="800"
+        Height="800" Width="450"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="Regular"
         TextElement.FontSize="13"
@@ -23,64 +23,38 @@
         <Grid.RowDefinitions>
             <!-- NAME -->
             <RowDefinition Height="Auto" />
+            
+            <!-- ADD NEW CATEGORIES -->
+            <RowDefinition Height="Auto" />
             <!-- SEARCH -->
             <RowDefinition Height="Auto" />
-            <!-- CONTent -->
+            
+            
+            <!-- CONTENT -->
             <RowDefinition Height="*" />
             <!-- VALIDATE -->
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <!-- FEED NAME -->
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
+        <TextBox
+            ToolTip="Nom de l'aliment"
+            Margin="10"
+            VerticalAlignment="Center"
+            Style="{StaticResource MaterialDesignOutlinedTextBox}"
+            Text="{Binding FeedEditedName, UpdateSourceTrigger=PropertyChanged}" />
 
-            <TextBlock
-                Margin="10"
-                Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
-                Text="Nom : "
-                VerticalAlignment="Center" />
 
-            <TextBox Grid.Column="1"
-                     Margin="10"
-                     VerticalAlignment="Center"
-                     Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                     Text="{Binding FeedEditedName}" />
-        </Grid>
-
-        <!-- SEARCH + ADD NEW CATEGORIES -->
+        <!-- ADD NEW CATEGORIES -->
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-
-            <!-- SEARCH BAR -->
-            <materialDesign:PackIcon
-                Margin="10, 2, 2, 2"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Kind="Magnify" Height="25" Width="25" />
-
-            <TextBox
-                Grid.Column="1"
-                Margin="5, 2"
-                Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                materialDesign:HintAssist.Hint="Recherche"
-                VerticalAlignment="Center"
-                Height="50"
-                HorizontalAlignment="Stretch"
-                Text="{Binding SearchFilter, UpdateSourceTrigger=PropertyChanged, Delay=100}" />
 
             <!-- ADD NEW CATEGORIES  -->
             <ComboBox
                 Margin="5, 2"
-                Grid.Column="2"
                 Style="{StaticResource MaterialDesignOutlinedComboBox}"
                 materialDesign:HintAssist.Hint="Ajouter des catégories"
                 ItemsSource="{Binding AvailableHeaders}"
@@ -94,8 +68,9 @@
             </ComboBox>
 
             <!-- ADD SELECTED -->
-            <Button Grid.Column="3"
-                    Margin="5, 2"
+            <Button Grid.Column="1"
+                    Margin="2"
+                    Padding="5"
                     HorizontalContentAlignment="Left"
                     ToolTip="Ajouter à la composition de l'aliment"
                     Command="{Binding AddCategoryCommand}"
@@ -109,8 +84,35 @@
             </Button>
         </Grid>
 
+        <!-- SEARCH  -->
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <!-- SEARCH BAR -->
+            <TextBox
+               
+                Margin="5, 2"
+                Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                materialDesign:HintAssist.Hint="Recherche"
+                VerticalAlignment="Center"
+                Height="50"
+                HorizontalAlignment="Stretch"
+                Text="{Binding SearchFilter, UpdateSourceTrigger=PropertyChanged, Delay=100}" />
+            
+            <materialDesign:PackIcon
+                Grid.Column="1"
+                Margin="7, 2"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Kind="Magnify" Height="25" Width="25" />
+           
+        </Grid>
+        
         <!-- ALL SELECTED FEED DETAILS -->
-        <ItemsControl Grid.Row="2" Margin="2, 5" Padding="5"
+        <ItemsControl Grid.Row="3" Margin="2, 5" Padding="5"
                       HorizontalAlignment="Stretch"
                       ItemsSource="{Binding FeedDetailsInEdition}">
             <ItemsControl.ItemsPanel>
@@ -135,20 +137,32 @@
                 <DataTemplate DataType="{x:Type adapter:FeedDetailInEditionAdapter}">
                     <Grid>
                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100" />
                             <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="120" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
 
                         <!-- HEADER NAME -->
-                        <TextBlock Text="{Binding HeaderName}" 
+                        <TextBlock Text="{Binding HeaderName}"
                                    VerticalAlignment="Center"
-                                   Margin="10, 2"/>
+                                   HorizontalAlignment="Right"
+                                   Margin="10, 2" />
 
                         <!-- CELL VALUE -->
-                        <TextBox Grid.Column="1" Text="{Binding CellValue}"
+                        <TextBox Grid.Column="1" Text="{Binding CellValue, UpdateSourceTrigger=PropertyChanged}"
                                  VerticalContentAlignment="Center"
-                                 VerticalAlignment="Center"/>
+                                 VerticalAlignment="Center">
+                            <TextBox.Style>
+                                <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource MaterialDesignTextBox}">
+                                    <Setter Property="Foreground" Value="{StaticResource MaterialDesignBody}"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsValid}" Value="False">
+                                            <Setter Property="Foreground" Value="Red" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBox.Style>
+                        </TextBox>
 
                         <!-- DELETE -->
                         <Button Grid.Column="2"
@@ -165,7 +179,10 @@
             </ItemsControl.ItemTemplate>
         </ItemsControl>
 
-        <Button Grid.Row="3" Style="{StaticResource MaterialDesignFlatButton}"
+        <Button Grid.Row="4" 
+                Margin="20, 5"
+                VerticalAlignment="Center" HorizontalAlignment="Stretch"
+                Style="{StaticResource MaterialDesignOutlinedButton}"
                 Content="Valider"
                 Command="{Binding ValidateDuplicateAndEditCommand}" />
     </Grid>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -18,7 +19,7 @@ internal interface IFeedProvider
 {
     IEnumerable<IFeed> GetFeeds();
     event Action OnNewDataProvided;
-    void AddFeeds(IEnumerable<IFeed> newFeeds);
+    void AddFeedsAndSave(IReadOnlyCollection<IFeed> newFeeds);
 }
 
 public sealed class FeedProvider : IFeedProvider
@@ -27,6 +28,7 @@ public sealed class FeedProvider : IFeedProvider
     private readonly object _key = new object();
     private readonly Dictionary<string, IFeed> _feedByLabels = new Dictionary<string, IFeed>(StringComparer.OrdinalIgnoreCase);
     private readonly DirectoryInfo _cacheFolder;
+    private readonly string[] _filesToLoad = { VetSolutionRatioConstants.SAVED_DATA_REFERENCE_FILE_NAME, VetSolutionRatioConstants.SAVED_DATA_USER_FILE_NAME };
 
     public FeedProvider(IConfigurationManager configurationManager)
     {
@@ -38,16 +40,24 @@ public sealed class FeedProvider : IFeedProvider
     {
         AsyncWrapper.DispatchAndWrapInFireAndForget(() =>
         {
-            if (_cacheFolder.ExistsExplicit() && _cacheFolder.TryGetFile(VetSolutionRatioConstants.SAVED_DATA_FILE_NAME, out var file))
+            if (!_cacheFolder.ExistsExplicit()) return;
+            
+            // load every saved data file (reference and user) if they exists
+            foreach (var fileName in _filesToLoad)
             {
-                var fileContent = DtoExporter.DeserializeFromJson(file.ReadAllText());
-                if (fileContent.Feeds != null)
+                if (_cacheFolder.TryGetFile(fileName, out var file))
                 {
-                    AddFeeds(fileContent.Feeds.Select(o => o.ConvertFromDto()));
-                }
+                    var fileContent = DtoExporter.DeserializeFromJson(file.ReadAllText());
+                    if (fileContent.Feeds != null)
+                    {
+                        // add feeds without saving
+                        AddFeedsAndSaveIfNeeded(fileContent.Feeds.Select(o => o.ConvertFromDto()).ToArray(), false);
+                    }
+                }  
             }
         });
     }
+
 
     /// <inheritdoc />
     public IEnumerable<IFeed> GetFeeds()
@@ -58,10 +68,20 @@ public sealed class FeedProvider : IFeedProvider
         }
     }
 
-    public void AddFeeds(IEnumerable<IFeed> newFeeds)
+    public void AddFeedsAndSave(IReadOnlyCollection<IFeed> newFeeds)
     {
+        AddFeedsAndSaveIfNeeded(newFeeds, true);
+    }
+
+    private void AddFeedsAndSaveIfNeeded(IReadOnlyCollection<IFeed> newFeeds, bool shouldSave)
+    {
+        if(newFeeds.Count == 0) return;
+        
         lock (_key)
         {
+            var referenceChanged = false;
+            var userDataChanged = false;
+
             foreach (var newFeed in newFeeds)
             {
                 if (_feedByLabels.TryGetValue(newFeed.Label, out var previous))
@@ -70,11 +90,13 @@ public sealed class FeedProvider : IFeedProvider
                     if (newFeed is IReferenceFeed)
                     {
                         _feedByLabels[newFeed.Label] = newFeed;
+                        referenceChanged = true;
                     }
-                    // else if previous is custom and new one is cutom replace it
+                    // else if previous is custom and new one is custom replace it
                     if (previous is ICustomFeed)
                     {
                         _feedByLabels[newFeed.Label] = newFeed;
+                        userDataChanged = true;
                     }
                     // else if the previous is a reference feed, ignore the custom new one
                 }
@@ -82,22 +104,62 @@ public sealed class FeedProvider : IFeedProvider
                 {
                     // if not there, juste add it
                     _feedByLabels.Add(newFeed.Label, newFeed);
+                    if (newFeed is IReferenceFeed)
+                    {
+                        referenceChanged = true;
+                    }
+                    else
+                    {
+                        userDataChanged = true;
+                    }
                 }
             }
 
-            SaveFeeds(_feedByLabels.Values.ToArray());
+            if (shouldSave && (referenceChanged || userDataChanged))
+            {
+                var referenceFeeds = new List<IFeed>(_feedByLabels.Count);
+                var customFeeds = new List<IFeed>();
+                foreach (var feedByLabel in _feedByLabels)
+                {
+                    switch (feedByLabel.Value)
+                    {
+                        case ICustomFeed customFeed:
+                            customFeeds.Add(customFeed);
+                            break;
+                        case IReferenceFeed referenceFeed:
+                            referenceFeeds.Add(referenceFeed);
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException(nameof(feedByLabel.Value));
+                    }
+                }
+
+                if (userDataChanged)
+                {
+                    SaveFeeds(customFeeds, VetSolutionRatioConstants.SAVED_DATA_USER_FILE_NAME);
+                }
+
+                if (referenceChanged)
+                {
+                    SaveFeeds(referenceFeeds, VetSolutionRatioConstants.SAVED_DATA_REFERENCE_FILE_NAME);
+                }
+            }
         }
         // raise outside the lock
         RaiseOnNewDataProvided();
     }
 
-    private void SaveFeeds(IFeed[] feeds)
+    private void SaveFeeds(IReadOnlyCollection<IFeed> feeds, string fileName)
     {
+        if (feeds.Count == 0)
+        {
+            return;
+        }
         try
         {
             _cacheFolder.CreateIfNotExist();
             var jsonFeeds = feeds.ConvertToDto().SerializeReferenceToJson();
-            File.WriteAllText(_cacheFolder.GetFile(VetSolutionRatioConstants.SAVED_DATA_FILE_NAME).FullName, jsonFeeds);
+            File.WriteAllText(_cacheFolder.GetFile(fileName).FullName, jsonFeeds);
         }
         catch (Exception e)
         {
