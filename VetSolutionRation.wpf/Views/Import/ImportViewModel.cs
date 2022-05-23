@@ -1,12 +1,10 @@
 ﻿using System;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using PRF.WPFCore;
 using PRF.WPFCore.Browsers;
 using PRF.WPFCore.Commands;
-using PRF.WPFCore.CustomCollections;
 using VetSolutionRation.Common.Async;
 using VetSolutionRation.DataProvider;
 using VetSolutionRation.DataProvider.Models.Helpers;
@@ -14,7 +12,6 @@ using VetSolutionRation.wpf.Helpers;
 using VetSolutionRation.wpf.Services.Configuration;
 using VetSolutionRation.wpf.Services.Feed;
 using VetSolutionRation.wpf.Views.Import.Adapters;
-using VetSolutionRationLib.Models.Feed;
 
 namespace VetSolutionRation.wpf.Views.Import;
 

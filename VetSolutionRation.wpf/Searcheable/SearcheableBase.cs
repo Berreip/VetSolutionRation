@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using PRF.Utils.CoreComponents.Extensions;
 using PRF.WPFCore;
 using VetSolutionRation.wpf.Helpers;
 using VetSolutionRationLib.Helpers;

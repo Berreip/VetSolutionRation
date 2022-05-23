@@ -1,5 +1,4 @@
 ﻿using System;
-using PRF.WPFCore;
 using VetSolutionRation.wpf.Helpers;
 using VetSolutionRation.wpf.Searcheable;
 using VetSolutionRationLib.Enums;
@@ -14,19 +13,22 @@ internal interface IFeedWithValue
 
 internal interface IFeedAdapter : IFeedWithValue
 {
+    string FeedName { get; }
 }
-
 
 /// <summary>
 /// Represent the adapter of a feed that is from reference feed (readonly)
 /// </summary>
-internal abstract class FeedAdapterBase : SearcheableBase, IFeedAdapter
+internal abstract class FeedAdapterBase<T> : SearcheableBase, IFeedAdapter
+    where T : IFeed
 {
+    private readonly T _feed;
     private bool _isSelected;
 
-    protected FeedAdapterBase(string feedName) : base(feedName)
+    protected FeedAdapterBase(T feed) : base(feed.Label)
     {
-        FeedName = feedName;
+        _feed = feed;
+        FeedName = feed.Label;
     }
 
     public bool IsSelected
@@ -37,42 +39,34 @@ internal abstract class FeedAdapterBase : SearcheableBase, IFeedAdapter
 
     public string FeedName { get; }
 
-    public abstract double GetInraValue(InraHeader inraHeader);
+    /// <inheritdoc />
+    public double GetInraValue(InraHeader inraHeader)
+    {
+        return _feed.TryGetInraValue(inraHeader, out var matchingValue) ? matchingValue : VetSolutionRatioConstants.DEFAULT_FEED_VALUE;
+    }
+}
+
+internal interface IReferenceFeedAdapter : IFeedAdapter
+{
 }
 
 /// <summary>
 /// Represent the adapter of a feed that is from reference feed (readonly)
 /// </summary>
-internal sealed class ReferenceFeedAdapter : FeedAdapterBase
+internal sealed class ReferenceFeedAdapter : FeedAdapterBase<IReferenceFeed>, IReferenceFeedAdapter
 {
-    private readonly IReferenceFeed _feed;
-
-    public ReferenceFeedAdapter(IReferenceFeed feed) : base(feed.Label)
+    public ReferenceFeedAdapter(IReferenceFeed feed) : base(feed)
     {
-        _feed = feed;
-    }
-
-    /// <inheritdoc />
-    public override double GetInraValue(InraHeader inraHeader)
-    {
-        return _feed.TryGetInraValue(inraHeader, out var matchingValue) ? matchingValue : VetSolutionRatioConstants.DEFAULT_FEED_VALUE;
     }
 }
 
 /// <summary>
 /// Represent the adapter of a feed that has been created by user
 /// </summary>
-internal sealed class CustomUserFeedAdapter : FeedAdapterBase
+internal sealed class CustomUserFeedAdapter : FeedAdapterBase<ICustomFeed>
 {
-    public CustomUserFeedAdapter(ICustomFeed feed) : base(feed.Label)
+    public CustomUserFeedAdapter(ICustomFeed feed) : base(feed)
     {
-    }
-
-    /// <inheritdoc />
-    public override double GetInraValue(InraHeader inraHeader)
-    {
-        // TODO PBO
-        throw new NotImplementedException();
     }
 }
 
@@ -90,5 +84,4 @@ internal static class FeedAdapterExtensions
                 throw new ArgumentOutOfRangeException(nameof(feed));
         }
     }
-
 }

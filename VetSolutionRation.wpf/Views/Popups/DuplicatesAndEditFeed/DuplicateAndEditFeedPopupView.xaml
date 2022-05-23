@@ -23,13 +23,13 @@
         <Grid.RowDefinitions>
             <!-- NAME -->
             <RowDefinition Height="Auto" />
-            
+
             <!-- ADD NEW CATEGORIES -->
             <RowDefinition Height="Auto" />
             <!-- SEARCH -->
             <RowDefinition Height="Auto" />
-            
-            
+
+
             <!-- CONTENT -->
             <RowDefinition Height="*" />
             <!-- VALIDATE -->
@@ -37,12 +37,34 @@
         </Grid.RowDefinitions>
 
         <!-- FEED NAME -->
-        <TextBox
-            ToolTip="Nom de l'aliment"
-            Margin="10"
-            VerticalAlignment="Center"
-            Style="{StaticResource MaterialDesignOutlinedTextBox}"
-            Text="{Binding FeedEditedName, UpdateSourceTrigger=PropertyChanged}" />
+        <Grid>
+            <Grid.RowDefinitions>
+                <!-- NAME -->
+                <RowDefinition Height="Auto" />
+                <!-- Duplication warning -->
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            
+            <TextBox
+                IsEnabled="{Binding CouldEditName}"
+                ToolTip="Nom de l'aliment"
+                Margin="10"
+                VerticalAlignment="Center"
+                Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                Text="{Binding FeedEditedName, UpdateSourceTrigger=PropertyChanged}" />
+            <StackPanel Grid.Row="1" Orientation="Horizontal"
+                        Visibility="{Binding IsDuplicatedLabel, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <materialDesign:PackIcon Kind="AlertOutline" 
+                                         Foreground="Orange" 
+                                         Margin="10"
+                                         Height="35" Width="35"/>
+                <TextBlock
+                    VerticalAlignment="Center"
+                    Foreground="Orange" 
+                    Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
+                    Text="Le nom renseigné est déjà utilisé" />
+            </StackPanel>
+        </Grid>
 
 
         <!-- ADD NEW CATEGORIES -->
@@ -93,7 +115,7 @@
 
             <!-- SEARCH BAR -->
             <TextBox
-               
+
                 Margin="5, 2"
                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
                 materialDesign:HintAssist.Hint="Recherche"
@@ -101,16 +123,16 @@
                 Height="50"
                 HorizontalAlignment="Stretch"
                 Text="{Binding SearchFilter, UpdateSourceTrigger=PropertyChanged, Delay=100}" />
-            
+
             <materialDesign:PackIcon
                 Grid.Column="1"
                 Margin="7, 2"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Kind="Magnify" Height="25" Width="25" />
-           
+
         </Grid>
-        
+
         <!-- ALL SELECTED FEED DETAILS -->
         <ItemsControl Grid.Row="3" Margin="2, 5" Padding="5"
                       HorizontalAlignment="Stretch"
@@ -154,7 +176,7 @@
                                  VerticalAlignment="Center">
                             <TextBox.Style>
                                 <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource MaterialDesignTextBox}">
-                                    <Setter Property="Foreground" Value="{StaticResource MaterialDesignBody}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource MaterialDesignBody}" />
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding IsValid}" Value="False">
                                             <Setter Property="Foreground" Value="Red" />
@@ -179,7 +201,7 @@
             </ItemsControl.ItemTemplate>
         </ItemsControl>
 
-        <Button Grid.Row="4" 
+        <Button Grid.Row="4"
                 Margin="20, 5"
                 VerticalAlignment="Center" HorizontalAlignment="Stretch"
                 Style="{StaticResource MaterialDesignOutlinedButton}"

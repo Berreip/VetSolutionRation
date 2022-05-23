@@ -1,5 +1,4 @@
-﻿using System;
-using VetSolutionRation.wpf.Searcheable;
+﻿using VetSolutionRation.wpf.Searcheable;
 using VetSolutionRationLib.Enums;
 
 namespace VetSolutionRation.wpf.Views.RatioPanel.Adapter

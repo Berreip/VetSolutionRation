@@ -1,26 +1,22 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Windows.Xps.Packaging;
 using PRF.WPFCore;
 using PRF.WPFCore.Commands;
 using PRF.WPFCore.CustomCollections;
-using PRF.WPFCore.LiveCollection;
-using VetSolutionRation.wpf.Services;
 using VetSolutionRation.wpf.Views.RatioPanel.SubPanels.FeedSelection.Adapters;
 
 namespace VetSolutionRation.wpf.Views.RatioPanel.SubPanels.FeedSelection.Verify;
 
 internal interface IVerifyRatiosViewModel
 {
-    void AddSelectedFeed(FeedAdapterBase feedAdapter);
+    void AddSelectedFeed(IFeedAdapter feedAdapter);
 }
 
 internal sealed class VerifyRatiosViewModel : ViewModelBase, IVerifyRatiosViewModel
 {
     public ICollectionView SelectedFeedsForVerifyPanel { get; }
     private readonly ObservableCollectionRanged<FeedVerifySpecificAdapter> _selectedFeedForVerifyPanel;
-    private readonly HashSet<FeedAdapterBase> _alreadyAddedHash = new HashSet<FeedAdapterBase>();
+    private readonly HashSet<IFeedAdapter> _alreadyAddedHash = new HashSet<IFeedAdapter>();
 
     public IDelegateCommandLight<FeedVerifySpecificAdapter> RemoveFromSelectedFeedsCommand { get; }
     
@@ -32,7 +28,7 @@ internal sealed class VerifyRatiosViewModel : ViewModelBase, IVerifyRatiosViewMo
     }
 
     /// <inheritdoc />
-    public void AddSelectedFeed(FeedAdapterBase feedAdapter)
+    public void AddSelectedFeed(IFeedAdapter feedAdapter)
     {
         if (_alreadyAddedHash.Add(feedAdapter))
         {

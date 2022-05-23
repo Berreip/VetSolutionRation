@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using PRF.WPFCore;
 using PRF.WPFCore.Commands;
 using PRF.WPFCore.CustomCollections;
-using VetSolutionRation.wpf.Helpers;
 using VetSolutionRation.wpf.Services.Feed;
+using VetSolutionRation.wpf.Services.PopupManager;
 using VetSolutionRation.wpf.Views.Popups.Adapters;
 using VetSolutionRation.wpf.Views.RatioPanel.SubPanels.FeedSelection.Adapters;
 using VetSolutionRationLib.Enums;
@@ -14,38 +13,53 @@ using VetSolutionRationLib.Models.Feed;
 
 namespace VetSolutionRation.wpf.Views.Popups.DuplicatesAndEditFeed;
 
-internal interface IDuplicateAndEditFeedPopupViewModel
+internal interface IDuplicateAndEditFeedPopupViewModel: IPopupViewModel
 {
 }
 
 internal sealed class DuplicateAndEditFeedPopupViewModel : ViewModelBase, IDuplicateAndEditFeedPopupViewModel
 {
+    private readonly IPopupManagerLight _popupManager;
     private readonly IFeedProvider _feedProvider;
-    private readonly FeedAdapterBase _currentData;
+    private readonly IFeedAdapter _currentData;
+    private readonly FeedEditionMode _mode;
     private string _feedEditedName;
-    private readonly ObservableCollectionRanged<FeedDetailInEditionAdapter> _feedDetailsInEdition;
     private string? _searchFilter;
     private HeaderAdapter? _selectedHeader;
+    private bool _isDuplicatedLabel;
+    public bool CouldEditName { get; }
+    
+    private readonly ObservableCollectionRanged<FeedDetailInEditionAdapter> _feedDetailsInEdition;
     public ICollectionView FeedDetailsInEdition { get; }
-    public IDelegateCommandLight ValidateDuplicateAndEditCommand { get; }
     public ICollectionView AvailableHeaders { get; }
+    
+    public IDelegateCommandLight ValidateDuplicateAndEditCommand { get; }
     public IDelegateCommandLight AddCategoryCommand { get; }
     public DelegateCommandLight<FeedDetailInEditionAdapter> DeleteFeedCommand { get; }
-    
-    public DuplicateAndEditFeedPopupViewModel(IFeedProvider feedProvider, FeedAdapterBase feed)
+
+    public DuplicateAndEditFeedPopupViewModel(IPopupManagerLight popupManager, IFeedProvider feedProvider, IFeedAdapter feed, FeedEditionMode mode)
     {
+        _popupManager = popupManager;
         _feedProvider = feedProvider;
         _currentData = feed;
-        _feedEditedName = $"{_currentData.FeedName}(2)";
+        _mode = mode;
+        _feedEditedName = feed.FeedName;
+
+        if (mode == FeedEditionMode.Edition && feed is IReferenceFeedAdapter)
+        {
+            throw new InvalidOperationException("Could not edit a reference feed");
+        }
+
+        CouldEditName = _mode == FeedEditionMode.Duplication;
         FeedDetailsInEdition = ObservableCollectionSource.GetDefaultView(out _feedDetailsInEdition);
-        
+
         AvailableHeaders = ObservableCollectionSource.GetDefaultView(Enum.GetValues(typeof(InraHeader)).Cast<InraHeader>().Select(o => new HeaderAdapter(o)));
         AvailableHeaders.SortDescriptions.Add(new SortDescription(nameof(HeaderAdapter.Header), ListSortDirection.Ascending));
-        
+
         ValidateDuplicateAndEditCommand = new DelegateCommandLight(ExecuteValidateDuplicateAndEditCommand, CanExecuteValidateDuplicateAndEditCommand);
         AddCategoryCommand = new DelegateCommandLight(ExecuteAddCategoryCommand, CanExecuteAddCategoryCommand);
         DeleteFeedCommand = new DelegateCommandLight<FeedDetailInEditionAdapter>(ExecuteDeleteFeedCommand);
-        
+
         // LoadDefaultHeader:
         _feedDetailsInEdition.AddRange(FeedInEditionHelpers.GetDefaultHeaderForEdition(feed, RefreshValidity));
         RefreshAvailableFeeds();
@@ -55,7 +69,7 @@ internal sealed class DuplicateAndEditFeedPopupViewModel : ViewModelBase, IDupli
     {
         if (_feedDetailsInEdition.Remove(feedDetailsToRemove))
         {
-            RefreshValidity();
+            RefreshAvailableFeeds();
         }
     }
 
@@ -70,6 +84,7 @@ internal sealed class DuplicateAndEditFeedPopupViewModel : ViewModelBase, IDupli
         if (header != null)
         {
             _feedDetailsInEdition.Add(new FeedDetailInEditionAdapter(header.HeaderKind, _currentData.GetInraValue(header.HeaderKind), RefreshValidity));
+            SelectedHeader = null;
             RefreshAvailableFeeds();
         }
     }
@@ -84,14 +99,18 @@ internal sealed class DuplicateAndEditFeedPopupViewModel : ViewModelBase, IDupli
     private bool CanExecuteValidateDuplicateAndEditCommand()
     {
         return !string.IsNullOrWhiteSpace(_feedEditedName) &&
-               _feedDetailsInEdition.Count != 0 && 
+               !_isDuplicatedLabel &&
+               _feedDetailsInEdition.Count != 0 &&
                _feedDetailsInEdition.All(o => o.IsValid);
     }
 
     private void ExecuteValidateDuplicateAndEditCommand()
     {
         var customFeed = new CustomFeed(new[] { _feedEditedName }, _feedDetailsInEdition.Select(o => o.CreateNutritionalFeedDetails()));
-        _feedProvider.AddFeedsAndSave(new []{customFeed});
+        _feedProvider.AddFeedsAndSave(new[] { customFeed });
+        
+        // request closing
+        _popupManager.RequestClosing(this);
     }
 
     public string FeedEditedName
@@ -99,13 +118,19 @@ internal sealed class DuplicateAndEditFeedPopupViewModel : ViewModelBase, IDupli
         get => _feedEditedName;
         set
         {
-            if (SetProperty(ref _feedEditedName, value))
+            if (_mode == FeedEditionMode.Duplication && SetProperty(ref _feedEditedName, value))
             {
                 RefreshValidity();
             }
         }
     }
 
+    public bool IsDuplicatedLabel
+    {
+        get => _isDuplicatedLabel;
+        private set => SetProperty(ref _isDuplicatedLabel, value);
+    }
+    
     public string? SearchFilter
     {
         get => _searchFilter;
@@ -139,6 +164,20 @@ internal sealed class DuplicateAndEditFeedPopupViewModel : ViewModelBase, IDupli
 
     private void RefreshValidity()
     {
+        IsDuplicatedLabel = CouldEditName && _feedProvider.ContainsFeedName(_feedEditedName);
         ValidateDuplicateAndEditCommand.RaiseCanExecuteChanged();
     }
+}
+
+internal enum FeedEditionMode
+{
+    /// <summary>
+    /// Edit a feed without changing it's name
+    /// </summary>
+    Edition,
+
+    /// <summary>
+    /// Duplicate a feed
+    /// </summary>
+    Duplication
 }

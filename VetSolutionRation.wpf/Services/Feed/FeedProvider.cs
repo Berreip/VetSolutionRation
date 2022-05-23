@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using Newtonsoft.Json;
 using PRF.Utils.CoreComponents.Diagnostic;
 using PRF.Utils.CoreComponents.Extensions;
 using VetSolutionRation.Common.Async;
@@ -20,11 +18,11 @@ internal interface IFeedProvider
     IEnumerable<IFeed> GetFeeds();
     event Action OnNewDataProvided;
     void AddFeedsAndSave(IReadOnlyCollection<IFeed> newFeeds);
+    bool ContainsFeedName(string feedEditedName);
 }
 
 public sealed class FeedProvider : IFeedProvider
 {
-    private readonly IConfigurationManager _configurationManager;
     private readonly object _key = new object();
     private readonly Dictionary<string, IFeed> _feedByLabels = new Dictionary<string, IFeed>(StringComparer.OrdinalIgnoreCase);
     private readonly DirectoryInfo _cacheFolder;
@@ -32,8 +30,7 @@ public sealed class FeedProvider : IFeedProvider
 
     public FeedProvider(IConfigurationManager configurationManager)
     {
-        _configurationManager = configurationManager;
-        _cacheFolder = _configurationManager.GetCacheDataFolder();
+        _cacheFolder = configurationManager.GetCacheDataFolder();
     }
 
     public void LoadInitialSavedFeeds()
@@ -71,6 +68,15 @@ public sealed class FeedProvider : IFeedProvider
     public void AddFeedsAndSave(IReadOnlyCollection<IFeed> newFeeds)
     {
         AddFeedsAndSaveIfNeeded(newFeeds, true);
+    }
+
+    /// <inheritdoc />
+    public bool ContainsFeedName(string feedEditedName)
+    {
+        lock (_key)
+        {
+            return _feedByLabels.ContainsKey(feedEditedName);
+        }
     }
 
     private void AddFeedsAndSaveIfNeeded(IReadOnlyCollection<IFeed> newFeeds, bool shouldSave)

@@ -5,11 +5,11 @@ namespace VetSolutionRation.wpf.Views.RatioPanel.SubPanels.FeedSelection.Adapter
 
 internal sealed class FeedVerifySpecificAdapter : ViewModelBase
 {
-    private readonly FeedAdapterBase _feedAdapter;
+    private readonly IFeedAdapter _feedAdapter;
     private bool _isSelected;
     public IDelegateCommandLight ClickOnLineCommand { get; }
     
-    public FeedVerifySpecificAdapter(FeedAdapterBase feedAdapter, string quantityUnit, bool initialIsSelected = true)
+    public FeedVerifySpecificAdapter(IFeedAdapter feedAdapter, string quantityUnit, bool initialIsSelected = true)
     {
         FeedName = feedAdapter.FeedName;
         FeedQuantity = new FeedQuantityAdapter(quantityUnit);
@@ -18,7 +18,7 @@ internal sealed class FeedVerifySpecificAdapter : ViewModelBase
         ClickOnLineCommand = new DelegateCommandLight(ExecuteClickOnLineCommand);
     }
 
-    public FeedAdapterBase GetUnderlyingFeedAdapter()
+    public IFeedAdapter GetUnderlyingFeedAdapter()
     {
         return _feedAdapter;
     }

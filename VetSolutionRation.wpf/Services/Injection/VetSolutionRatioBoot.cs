@@ -7,9 +7,9 @@ using VetSolutionRation.wpf.Main;
 using VetSolutionRation.wpf.Services.Configuration;
 using VetSolutionRation.wpf.Services.Feed;
 using VetSolutionRation.wpf.Services.Navigation;
+using VetSolutionRation.wpf.Services.PopupManager;
 using VetSolutionRation.wpf.Views.Import;
 using VetSolutionRation.wpf.Views.Parameters;
-using VetSolutionRation.wpf.Views.Popups;
 using VetSolutionRation.wpf.Views.RatioPanel;
 using VetSolutionRation.wpf.Views.RatioPanel.Components;
 using VetSolutionRation.wpf.Views.RatioPanel.SubPanels.AnimalSelection;
@@ -86,6 +86,7 @@ namespace VetSolutionRation.wpf.Services.Injection
             // // VM related services
             _internalContainer.Register<IAnimalAdaptersHoster, AnimalAdaptersHoster>(LifeTime.Singleton);
             _internalContainer.Register<IFeedProviderHoster, FeedProviderHoster>(LifeTime.Singleton);
+            _internalContainer.Register<IPopupManagerLight, PopupManagerLight>(LifeTime.Singleton);
         }
 
         private void Initialize()

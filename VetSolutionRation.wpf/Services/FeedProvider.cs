@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Linq;
 using PRF.WPFCore;
 using PRF.WPFCore.CustomCollections;
@@ -7,7 +6,6 @@ using VetSolutionRation.wpf.Helpers;
 using VetSolutionRation.wpf.Services.Feed;
 using VetSolutionRation.wpf.Views.RatioPanel.SubPanels.FeedSelection.Adapters;
 using VetSolutionRationLib.Helpers;
-using VetSolutionRationLib.Models.Feed;
 
 namespace VetSolutionRation.wpf.Services;
 

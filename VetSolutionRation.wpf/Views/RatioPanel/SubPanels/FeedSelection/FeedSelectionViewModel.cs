@@ -1,11 +1,9 @@
 ﻿using PRF.WPFCore;
 using PRF.WPFCore.Commands;
-using PRF.WPFCore.PopupManager;
-using PRF.WPFCore.UiWorkerThread;
 using VetSolutionRation.Common.Async;
 using VetSolutionRation.wpf.Services;
 using VetSolutionRation.wpf.Services.Feed;
-using VetSolutionRation.wpf.Views.Popups;
+using VetSolutionRation.wpf.Services.PopupManager;
 using VetSolutionRation.wpf.Views.Popups.DuplicatesAndEditFeed;
 using VetSolutionRation.wpf.Views.RatioPanel.Adapter.FeedSelection;
 using VetSolutionRation.wpf.Views.RatioPanel.SubPanels.FeedSelection.Adapters;
@@ -13,7 +11,6 @@ using VetSolutionRation.wpf.Views.RatioPanel.SubPanels.FeedSelection.Calculate;
 using VetSolutionRation.wpf.Views.RatioPanel.SubPanels.FeedSelection.Verify;
 using VetSolutionRation.wpf.Views.RatioPanel.SubPanels.ResultPanels.Calculate;
 using VetSolutionRation.wpf.Views.RatioPanel.SubPanels.ResultPanels.Verify;
-using VetSolutionRationLib.Models.Feed;
 
 namespace VetSolutionRation.wpf.Views.RatioPanel.SubPanels.FeedSelection;
 
@@ -29,12 +26,13 @@ internal sealed class FeedSelectionViewModel : ViewModelBase, IFeedSelectionView
     private readonly CalculateRatiosView _calculateRatiosView;
     private readonly VerifyRatiosView _verifyRatiosView;
     private readonly IFeedProvider _feedProvider;
+    private readonly IPopupManagerLight _popupManagerLight;
     private IFeedSelectionModeView _selectedFeedSelectionMode;
     private IResultView _selectedResultView;
     public IFeedSelectionModeAdapter[] AvailableFeedSelectionModes { get; }
     public IFeedProviderHoster FeedProviderHoster { get; }
     public IDelegateCommandLight<ReferenceFeedAdapter> SelectFeedCommand { get; }
-    public IDelegateCommandLight<FeedAdapterBase> DuplicateFeedCommand { get; }
+    public IDelegateCommandLight<IFeedAdapter> DuplicateFeedCommand { get; }
     public IDelegateCommandLight<CustomUserFeedAdapter> EditFeedCommand { get; }
     public IDelegateCommandLight<CustomUserFeedAdapter> DeleteFeedCommand { get; }
 
@@ -46,11 +44,13 @@ internal sealed class FeedSelectionViewModel : ViewModelBase, IFeedSelectionView
         VerifyResultView verifyResultView,
         // ReSharper restore SuggestBaseTypeForParameterInConstructor
         IFeedProvider feedProvider,
-        IFeedProviderHoster feedProviderHoster)
+        IFeedProviderHoster feedProviderHoster,
+        IPopupManagerLight popupManagerLight)
     {
         _calculateRatiosView = calculateRatiosView;
         _verifyRatiosView = verifyRatiosView;
         _feedProvider = feedProvider;
+        _popupManagerLight = popupManagerLight;
         FeedProviderHoster = feedProviderHoster;
         AvailableFeedSelectionModes = new IFeedSelectionModeAdapter[]
         {
@@ -67,30 +67,36 @@ internal sealed class FeedSelectionViewModel : ViewModelBase, IFeedSelectionView
         _selectedResultView = AvailableFeedSelectionModes[0].ResultView;
         AvailableFeedSelectionModes[0].IsSelected = true;
 
-        SelectFeedCommand = new DelegateCommandLight<FeedAdapterBase>(ExecuteSelectFeedCommand);
-        DuplicateFeedCommand = new DelegateCommandLight<FeedAdapterBase>(ExecuteDuplicateFeedCommand);
+        SelectFeedCommand = new DelegateCommandLight<IFeedAdapter>(ExecuteSelectFeedCommand);
+        DuplicateFeedCommand = new DelegateCommandLight<IFeedAdapter>(ExecuteDuplicateFeedCommand);
         EditFeedCommand = new DelegateCommandLight<CustomUserFeedAdapter>(ExecuteEditFeedCommand);
         DeleteFeedCommand = new DelegateCommandLight<CustomUserFeedAdapter>(ExecuteDeleteFeedCommand);
     }
 
     private void ExecuteDeleteFeedCommand(CustomUserFeedAdapter obj)
     {
-        // TODO PBO
+        AsyncWrapper.Wrap(() =>
+        {
+            // TODO PBO
+        });
     }
 
-    private void ExecuteEditFeedCommand(CustomUserFeedAdapter obj)
+    private void ExecuteEditFeedCommand(CustomUserFeedAdapter feed)
     {
-        // TODO PBO
+        AsyncWrapper.Wrap(() => ShowEditAndDuplicateWindow(feed, FeedEditionMode.Edition));
     }
-
-    private void ExecuteDuplicateFeedCommand(FeedAdapterBase feed)
+    
+    private void ExecuteDuplicateFeedCommand(IFeedAdapter feed)
     {
-        var vm = new DuplicateAndEditFeedPopupViewModel(_feedProvider, feed);
-        var view = new DuplicateAndEditFeedPopupView(vm);
-        view.ShowDialog();
+        AsyncWrapper.Wrap(() => ShowEditAndDuplicateWindow(feed, FeedEditionMode.Duplication));
+    }
+    
+    private void ShowEditAndDuplicateWindow(IFeedAdapter feed, FeedEditionMode mode)
+    {
+        _popupManagerLight.ShowDialog(() => new DuplicateAndEditFeedPopupViewModel(_popupManagerLight, _feedProvider, feed, mode), vm => new DuplicateAndEditFeedPopupView(vm));
     }
 
-    private void ExecuteSelectFeedCommand(FeedAdapterBase feedAdapter)
+    private void ExecuteSelectFeedCommand(IFeedAdapter feedAdapter)
     {
         _calculateRatiosView.ViewModel.AddSelectedFeed(feedAdapter);
         _verifyRatiosView.ViewModel.AddSelectedFeed(feedAdapter);

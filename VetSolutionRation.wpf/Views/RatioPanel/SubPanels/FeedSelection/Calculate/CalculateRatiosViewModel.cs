@@ -5,13 +5,13 @@ namespace VetSolutionRation.wpf.Views.RatioPanel.SubPanels.FeedSelection.Calcula
 
 internal interface ICalculateRatiosViewModel
 {
-    void AddSelectedFeed(FeedAdapterBase feedAdapter);
+    void AddSelectedFeed(IFeedAdapter feedAdapter);
 }
 
 internal sealed class CalculateRatiosViewModel : ViewModelBase, ICalculateRatiosViewModel
 {
     /// <inheritdoc />
-    public void AddSelectedFeed(FeedAdapterBase feedAdapter)
+    public void AddSelectedFeed(IFeedAdapter feedAdapter)
     {
         // Nothing now
     }
