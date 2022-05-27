@@ -13,7 +13,7 @@ internal abstract class SearcheableBase : ViewModelBase, ISearcheable
 
     protected SearcheableBase(string searchPart)
     {
-        _searchPart = SearchHelpers.SplitByWhitspace(searchPart);
+        _searchPart = SearchHelpers.SplitByWhitspaceAndSpecificSymbols(searchPart);
     }
 
     /// <inheritdoc />

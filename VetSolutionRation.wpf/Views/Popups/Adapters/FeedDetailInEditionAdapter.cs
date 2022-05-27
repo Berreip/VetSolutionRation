@@ -13,7 +13,12 @@ internal sealed class FeedDetailInEditionAdapter : ViewModelBase
     private double _doubleCellValue;
     private readonly Action _refreshValidityCallBack;
     private bool _isValid = true;
-
+    
+    /// <summary>
+    /// The unit of this feed (like percentage, UEM/kg, ...)
+    /// </summary>
+    public IFeedUnitAdapter Unit { get; }
+    
     public string HeaderName { get; }
     public double DoubleCellValue => _doubleCellValue;
 
@@ -24,6 +29,7 @@ internal sealed class FeedDetailInEditionAdapter : ViewModelBase
         _doubleCellValue = initialCellValue;
         _refreshValidityCallBack = refreshValidityCallBack;
         _cellValue = initialCellValue.ToString(CultureInfo.CurrentCulture);
+        Unit = FeedUnitAdapterFactory.CreateUnit(header.GetUnit());
     }
     
     public string? CellValue
@@ -33,7 +39,7 @@ internal sealed class FeedDetailInEditionAdapter : ViewModelBase
         {
             if (SetProperty(ref _cellValue, value))
             {
-                IsValid = double.TryParse(value, NumberStyles.Any, CultureInfo.CurrentCulture, out _doubleCellValue);
+                IsValid = Unit.IsValid(value, out _doubleCellValue);
             }
         }
     }

@@ -41,7 +41,7 @@ internal sealed class FeedProviderHoster : ViewModelBase, IFeedProviderHoster
     {
         if (inputText == null)
             return;
-        var splitByWhitspace = SearchHelpers.SplitByWhitspace(inputText);
+        var splitByWhitspace = SearchHelpers.SplitByWhitspaceAndSpecificSymbols(inputText);
         AvailableFeeds.Filter = item => SearchFilters.FilterParts(item, splitByWhitspace);
     }
     

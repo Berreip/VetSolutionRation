@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using VetSolutionRationLib.Models.Units;
 
 namespace VetSolutionRationLib.Enums;
 
@@ -121,6 +122,8 @@ public static class InraHeaderExtensions
 {
     private static readonly Dictionary<InraHeader, string[]> _inraHeaderToDisplayName;
     private static readonly Dictionary<InraHeader, string> _inraHeaderToDetailledInfo;
+    private static readonly Dictionary<InraHeader, IUnit> _inraHeaderToUnit;
+
     private static readonly Dictionary<string, InraHeader> _inraDisplayNameToHeaderFr;
     private static readonly Dictionary<string, InraHeader> _inraDisplayNameToHeaderEn;
     private static readonly Dictionary<string, InraHeader> _inraDtoToHeader;
@@ -132,6 +135,7 @@ public static class InraHeaderExtensions
         InraHeader.Etat,
         InraHeader.CodeInra
     };
+
 
     static InraHeaderExtensions()
     {
@@ -361,6 +365,84 @@ sèche dans le rumen (%)"
             { InraHeader.C22_1, @"en % de la teneur en Acide Gras" },
             { InraHeader.C24_0, @"en % de la teneur en Acide Gras" },
         };
+
+        _inraHeaderToUnit = new Dictionary<InraHeader, IUnit>
+        {
+            { InraHeader.MS, Units.Percentage },
+            { InraHeader.UFL, new SpecificUnit(@"UFL/kg MS") },
+            { InraHeader.UFV, new SpecificUnit(@"UFV/kg MS") },
+            { InraHeader.PDIA, Units.GKgMs },
+            { InraHeader.PDI, Units.GKgMs },
+            { InraHeader.BPR, Units.GKgMs },
+            { InraHeader.LysDI, new PercentageUnit(@"% des PDI") },
+            { InraHeader.MetDI, new PercentageUnit(@"% des PDI") },
+            { InraHeader.HisDI, new PercentageUnit(@"% des PDI") },
+            { InraHeader.NIref, new PercentageUnit(@"% du PV") },
+            { InraHeader.UEM, new SpecificUnit(@"UEM/kg MS") },
+            { InraHeader.UEL, new SpecificUnit(@"UEL/kg MS") },
+            { InraHeader.UEB, new SpecificUnit(@"UEB/kg MS") },
+            // { InraHeader.bFVc, @"Valeur basale d’encombrement de l’aliment concentré (UEL/kg MS) " },
+            { InraHeader.MO, Units.GKgMs },
+            { InraHeader.MAT, Units.GKgMs },
+            { InraHeader.CB, Units.GKgMs },
+            { InraHeader.NDF, Units.GKgMs },
+            { InraHeader.ADF, Units.GKgMs },
+            { InraHeader.ADL, Units.GKgMs },
+            { InraHeader.AG, Units.GKgMs },
+            { InraHeader.EE, Units.GKgMs },
+            { InraHeader.Amidon, Units.GKgMs },
+            { InraHeader.dMO, Units.Percentage },
+            { InraHeader.dMA, Units.Percentage },
+            { InraHeader.dCB, Units.Percentage },
+            { InraHeader.dNDF, Units.Percentage },
+            { InraHeader.dADF, Units.Percentage },
+            { InraHeader.dE, Units.Percentage },
+            { InraHeader.P, Units.GKgMs },
+            { InraHeader.Pabs, Units.GKgMs },
+            { InraHeader.Ca, Units.GKgMs },
+            { InraHeader.Caabs, Units.GKgMs },
+            { InraHeader.Mg, Units.GKgMs },
+            { InraHeader.BE, Units.GKgMs },
+            { InraHeader.EB, Units.GKgMs },
+            { InraHeader.EM, Units.GKgMs },
+            { InraHeader.DT_N, Units.Percentage },
+            { InraHeader.DT6_N, Units.Percentage },
+            { InraHeader.DT_MS, Units.Percentage },
+            { InraHeader.DT6_MS, Units.Percentage },
+            { InraHeader.DT_Ami, Units.Percentage },
+            { InraHeader.DT6_Ami, Units.Percentage },
+            { InraHeader.dr_N, Units.Percentage },
+            { InraHeader.S, Units.GKgMs },
+            { InraHeader.Na, Units.GKgMs },
+            { InraHeader.K, Units.GKgMs },
+            { InraHeader.Cl, Units.GKgMs },
+            { InraHeader.BACA, new SpecificUnit(@"mEq/kg MS") },
+            { InraHeader.Cu, Units.MgKgMs },
+            { InraHeader.Zn, Units.MgKgMs },
+            { InraHeader.Mn, Units.MgKgMs },
+            { InraHeader.Co, Units.MgKgMs },
+            { InraHeader.Se, Units.MgKgMs },
+            { InraHeader.I, Units.MgKgMs },
+            { InraHeader.VitA, new SpecificUnit(@"UI") },
+            { InraHeader.VitD, new SpecificUnit(@"UI") },
+            { InraHeader.VitE, new SpecificUnit(@"UI") },
+            // { InraHeader.AABP, @"Concentration en Acides Aminés By-Pass au duodénum en g/100 g des 16 AA pour les 16 AABP (de la Lys à la Tyr), et en g/100 g des 18 AA pour la somme de la Cys et du Trp (CysTrpBP). Ces valeurs sont notées [AAni] dans les chapitres de Inra 2018" },
+            // { InraHeader.AADI, @"Acides Aminés Digestibles dans l’Intestin (% PDI)" },
+            { InraHeader.C6_10, Units.Percentage },
+            { InraHeader.C12_0, Units.Percentage },
+            { InraHeader.C14_0, Units.Percentage },
+            { InraHeader.C16_0, Units.Percentage },
+            { InraHeader.C16_1, Units.Percentage },
+            { InraHeader.C18_0, Units.Percentage },
+            { InraHeader.C18_1, Units.Percentage },
+            { InraHeader.C18_2, Units.Percentage },
+            { InraHeader.C18_3, Units.Percentage },
+            { InraHeader.C20_0, Units.Percentage },
+            { InraHeader.C20_1, Units.Percentage },
+            { InraHeader.C22_0, Units.Percentage },
+            { InraHeader.C22_1, Units.Percentage },
+            { InraHeader.C24_0, Units.Percentage },
+        };
     }
 
     /// <summary>
@@ -368,11 +450,21 @@ sèche dans le rumen (%)"
     /// </summary>
     public static string GetDetailledInfo(this InraHeader inraHeader)
     {
-        return _inraHeaderToDetailledInfo.TryGetValue(inraHeader, out var detailledInfo) 
+        return _inraHeaderToDetailledInfo.TryGetValue(inraHeader, out var detailledInfo)
             ? detailledInfo
             : inraHeader.GetInraHeaderLabel();
     }
     
+    /// <summary>
+    /// Return the detailled information about an INRA header
+    /// </summary>
+    public static IUnit GetUnit(this InraHeader inraHeader)
+    {
+        return _inraHeaderToUnit.TryGetValue(inraHeader, out var detailledInfo)
+            ? detailledInfo
+            : Units.NoUnit;
+    }
+
     public static bool IsStringContent(this InraHeader inraHeader)
     {
         return _stringInraContent.Contains(inraHeader);

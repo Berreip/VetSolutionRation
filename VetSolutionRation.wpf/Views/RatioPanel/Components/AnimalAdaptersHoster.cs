@@ -80,7 +80,7 @@ namespace VetSolutionRation.wpf.Views.RatioPanel.Components
         {
             if (inputText == null)
                 return;
-            var splitByWhitspace = SearchHelpers.SplitByWhitspace(inputText);
+            var splitByWhitspace = SearchHelpers.SplitByWhitspaceAndSpecificSymbols(inputText);
             AvailableAnimals.Filter = item => SearchFilters.FilterParts(item, splitByWhitspace);
         }
     }

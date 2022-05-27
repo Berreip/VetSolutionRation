@@ -71,6 +71,19 @@ namespace VetSolutionRation.wpf.UnitTests.Adapters
             //Assert
             Assert.IsFalse(res);
         }
+            
+        [Test]
+        public void MatchSearch_retuns_true_if_starts_with_parenthesis()
+        {
+            //Arrange
+            var sut = new AnimalAdapter(AnimalKind.Bovine, "bovin (Auvergne)");
+
+            //Act
+            var res = sut.MatchSearch(new [] { "Auv" });
+
+            //Assert
+            Assert.IsTrue(res);
+        }
         
         [Test]
         public void ContainsAny_retuns_false_if_no_match()

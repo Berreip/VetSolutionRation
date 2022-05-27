@@ -13,7 +13,7 @@ namespace VetSolutionRation.UnitTest.Helpers
             //Arrange
 
             //Act
-            var res = SearchHelpers.SplitByWhitspace("");
+            var res = SearchHelpers.SplitByWhitspaceAndSpecificSymbols("");
 
             //Assert
             Assert.AreEqual(0, res.Length);
@@ -25,7 +25,7 @@ namespace VetSolutionRation.UnitTest.Helpers
             //Arrange
 
             //Act
-            var res = SearchHelpers.SplitByWhitspace("   blou    bloub   ");
+            var res = SearchHelpers.SplitByWhitspaceAndSpecificSymbols("   blou    bloub   ");
 
             //Assert
             Assert.AreEqual(2, res.Length);
@@ -34,12 +34,26 @@ namespace VetSolutionRation.UnitTest.Helpers
         }
         
         [Test]
+        public void SplitByWhitspace_with_parenthesis()
+        {
+            //Arrange
+
+            //Act
+            var res = SearchHelpers.SplitByWhitspaceAndSpecificSymbols("   (blou)) (    bloub   ");
+
+            //Assert
+            Assert.AreEqual(2, res.Length);
+            Assert.Contains("blou", res);
+            Assert.Contains("bloub", res);
+        }
+        
+        [Test]
         public void SplitByWhitspace_retuns_no_split_when_no_whitespace()
         {
             //Arrange
 
             //Act
-            var res = SearchHelpers.SplitByWhitspace("bloublou");
+            var res = SearchHelpers.SplitByWhitspaceAndSpecificSymbols("bloublou");
 
             //Assert
             Assert.AreEqual(1, res.Length);
@@ -52,7 +66,7 @@ namespace VetSolutionRation.UnitTest.Helpers
             //Arrange
 
             //Act
-            var res = SearchHelpers.SplitByWhitspace("blou bloub");
+            var res = SearchHelpers.SplitByWhitspaceAndSpecificSymbols("blou bloub");
 
             //Assert
             Assert.AreEqual(2, res.Length);

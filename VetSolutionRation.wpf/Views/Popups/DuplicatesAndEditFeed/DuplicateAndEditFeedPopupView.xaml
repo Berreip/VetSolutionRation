@@ -6,6 +6,7 @@
         xmlns:duplicatesAndEditFeed="clr-namespace:VetSolutionRation.wpf.Views.Popups.DuplicatesAndEditFeed"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:adapter="clr-namespace:VetSolutionRation.wpf.Views.Popups.Adapters"
+        xmlns:selector="clr-namespace:VetSolutionRation.wpf.Views.TemplateSelector"
         mc:Ignorable="d"
         Title="Duplication et édition aliment"
         Height="800" Width="450"
@@ -19,6 +20,88 @@
         x:Name="DuplicateAndEditPopup"
         d:DataContext="{d:DesignInstance duplicatesAndEditFeed:DuplicateAndEditFeedPopupViewModel, IsDesignTimeCreatable=true}" x:ClassModifier="internal">
 
+    <Window.Resources>
+        <selector:UnitTemplateSelector x:Key="UnitTemplateSelector">
+            <selector:UnitTemplateSelector.NoUnit>
+                <DataTemplate DataType="{x:Type adapter:FeedDetailInEditionAdapter}">
+                    <TextBox Text="{Binding CellValue, UpdateSourceTrigger=PropertyChanged}"
+                             VerticalContentAlignment="Center"
+                             VerticalAlignment="Center">
+                        <TextBox.Style>
+                            <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource MaterialDesignTextBox}">
+                                <Setter Property="Foreground" Value="{StaticResource MaterialDesignBody}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsValid}" Value="False">
+                                        <Setter Property="Foreground" Value="Red" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBox.Style>
+                    </TextBox>
+                </DataTemplate>
+            </selector:UnitTemplateSelector.NoUnit>
+            <selector:UnitTemplateSelector.Percentage>
+                <DataTemplate DataType="{x:Type adapter:FeedDetailInEditionAdapter}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBox Text="{Binding CellValue, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalContentAlignment="Center"
+                                 VerticalAlignment="Center">
+                            <TextBox.Style>
+                                <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource MaterialDesignTextBox}">
+                                    <Setter Property="Foreground" Value="{StaticResource MaterialDesignBody}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsValid}" Value="False">
+                                            <Setter Property="Foreground" Value="Red" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBox.Style>
+                        </TextBox>
+                        <TextBlock
+                            Grid.Column="1"
+                            Margin="10, 2"
+                            Text="{Binding Unit.DisplayLabel, Mode=OneTime}"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center" />
+                    </Grid>
+                </DataTemplate>
+            </selector:UnitTemplateSelector.Percentage>
+            <selector:UnitTemplateSelector.Specific>
+                <DataTemplate DataType="{x:Type adapter:FeedDetailInEditionAdapter}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBox Text="{Binding CellValue, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalContentAlignment="Center"
+                                 VerticalAlignment="Center">
+                            <TextBox.Style>
+                                <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource MaterialDesignTextBox}">
+                                    <Setter Property="Foreground" Value="{StaticResource MaterialDesignBody}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsValid}" Value="False">
+                                            <Setter Property="Foreground" Value="Red" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBox.Style>
+                        </TextBox>
+                        <TextBlock
+                            Grid.Column="1"
+                            Margin="10, 2"
+                            Text="{Binding Unit.DisplayLabel, Mode=OneTime}"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center" />
+                    </Grid>
+                </DataTemplate>
+            </selector:UnitTemplateSelector.Specific>
+        </selector:UnitTemplateSelector>
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <!-- NAME -->
@@ -44,7 +127,7 @@
                 <!-- Duplication warning -->
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            
+
             <TextBox
                 IsEnabled="{Binding CouldEditName}"
                 ToolTip="Nom de l'aliment"
@@ -54,13 +137,13 @@
                 Text="{Binding FeedEditedName, UpdateSourceTrigger=PropertyChanged}" />
             <StackPanel Grid.Row="1" Orientation="Horizontal"
                         Visibility="{Binding IsDuplicatedLabel, Converter={StaticResource BooleanToVisibilityConverter}}">
-                <materialDesign:PackIcon Kind="AlertOutline" 
-                                         Foreground="Orange" 
+                <materialDesign:PackIcon Kind="AlertOutline"
+                                         Foreground="Orange"
                                          Margin="10"
-                                         Height="35" Width="35"/>
+                                         Height="35" Width="35" />
                 <TextBlock
                     VerticalAlignment="Center"
-                    Foreground="Orange" 
+                    Foreground="Orange"
                     Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
                     Text="Le nom renseigné est déjà utilisé" />
             </StackPanel>
@@ -171,21 +254,10 @@
                                    HorizontalAlignment="Right"
                                    Margin="10, 2" />
 
-                        <!-- CELL VALUE -->
-                        <TextBox Grid.Column="1" Text="{Binding CellValue, UpdateSourceTrigger=PropertyChanged}"
-                                 VerticalContentAlignment="Center"
-                                 VerticalAlignment="Center">
-                            <TextBox.Style>
-                                <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource MaterialDesignTextBox}">
-                                    <Setter Property="Foreground" Value="{StaticResource MaterialDesignBody}" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsValid}" Value="False">
-                                            <Setter Property="Foreground" Value="Red" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBox.Style>
-                        </TextBox>
+                        <!-- CELL VALUE AND UNIT -->
+                        <ContentControl Grid.Column="1"
+                                        Content="{Binding .}"
+                                        ContentTemplateSelector="{StaticResource UnitTemplateSelector}" />
 
                         <!-- DELETE -->
                         <Button Grid.Column="2"
