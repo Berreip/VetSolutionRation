@@ -49,6 +49,8 @@ internal sealed class FeedDetailInEditionAdapter : ViewModelBase
             }
         }
     }
+
+    public string DetailledInformations => Header.GetDetailledInfo();
 }
 
 internal static class FeedDetailInEditionAdapterExtensions

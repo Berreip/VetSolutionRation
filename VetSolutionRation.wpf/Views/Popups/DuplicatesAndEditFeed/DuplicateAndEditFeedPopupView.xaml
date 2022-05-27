@@ -166,6 +166,7 @@
 
                         <!-- HEADER NAME -->
                         <TextBlock Text="{Binding HeaderName}"
+                                   ToolTip="{Binding DetailledInformations}"
                                    VerticalAlignment="Center"
                                    HorizontalAlignment="Right"
                                    Margin="10, 2" />

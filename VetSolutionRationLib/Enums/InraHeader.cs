@@ -120,10 +120,11 @@ public enum InraHeader
 public static class InraHeaderExtensions
 {
     private static readonly Dictionary<InraHeader, string[]> _inraHeaderToDisplayName;
+    private static readonly Dictionary<InraHeader, string> _inraHeaderToDetailledInfo;
     private static readonly Dictionary<string, InraHeader> _inraDisplayNameToHeaderFr;
     private static readonly Dictionary<string, InraHeader> _inraDisplayNameToHeaderEn;
     private static readonly Dictionary<string, InraHeader> _inraDtoToHeader;
-    
+
     // inra header that should be converted to string
     private static readonly HashSet<InraHeader> _stringInraContent = new HashSet<InraHeader>
     {
@@ -163,7 +164,7 @@ public static class InraHeaderExtensions
             { InraHeader.Ca, new[] { "Ca" } },
             { InraHeader.Caabs, new[] { "Caabs" } },
             { InraHeader.Mg, new[] { "Mg" } },
-            { InraHeader.BE, new[] { "BE", "EB"} },
+            { InraHeader.BE, new[] { "BE", "EB" } },
             { InraHeader.EB, new[] { "EB", "GE" } },
             { InraHeader.dE, new[] { "dE", "Ed" } },
             { InraHeader.EM, new[] { "EM", "ME" } },
@@ -262,19 +263,127 @@ public static class InraHeaderExtensions
                 }
             }
         }
+
+        _inraHeaderToDetailledInfo = new Dictionary<InraHeader, string>
+        {
+            { InraHeader.MS, @"Matière sèche (%)" },
+            { InraHeader.UFL, @"Energie nette pour la lactation (UFL/kg MS) " },
+            { InraHeader.UFV, @"Energie nette pour la production de viande (UFV/kg MS) " },
+            { InraHeader.PDIA, @"Protéines digestibles dans l’intestin d’origine alimentaire (g/kg MS) " },
+            { InraHeader.PDI, @"Protéines digestibles dans l’intestin d’origine alimentaire et microbienne (g/kg MS) " },
+            { InraHeader.BPR, @"Balance protéique du rumen (g/kg MS) " },
+            { InraHeader.LysDI, @"Lysine digestible (% des PDI) " },
+            { InraHeader.MetDI, @"Méthionine digestible (% des PDI) " },
+            { InraHeader.HisDI, @"Histidine digestible (% des PDI) " },
+            { InraHeader.NIref, @"Niveau d’ingestion de référence (% du PV) " },
+            { InraHeader.UEM, @"Valeur d’encombrement « mouton » (UEM/kg MS) " },
+            { InraHeader.UEL, @"Valeur d’encombrement « vaches et chèvres laitières » (UEL/kg MS) " },
+            { InraHeader.UEB, @"Valeur d’encombrement « bovins allaitants et en croissance » (UEB/kg MS) " },
+            // { InraHeader.bFVc, @"Valeur basale d’encombrement de l’aliment concentré (UEL/kg MS) " },
+            { InraHeader.MO, @"Matière organique (g/kg MS) " },
+            { InraHeader.MAT, @"Matières azotées totales (N x 6.25) (g/kg MS) " },
+            { InraHeader.CB, @"Cellulose brute (g/kg MS) " },
+            { InraHeader.NDF, @"Fibre insoluble dans le détergent neutre (g/kg MS) " },
+            { InraHeader.ADF, @"Fibre insoluble dans le détergent acide (g/kg MS) " },
+            { InraHeader.ADL, @"Lignine insoluble dans l’acide sulfurique (g/kg MS) " },
+            { InraHeader.AG, @"Acides gras (g/kg MS) " },
+            { InraHeader.EE, @"Extrait éthéré (matière grasse brute) (g/kg MS) " },
+            { InraHeader.Amidon, @"Amidon (g/kg MS) " },
+            { InraHeader.dMO, @" Coefficients de digestibilité apparente de la MO (%)" },
+            { InraHeader.dMA, @" Coefficients de digestibilité apparente de la MAT (%)" },
+            { InraHeader.dCB, @" Coefficients de digestibilité apparente de la CB (%)" },
+            { InraHeader.dNDF, @" Coefficients de digestibilité apparente de la NDF (%)" },
+            { InraHeader.dADF, @" Coefficients de digestibilité apparente de l'ADF (%)" },
+            { InraHeader.dE, @" Coefficients de digestibilité apparente de l’énergie (%)" },
+            { InraHeader.P, @"Phosphore total (g/kg MS) " },
+            { InraHeader.Pabs, @"Phosphore absorbable (g/kg MS) " },
+            { InraHeader.Ca, @"Calcium total (g/kg MS) " },
+            { InraHeader.Caabs, @"Calcium absorbable (g/kg MS) " },
+            { InraHeader.Mg, @"Magnésium (g/kg MS) " },
+            { InraHeader.BE, @"Bilan électrolytique (mEq/kg MS) " },
+            { InraHeader.EB, @"Energie brute (kcal/kg MS) " },
+            { InraHeader.EM, @"Energie métabolisable (kcal/kg MS) " },
+            {
+                InraHeader.DT_N, @"Coefficients de dégradabilité théorique calculés pour un taux de passage correspondant à NIref 
+(DT_X) et pour un taux de passage de 6%/h (DT6_X) respectivement de l’azote dans le rumen (%)"
+            },
+            {
+                InraHeader.DT6_N, @"Coefficients de dégradabilité théorique calculés pour un taux de passage correspondant à NIref 
+(DT_X) et pour un taux de passage de 6%/h (DT6_X) respectivement de l’azote dans le rumen (%)"
+            },
+            {
+                InraHeader.DT_MS, @"Coefficients de dégradabilité théorique calculés pour un taux de passage correspondant à NIref 
+(DT_X) et pour un taux de passage de 6%/h (DT6_X) respectivement de la matière 
+sèche dans le rumen (%)"
+            },
+            {
+                InraHeader.DT6_MS, @"Coefficients de dégradabilité théorique calculés pour un taux de passage correspondant à NIref 
+(DT_X) et pour un taux de passage de 6%/h (DT6_X) respectivement de la matière 
+sèche dans le rumen (%)"
+            },
+            {
+                InraHeader.DT_Ami, @"Coefficients de dégradabilité théorique calculés pour un taux de passage correspondant à NIref 
+(DT_X) et pour un taux de passage de 6%/h (DT6_X) respectivement de l’amidon dans le rumen (%)"
+            },
+            {
+                InraHeader.DT6_Ami, @"Coefficients de dégradabilité théorique calculés pour un taux de passage correspondant à NIref 
+(DT_X) et pour un taux de passage de 6%/h (DT6_X) respectivement de l’amidon dans le rumen (%)"
+            },
+            { InraHeader.dr_N, @"igestibilité réelle de l’azote d’origine alimentaire dans l’intestin (%)" },
+            { InraHeader.S, @"Soufre (g/kg MS)" },
+            { InraHeader.Na, @"Sodium (g/kg MS)" },
+            { InraHeader.K, @"Potassium (g/kg MS)" },
+            { InraHeader.Cl, @"Chlore (g/kg MS)" },
+            { InraHeader.BACA, @"Bilan cations anions (mEq/kg MS)" },
+            { InraHeader.Cu, @"Cuivre (mg/kg MS" },
+            { InraHeader.Zn, @"Zinc (mg/kg MS)" },
+            { InraHeader.Mn, @"Manganèse (mg/kg MS)" },
+            { InraHeader.Co, @"Cobalt (mg/kg MS)" },
+            { InraHeader.Se, @"Sélénium (mg/kg MS)" },
+            { InraHeader.I, @"Iode (mg/kg MS)" },
+            { InraHeader.VitA, @"Vitamine A en UI " },
+            { InraHeader.VitD, @"Vitamine D en UI " },
+            { InraHeader.VitE, @"Vitamine E en UI " },
+            // { InraHeader.AABP, @"Concentration en Acides Aminés By-Pass au duodénum en g/100 g des 16 AA pour les 16 AABP (de la Lys à la Tyr), et en g/100 g des 18 AA pour la somme de la Cys et du Trp (CysTrpBP). Ces valeurs sont notées [AAni] dans les chapitres de Inra 2018" },
+            // { InraHeader.AADI, @"Acides Aminés Digestibles dans l’Intestin (% PDI)" },
+            { InraHeader.C6_10, @"en % de la teneur en Acide Gras" },
+            { InraHeader.C12_0, @"en % de la teneur en Acide Gras" },
+            { InraHeader.C14_0, @"en % de la teneur en Acide Gras" },
+            { InraHeader.C16_0, @"en % de la teneur en Acide Gras" },
+            { InraHeader.C16_1, @"en % de la teneur en Acide Gras" },
+            { InraHeader.C18_0, @"en % de la teneur en Acide Gras" },
+            { InraHeader.C18_1, @"en % de la teneur en Acide Gras" },
+            { InraHeader.C18_2, @"en % de la teneur en Acide Gras" },
+            { InraHeader.C18_3, @"en % de la teneur en Acide Gras" },
+            { InraHeader.C20_0, @"en % de la teneur en Acide Gras" },
+            { InraHeader.C20_1, @"en % de la teneur en Acide Gras" },
+            { InraHeader.C22_0, @"en % de la teneur en Acide Gras" },
+            { InraHeader.C22_1, @"en % de la teneur en Acide Gras" },
+            { InraHeader.C24_0, @"en % de la teneur en Acide Gras" },
+        };
     }
 
+    /// <summary>
+    /// Return the detailled information about an INRA header
+    /// </summary>
+    public static string GetDetailledInfo(this InraHeader inraHeader)
+    {
+        return _inraHeaderToDetailledInfo.TryGetValue(inraHeader, out var detailledInfo) 
+            ? detailledInfo
+            : inraHeader.GetInraHeaderLabel();
+    }
+    
     public static bool IsStringContent(this InraHeader inraHeader)
     {
         return _stringInraContent.Contains(inraHeader);
     }
-    
+
     public static string ToDtoKey(this InraHeader inraHeader)
     {
         // just a to string for now
         return inraHeader.ToString();
     }
-    
+
     public static string GetInraHeaderLabel(this InraHeader inraHeader, InraSourceFileCulture culture = InraSourceFileCulture.French)
     {
         if (_inraHeaderToDisplayName.TryGetValue(inraHeader, out var label))
@@ -284,6 +393,7 @@ public static class InraHeaderExtensions
                 // same FR/EN
                 return label[0];
             }
+
             return label[culture == InraSourceFileCulture.French ? 0 : 1];
         }
 
@@ -296,7 +406,7 @@ public static class InraHeaderExtensions
             ? _inraDisplayNameToHeaderFr.TryGetValue(label, out header)
             : _inraDisplayNameToHeaderEn.TryGetValue(label, out header);
     }
-    
+
     public static bool TryParseDtoInraHeader(string label, out InraHeader header)
     {
         return _inraDtoToHeader.TryGetValue(label, out header);
