@@ -112,7 +112,7 @@ internal sealed class DuplicateAndEditFeedPopupViewModel : ViewModelBase, IDupli
         // request closing
         _popupManager.RequestClosing(this);
     }
-
+    
     public string FeedEditedName
     {
         get => _feedEditedName;

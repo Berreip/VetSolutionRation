@@ -26,7 +26,8 @@ internal sealed class FeedProviderHoster : ViewModelBase, IFeedProviderHoster
     {
         _feedProvider = feedProvider;
         AvailableFeeds = ObservableCollectionSource.GetDefaultView(feedProvider.GetFeeds().Select(o => o.CreateAdapter()), out _availableFeeds);
-        AvailableFeeds.SortDescriptions.Add(new SortDescription(nameof(ReferenceFeedAdapter.FeedName), ListSortDirection.Ascending));
+        AvailableFeeds.SortDescriptions.Add(new SortDescription(nameof(ReferenceFeedAdapter.IsCustom), ListSortDirection.Descending)); // custom first
+        AvailableFeeds.SortDescriptions.Add(new SortDescription(nameof(ReferenceFeedAdapter.FeedName), ListSortDirection.Ascending)); // then in aphabetical order
        
         feedProvider.OnNewDataProvided += OnNewDataProvided;
     }

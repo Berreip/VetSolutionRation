@@ -44,7 +44,7 @@
                     <ControlTemplate TargetType="ItemsControl">
                         <ScrollViewer CanContentScroll="True"
                                       VerticalScrollBarVisibility="Auto"
-                                      HorizontalScrollBarVisibility="Hidden"
+                                      HorizontalScrollBarVisibility="Disabled"
                                       Padding="{TemplateBinding Padding}"
                                       Background="{DynamicResource MaterialDesignPaper}"
                                       Focusable="False">
@@ -65,11 +65,13 @@
                             <Grid HorizontalAlignment="Stretch">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="35" />
                                 </Grid.ColumnDefinitions>
 
                                 <!-- REFERENCE FEED NAME -->
                                 <TextBlock Text="{Binding FeedName}"
+                                           TextTrimming="CharacterEllipsis"
+                                           ToolTip="{Binding FeedName}"
                                            VerticalAlignment="Center" />
 
                                 <!-- DUPLICATE AND EDIT -->
@@ -97,9 +99,9 @@
                             <Grid HorizontalAlignment="Stretch">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="35" />
+                                    <ColumnDefinition Width="35" />
+                                    <ColumnDefinition Width="35" />
                                 </Grid.ColumnDefinitions>
 
                                 <!-- CUSTOM FEED NAME -->

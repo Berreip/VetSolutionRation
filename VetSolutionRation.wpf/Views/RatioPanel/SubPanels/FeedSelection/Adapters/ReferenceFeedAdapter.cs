@@ -22,11 +22,13 @@ internal interface IFeedAdapter : IFeedWithValue
 internal abstract class FeedAdapterBase<T> : SearcheableBase, IFeedAdapter
     where T : IFeed
 {
+    public bool IsCustom { get; }
     private readonly T _feed;
     private bool _isSelected;
 
-    protected FeedAdapterBase(T feed) : base(feed.Label)
+    protected FeedAdapterBase(T feed, bool isCustom) : base(feed.Label)
     {
+        IsCustom = isCustom;
         _feed = feed;
         FeedName = feed.Label;
     }
@@ -55,7 +57,7 @@ internal interface IReferenceFeedAdapter : IFeedAdapter
 /// </summary>
 internal sealed class ReferenceFeedAdapter : FeedAdapterBase<IReferenceFeed>, IReferenceFeedAdapter
 {
-    public ReferenceFeedAdapter(IReferenceFeed feed) : base(feed)
+    public ReferenceFeedAdapter(IReferenceFeed feed) : base(feed, false)
     {
     }
 }
@@ -65,7 +67,7 @@ internal sealed class ReferenceFeedAdapter : FeedAdapterBase<IReferenceFeed>, IR
 /// </summary>
 internal sealed class CustomUserFeedAdapter : FeedAdapterBase<ICustomFeed>
 {
-    public CustomUserFeedAdapter(ICustomFeed feed) : base(feed)
+    public CustomUserFeedAdapter(ICustomFeed feed) : base(feed, true)
     {
     }
 }
