@@ -43,7 +43,7 @@ internal sealed class ImportViewModel : ViewModelBase, IImportViewModel
         ImportCommand = new DelegateCommandLight(ExecuteImportCommand);
         OpenCacheFolderCommand = new DelegateCommandLight(ExecuteOpenCacheFolderCommand);
         RefreshAllLoadedData();
-        feedProvider.OnNewDataProvided += OnNewDataProvided;
+        feedProvider.OnFeedChanged += OnNewDataProvided;
     }
 
     public RegisteredDataAdapter[] AllLoadedData

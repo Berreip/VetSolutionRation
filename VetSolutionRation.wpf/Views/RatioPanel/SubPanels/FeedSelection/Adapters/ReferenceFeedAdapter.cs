@@ -46,6 +46,8 @@ internal abstract class FeedAdapterBase<T> : SearcheableBase, IFeedAdapter
     {
         return _feed.TryGetInraValue(inraHeader, out var matchingValue) ? matchingValue : VetSolutionRatioConstants.DEFAULT_FEED_VALUE;
     }
+    
+    public T GetUnderlyingFeed() => _feed;
 }
 
 internal interface IReferenceFeedAdapter : IFeedAdapter

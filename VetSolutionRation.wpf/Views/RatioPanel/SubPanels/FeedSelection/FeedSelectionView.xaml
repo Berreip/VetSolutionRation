@@ -137,7 +137,7 @@
                                         Margin="1" Padding="1"
                                         Width="35"
                                         VerticalAlignment="Center"
-                                        ToolTip="Supprimer l'aliment"
+                                        ToolTip="Supprimer définitivement l'aliment"
                                         Command="{Binding DataContext.DeleteFeedCommand, ElementName=FeedSelectionUserControlName}"
                                         CommandParameter="{Binding .}"
                                         Style="{StaticResource MaterialDesignFlatButton}">

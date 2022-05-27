@@ -1,4 +1,5 @@
-﻿using PRF.WPFCore;
+﻿using System.Windows.Forms;
+using PRF.WPFCore;
 using PRF.WPFCore.Commands;
 using VetSolutionRation.Common.Async;
 using VetSolutionRation.wpf.Services;
@@ -67,39 +68,50 @@ internal sealed class FeedSelectionViewModel : ViewModelBase, IFeedSelectionView
         _selectedResultView = AvailableFeedSelectionModes[0].ResultView;
         AvailableFeedSelectionModes[0].IsSelected = true;
 
-        SelectFeedCommand = new DelegateCommandLight<IFeedAdapter>(ExecuteSelectFeedCommand);
-        DuplicateFeedCommand = new DelegateCommandLight<IFeedAdapter>(ExecuteDuplicateFeedCommand);
-        EditFeedCommand = new DelegateCommandLight<CustomUserFeedAdapter>(ExecuteEditFeedCommand);
-        DeleteFeedCommand = new DelegateCommandLight<CustomUserFeedAdapter>(ExecuteDeleteFeedCommand);
+        SelectFeedCommand = new DelegateCommandLight<IFeedAdapter?>(ExecuteSelectFeedCommand);
+        DuplicateFeedCommand = new DelegateCommandLight<IFeedAdapter?>(ExecuteDuplicateFeedCommand);
+        EditFeedCommand = new DelegateCommandLight<CustomUserFeedAdapter?>(ExecuteEditFeedCommand);
+        DeleteFeedCommand = new DelegateCommandLight<CustomUserFeedAdapter?>(ExecuteDeleteFeedCommand);
     }
 
-    private void ExecuteDeleteFeedCommand(CustomUserFeedAdapter obj)
+    private void ExecuteDeleteFeedCommand(CustomUserFeedAdapter? customUserFeed)
     {
         AsyncWrapper.Wrap(() =>
         {
-            // TODO PBO
+            if (customUserFeed != null && MessageBox.Show(@$"Voulez vous vraiment supprimer l'aliment {customUserFeed.FeedName} ? ", @"Confirmation", MessageBoxButtons.YesNoCancel) == DialogResult.Yes)
+            {
+                _feedProvider.DeleteFeedAndSave(customUserFeed.GetUnderlyingFeed());
+            }
         });
     }
 
-    private void ExecuteEditFeedCommand(CustomUserFeedAdapter feed)
+    private void ExecuteEditFeedCommand(CustomUserFeedAdapter? feed)
     {
         AsyncWrapper.Wrap(() => ShowEditAndDuplicateWindow(feed, FeedEditionMode.Edition));
     }
     
-    private void ExecuteDuplicateFeedCommand(IFeedAdapter feed)
+    private void ExecuteDuplicateFeedCommand(IFeedAdapter? feed)
     {
         AsyncWrapper.Wrap(() => ShowEditAndDuplicateWindow(feed, FeedEditionMode.Duplication));
     }
     
-    private void ShowEditAndDuplicateWindow(IFeedAdapter feed, FeedEditionMode mode)
+    private void ShowEditAndDuplicateWindow(IFeedAdapter? feed, FeedEditionMode mode)
     {
-        _popupManagerLight.ShowDialog(() => new DuplicateAndEditFeedPopupViewModel(_popupManagerLight, _feedProvider, feed, mode), vm => new DuplicateAndEditFeedPopupView(vm));
+        if (feed != null)
+        {
+            _popupManagerLight.ShowDialog(
+                () => new DuplicateAndEditFeedPopupViewModel(_popupManagerLight, _feedProvider, feed, mode), 
+                vm => new DuplicateAndEditFeedPopupView(vm));
+        }
     }
 
-    private void ExecuteSelectFeedCommand(IFeedAdapter feedAdapter)
+    private void ExecuteSelectFeedCommand(IFeedAdapter? feedAdapter)
     {
-        _calculateRatiosView.ViewModel.AddSelectedFeed(feedAdapter);
-        _verifyRatiosView.ViewModel.AddSelectedFeed(feedAdapter);
+        if (feedAdapter != null)
+        {
+            _calculateRatiosView.ViewModel.AddSelectedFeed(feedAdapter);
+            _verifyRatiosView.ViewModel.AddSelectedFeed(feedAdapter);
+        }
     }
 
     private void OnFeedSelectionModeSelected(IFeedSelectionModeAdapter adapter)

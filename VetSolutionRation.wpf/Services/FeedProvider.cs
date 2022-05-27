@@ -29,7 +29,7 @@ internal sealed class FeedProviderHoster : ViewModelBase, IFeedProviderHoster
         AvailableFeeds.SortDescriptions.Add(new SortDescription(nameof(ReferenceFeedAdapter.IsCustom), ListSortDirection.Descending)); // custom first
         AvailableFeeds.SortDescriptions.Add(new SortDescription(nameof(ReferenceFeedAdapter.FeedName), ListSortDirection.Ascending)); // then in aphabetical order
        
-        feedProvider.OnNewDataProvided += OnNewDataProvided;
+        feedProvider.OnFeedChanged += OnNewDataProvided;
     }
 
     private void OnNewDataProvided()

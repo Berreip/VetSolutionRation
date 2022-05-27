@@ -9,6 +9,7 @@ using VetSolutionRation.Common.Async;
 using VetSolutionRation.DataProvider.Dto;
 using VetSolutionRation.wpf.Helpers;
 using VetSolutionRation.wpf.Services.Configuration;
+using VetSolutionRation.wpf.Views.RatioPanel.SubPanels.FeedSelection.Adapters;
 using VetSolutionRationLib.Models.Feed;
 
 namespace VetSolutionRation.wpf.Services.Feed;
@@ -16,9 +17,14 @@ namespace VetSolutionRation.wpf.Services.Feed;
 internal interface IFeedProvider
 {
     IEnumerable<IFeed> GetFeeds();
-    event Action OnNewDataProvided;
+    event Action OnFeedChanged;
     void AddFeedsAndSave(IReadOnlyCollection<IFeed> newFeeds);
     bool ContainsFeedName(string feedEditedName);
+    
+    /// <summary>
+    /// Delete the provided custom feed from reference
+    /// </summary>
+    void DeleteFeedAndSave(ICustomFeed customFeed);
 }
 
 public sealed class FeedProvider : IFeedProvider
@@ -79,6 +85,21 @@ public sealed class FeedProvider : IFeedProvider
         }
     }
 
+    /// <inheritdoc />
+    public void DeleteFeedAndSave(ICustomFeed customFeed)
+    {
+        lock (_key)
+        {
+            if (_feedByLabels.TryGetValue(customFeed.Label, out var matchingFeed) && ReferenceEquals(matchingFeed, customFeed))
+            {
+                _feedByLabels.Remove(customFeed.Label);
+                Save(true, false);
+            }
+        }
+        // raise outside the lock
+        RaiseOnFeedChanged();
+    }
+
     private void AddFeedsAndSaveIfNeeded(IReadOnlyCollection<IFeed> newFeeds, bool shouldSave)
     {
         if(newFeeds.Count == 0) return;
@@ -123,36 +144,41 @@ public sealed class FeedProvider : IFeedProvider
 
             if (shouldSave && (referenceChanged || userDataChanged))
             {
-                var referenceFeeds = new List<IFeed>(_feedByLabels.Count);
-                var customFeeds = new List<IFeed>();
-                foreach (var feedByLabel in _feedByLabels)
-                {
-                    switch (feedByLabel.Value)
-                    {
-                        case ICustomFeed customFeed:
-                            customFeeds.Add(customFeed);
-                            break;
-                        case IReferenceFeed referenceFeed:
-                            referenceFeeds.Add(referenceFeed);
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException(nameof(feedByLabel.Value));
-                    }
-                }
-
-                if (userDataChanged)
-                {
-                    SaveFeeds(customFeeds, VetSolutionRatioConstants.SAVED_DATA_USER_FILE_NAME);
-                }
-
-                if (referenceChanged)
-                {
-                    SaveFeeds(referenceFeeds, VetSolutionRatioConstants.SAVED_DATA_REFERENCE_FILE_NAME);
-                }
+                Save(userDataChanged, referenceChanged);
             }
         }
         // raise outside the lock
-        RaiseOnNewDataProvided();
+        RaiseOnFeedChanged();
+    }
+
+    private void Save(bool userDataChanged, bool referenceChanged)
+    {
+        var referenceFeeds = new List<IFeed>(_feedByLabels.Count);
+        var customFeeds = new List<IFeed>();
+        foreach (var feedByLabel in _feedByLabels)
+        {
+            switch (feedByLabel.Value)
+            {
+                case ICustomFeed customFeed:
+                    customFeeds.Add(customFeed);
+                    break;
+                case IReferenceFeed referenceFeed:
+                    referenceFeeds.Add(referenceFeed);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(feedByLabel.Value));
+            }
+        }
+
+        if (userDataChanged)
+        {
+            SaveFeeds(customFeeds, VetSolutionRatioConstants.SAVED_DATA_USER_FILE_NAME);
+        }
+
+        if (referenceChanged)
+        {
+            SaveFeeds(referenceFeeds, VetSolutionRatioConstants.SAVED_DATA_REFERENCE_FILE_NAME);
+        }
     }
 
     private void SaveFeeds(IReadOnlyCollection<IFeed> feeds, string fileName)
@@ -174,12 +200,11 @@ public sealed class FeedProvider : IFeedProvider
         }
     }
 
-
     /// <inheritdoc />
-    public event Action? OnNewDataProvided;
+    public event Action? OnFeedChanged;
 
-    private void RaiseOnNewDataProvided()
+    private void RaiseOnFeedChanged()
     {
-        OnNewDataProvided?.Invoke();
+        OnFeedChanged?.Invoke();
     }
 }
