@@ -20,9 +20,9 @@
         <!-- ANIMAL AND FEED SELECTION PANELS -->
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width=".3*" />
+                <ColumnDefinition Width=".4*" />
                 <ColumnDefinition Width="3" />
-                <ColumnDefinition Width=".7*" />
+                <ColumnDefinition Width=".6*" />
             </Grid.ColumnDefinitions>
 
             <!-- ANIMAL SELECTION PANEL -->

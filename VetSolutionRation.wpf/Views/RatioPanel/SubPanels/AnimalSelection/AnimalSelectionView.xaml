@@ -20,9 +20,17 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
+            <!-- CURRENTLY SELECTED -->
+            <TextBlock
+                Grid.Row="0" Margin="10, 2"
+                Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                ToolTip="{Binding AnimalAdaptersHoster.SelectedAnimals}"
+                HorizontalAlignment="Center"
+                Text="{Binding AnimalAdaptersHoster.SelectedAnimals}" />
+            
             <!-- SEARCH BAR -->
             <TextBox
-                Grid.Row="0" 
+                Grid.Row="1" 
                 Margin="5, 2"
                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
                 materialDesign:HintAssist.Hint="Chercher un animal"
@@ -30,13 +38,6 @@
                 Height="50"
                 HorizontalAlignment="Stretch"
                 Text="{Binding SearchFilter, UpdateSourceTrigger=PropertyChanged}" />
-
-
-            <!-- CURRENTLy SELECTED -->
-            <TextBlock
-                Grid.Row="1" Margin="10, 2"
-                Style="{StaticResource MaterialDesignBody1TextBlock}"
-                Text="{Binding AnimalAdaptersHoster.SelectedAnimals}" />
             
             <!-- AVAILABLE ANIMALS -->
             <ItemsControl Grid.Row="2" Margin="2, 5" Padding="5"
