@@ -80,7 +80,7 @@ internal sealed class FeedSelectionViewModel : ViewModelBase, IFeedSelectionView
         {
             if (customUserFeed != null && MessageBox.Show(@$"Voulez vous vraiment supprimer l'aliment {customUserFeed.FeedName} ? ", @"Confirmation", MessageBoxButtons.YesNoCancel) == DialogResult.Yes)
             {
-                _feedProvider.DeleteFeedAndSave(customUserFeed.GetUnderlyingFeed());
+                _feedProvider.DeleteFeedAndSave(customUserFeed.GetUnderlyingCustomFeed());
             }
         });
     }

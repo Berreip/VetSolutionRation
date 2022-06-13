@@ -6,7 +6,14 @@ using VetSolutionRationLib.Models.Feed;
 
 namespace VetSolutionRation.wpf.Views.RatioPanel.SubPanels.FeedSelection.Adapters;
 
-internal interface IFeedWithValue
+/// <summary>
+/// Represent either a feed or a recipe
+/// </summary>
+internal interface IFeedOrReciepe
+{
+}
+
+internal interface IFeedWithValue : IFeedOrReciepe
 {
     double GetInraValue(InraHeader inraHeader);
 }
@@ -14,6 +21,7 @@ internal interface IFeedWithValue
 internal interface IFeedAdapter : IFeedWithValue
 {
     string FeedName { get; }
+    IFeed GetUnderlyingFeed();
 }
 
 /// <summary>
@@ -23,7 +31,7 @@ internal abstract class FeedAdapterBase<T> : SearcheableBase, IFeedAdapter
     where T : IFeed
 {
     public bool IsCustom { get; }
-    private readonly T _feed;
+    protected readonly T _feed;
     private bool _isSelected;
 
     protected FeedAdapterBase(T feed, bool isCustom) : base(feed.Label)
@@ -47,7 +55,7 @@ internal abstract class FeedAdapterBase<T> : SearcheableBase, IFeedAdapter
         return _feed.TryGetInraValue(inraHeader, out var matchingValue) ? matchingValue : VetSolutionRatioConstants.DEFAULT_FEED_VALUE;
     }
     
-    public T GetUnderlyingFeed() => _feed;
+    public IFeed GetUnderlyingFeed() => _feed;
 }
 
 internal interface IReferenceFeedAdapter : IFeedAdapter
@@ -72,6 +80,8 @@ internal sealed class CustomUserFeedAdapter : FeedAdapterBase<ICustomFeed>
     public CustomUserFeedAdapter(ICustomFeed feed) : base(feed, true)
     {
     }
+
+    public ICustomFeed GetUnderlyingCustomFeed() => _feed;
 }
 
 internal static class FeedAdapterExtensions

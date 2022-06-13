@@ -16,6 +16,7 @@ using VetSolutionRation.wpf.Views.RatioPanel.SubPanels.AnimalSelection;
 using VetSolutionRation.wpf.Views.RatioPanel.SubPanels.FeedSelection;
 using VetSolutionRation.wpf.Views.RatioPanel.SubPanels.FeedSelection.Calculate;
 using VetSolutionRation.wpf.Views.RatioPanel.SubPanels.FeedSelection.Verify;
+using VetSolutionRation.wpf.Views.RatioPanel.SubPanels.Recipe;
 using VetSolutionRation.wpf.Views.RatioPanel.SubPanels.ResultPanels.Calculate;
 using VetSolutionRation.wpf.Views.RatioPanel.SubPanels.ResultPanels.Verify;
 using VetSolutionRationLib;
@@ -86,6 +87,7 @@ namespace VetSolutionRation.wpf.Services.Injection
             // // VM related services
             _internalContainer.Register<IAnimalAdaptersHoster, AnimalAdaptersHoster>(LifeTime.Singleton);
             _internalContainer.Register<IFeedProviderHoster, FeedProviderHoster>(LifeTime.Singleton);
+            _internalContainer.Register<IRecipeCalculator, RecipeCalculator>(LifeTime.Singleton);
             _internalContainer.Register<IPopupManagerLight, PopupManagerLight>(LifeTime.Singleton);
         }
 

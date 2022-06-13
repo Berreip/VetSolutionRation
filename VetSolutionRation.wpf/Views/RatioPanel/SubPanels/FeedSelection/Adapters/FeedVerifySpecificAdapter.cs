@@ -1,17 +1,29 @@
 ﻿using PRF.WPFCore;
 using PRF.WPFCore.Commands;
+using VetSolutionRation.wpf.Helpers;
+using VetSolutionRation.wpf.Views.RatioPanel.SubPanels.Recipe;
+using VetSolutionRationLib.Enums;
 
 namespace VetSolutionRation.wpf.Views.RatioPanel.SubPanels.FeedSelection.Adapters;
 
-internal sealed class FeedVerifySpecificAdapter : ViewModelBase
+internal interface IVerifyFeed : IFeedThatCouldBeAddedIntoReciepe
+{
+    IFeedAdapter GetUnderlyingFeedAdapter();
+}
+
+internal interface IFeedVerifySpecificAdapter : IVerifyFeed
+{
+}
+
+internal sealed class FeedVerifySpecificAdapter : ViewModelBase, IFeedVerifySpecificAdapter
 {
     private readonly IFeedAdapter _feedAdapter;
     private bool _isSelected;
     public IDelegateCommandLight ClickOnLineCommand { get; }
     
-    public FeedVerifySpecificAdapter(IFeedAdapter feedAdapter, string quantityUnit, bool initialIsSelected = true)
+    public FeedVerifySpecificAdapter(IFeedAdapter feedAdapter, FeedUnit quantityUnit, bool initialIsSelected = true)
     {
-        FeedName = feedAdapter.FeedName;
+        Name = feedAdapter.FeedName;
         FeedQuantity = new FeedQuantityAdapter(quantityUnit);
         _feedAdapter = feedAdapter;
         _isSelected = initialIsSelected;
@@ -34,30 +46,52 @@ internal sealed class FeedVerifySpecificAdapter : ViewModelBase
         set => SetProperty(ref _isSelected, value);
     }
 
-    public string FeedName { get; }
+    public string Name { get; }
 
-    public FeedQuantityAdapter FeedQuantity { get; }
+    public IFeedQuantityAdapter FeedQuantity { get; }
 }
 
-internal sealed class FeedQuantityAdapter : ViewModelBase
+internal interface IFeedQuantityAdapter
 {
-    private double _quantity;
-    private string _unit;
+    string UnitDisplayName { get; set; }
+    double Quantity { get; set; }
+    FeedUnit Unit { get; }
+}
 
-    public FeedQuantityAdapter(string unit, double initialQuantity = 0d)
+internal sealed class FeedQuantityAdapter : ViewModelBase, IFeedQuantityAdapter
+{
+    public FeedUnit Unit { get; }
+    private double _quantity;
+    private string _unitDisplayName;
+
+    public FeedQuantityAdapter(FeedUnit unit, double initialQuantity = 0d)
     {
-        _unit = unit;
+        Unit = unit;
+        _unitDisplayName = unit.ToDiplayName();
+        _quantity = initialQuantity;
     }
 
-    public string Unit
+    public string UnitDisplayName
     {
-        get => _unit;
-        set => SetProperty(ref _unit, value);
+        get => _unitDisplayName;
+        set => SetProperty(ref _unitDisplayName, value);
     }
 
     public double Quantity
     {
         get => _quantity;
-        set => SetProperty(ref _quantity, value);
+        set
+        {
+            if (SetProperty(ref _quantity, value))
+            {
+                // set 0 if user select less than that:
+                if (value < 0)
+                {
+#pragma warning disable CA2011
+                    Quantity = 0;
+#pragma warning restore CA2011
+                }
+            }
+        }
     }
 }

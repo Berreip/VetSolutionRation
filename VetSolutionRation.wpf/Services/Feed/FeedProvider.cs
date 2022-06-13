@@ -11,6 +11,7 @@ using VetSolutionRation.wpf.Helpers;
 using VetSolutionRation.wpf.Services.Configuration;
 using VetSolutionRation.wpf.Views.RatioPanel.SubPanels.FeedSelection.Adapters;
 using VetSolutionRationLib.Models.Feed;
+using VetSolutionRationLib.Models.Recipe;
 
 namespace VetSolutionRation.wpf.Services.Feed;
 
@@ -25,6 +26,9 @@ internal interface IFeedProvider
     /// Delete the provided custom feed from reference
     /// </summary>
     void DeleteFeedAndSave(ICustomFeed customFeed);
+
+    void SaveReciepe(IRecipe recipe);
+    bool ContainsRecipeName(string reciepeName);
 }
 
 public sealed class FeedProvider : IFeedProvider
@@ -98,6 +102,19 @@ public sealed class FeedProvider : IFeedProvider
         }
         // raise outside the lock
         RaiseOnFeedChanged();
+    }
+
+    /// <inheritdoc />
+    public void SaveReciepe(IRecipe recipe)
+    {
+        // TODO PBO
+        throw new NotImplementedException();
+    }
+
+    /// <inheritdoc />
+    public bool ContainsRecipeName(string reciepeName)
+    {
+        throw new NotImplementedException();
     }
 
     private void AddFeedsAndSaveIfNeeded(IReadOnlyCollection<IFeed> newFeeds, bool shouldSave)

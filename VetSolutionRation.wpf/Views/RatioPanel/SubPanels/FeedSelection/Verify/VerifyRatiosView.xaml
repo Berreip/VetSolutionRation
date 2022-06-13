@@ -17,6 +17,15 @@
                          materialDesign:ShadowAssist.ShadowDepth="Depth2"
                          Background="{StaticResource MaterialDesignPaper}">
         <Grid>
+            <Grid.RowDefinitions>
+                <!-- LIST OF FEEDS -->
+                <RowDefinition Height="*"/>
+                
+                <!-- BUTTONS CONTROLS -->
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            
+            <!-- LIST OF FEEDS -->
             <ItemsControl ItemsSource="{Binding SelectedFeedsForVerifyPanel}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="{x:Type adapters:FeedVerifySpecificAdapter}">
@@ -62,9 +71,9 @@
                                         <TextBlock
                                             VerticalAlignment="Center"
                                             Margin="2"
-                                            Text="{Binding FeedName, Mode=OneTime}"
+                                            Text="{Binding Name, Mode=OneTime}"
                                             TextTrimming="CharacterEllipsis"
-                                            ToolTip="{Binding FeedName, Mode=OneTime}" />
+                                            ToolTip="{Binding Name, Mode=OneTime}" />
                                     </CheckBox>
 
                                     <!-- QUANTITY -->
@@ -81,7 +90,7 @@
                                         VerticalAlignment="Center"
                                         HorizontalAlignment="Left"
                                         Margin="2"
-                                        Text="{Binding FeedQuantity.Unit}" />
+                                        Text="{Binding FeedQuantity.UnitDisplayName}" />
 
                                     <!-- REMOVE FEED FROM SELECTION BUTTON -->
                                     <Button
@@ -103,6 +112,15 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
 
+            
+            <!-- BUTTONS CONTROLS -->
+            <StackPanel Grid.Row="1">
+                <Button Content="Créer une recette"
+                        ToolTip="Créer une recette à partir des aliment sélectionné dans les proportion spécifié"
+                        Style="{StaticResource MaterialDesignFlatButton}"
+                        Command="{Binding CreateRecipeCommand}">
+                </Button>
+            </StackPanel>
         </Grid>
     </materialDesign:Card>
 </UserControl>
