@@ -3,9 +3,9 @@ using System.Windows;
 using System.Windows.Threading;
 using PRF.Utils.CoreComponents.Diagnostic;
 using PRF.WPFCore.UiWorkerThread;
-using VetSolutionRation.wpf.Main;
+using VetSolutionRation.wpf.Helpers.Assertions;
 using VetSolutionRation.wpf.Services.Injection;
-using VetSolutionRation.wpf.Views.Assertions;
+using VetSolutionRation.wpf.Views;
 
 namespace VetSolutionRation.wpf
 {

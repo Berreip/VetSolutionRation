@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using PRF.Utils.CoreComponents.Extensions;
+using VetSolutionRation.wpf.Views.Adapter;
 using VetSolutionRation.wpf.Views.Popups.Adapters;
-using VetSolutionRation.wpf.Views.RatioPanel.SubPanels.FeedSelection.Adapters;
 using VetSolutionRationLib.Enums;
 
 namespace VetSolutionRation.wpf.Views.Popups.DuplicatesAndEditFeed;

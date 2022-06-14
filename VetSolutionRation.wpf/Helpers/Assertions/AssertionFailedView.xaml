@@ -1,0 +1,142 @@
+﻿<Window x:Class="VetSolutionRation.wpf.Helpers.Assertions.AssertionFailedView"
+        x:ClassModifier="internal"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:assertions="clr-namespace:VetSolutionRation.wpf.Helpers.Assertions"
+        Title="Assertion failed!"
+        mc:Ignorable="d"
+        Height="400" Width="700"
+        d:DataContext="{d:DesignInstance assertions:AssertionFailedViewModel, IsDesignTimeCreatable=true}">
+    <Grid>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <materialDesign:Card Margin="5, 5, 2, 5" Padding="10" UniformCornerRadius="10"
+                             materialDesign:ShadowAssist.ShadowDepth="Depth2">
+            <materialDesign:PackIcon Kind="AlertCircleOutline"
+                                     Foreground="Orange"
+                                     Height="70" Width="60" Margin="10"
+                                     VerticalAlignment="Center" HorizontalAlignment="Center" />
+
+        </materialDesign:Card>
+
+        <!-- <materialDesign:ColorZone -->
+        <!--     VerticalAlignment="Stretch" Margin="10" -->
+        <!--     Mode="PrimaryDark" -->
+        <!--     Padding="16" -->
+        <!--     CornerRadius="10" -->
+        <!--     materialDesign:ShadowAssist.ShadowDepth="Depth3" -->
+        <!--     ClipToBounds="False"> -->
+        <!--     <materialDesign:PackIcon Kind="AlertCircleOutline" Height="70" Width="70" Margin="10" -->
+        <!--                              VerticalAlignment="Center" HorizontalAlignment="Center" /> -->
+        <!-- </materialDesign:ColorZone> -->
+
+        <materialDesign:Card Grid.Column="1" Margin="5, 5, 2, 5" Padding="10" UniformCornerRadius="10"
+                             materialDesign:ShadowAssist.ShadowDepth="Depth2">
+            <Grid Margin="5">
+                <Grid.RowDefinitions>
+                    <!-- MESSAGE -->
+                    <RowDefinition Height="Auto" />
+                    <!-- Source Method -->
+                    <RowDefinition Height="Auto" />
+                    <!-- StackTrace -->
+                    <RowDefinition Height="*" />
+                    <!-- Control buttons -->
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Foreground="{DynamicResource MaterialDesignBody}"
+                           VerticalAlignment="Center">
+                    Message:
+                </TextBlock>
+                <TextBox Grid.Row="0" Grid.Column="1" VerticalAlignment="Center"
+                         Text="{Binding Message, Mode=OneTime}"
+                         IsReadOnly="True"
+                         MaxHeight="100"
+                         Foreground="{DynamicResource MaterialDesignBody}"
+                         Margin="24,8,24,16" />
+
+
+                <TextBlock Grid.Row="1" Grid.Column="0"
+                           Foreground="{DynamicResource MaterialDesignBody}"
+                           VerticalAlignment="Center">
+                    Source method:
+                </TextBlock>
+                <TextBox Grid.Row="1" Grid.Column="1" VerticalAlignment="Center"
+                         Text="{Binding SourceMethod, Mode=OneTime}"
+                         IsReadOnly="True"
+                         Foreground="{DynamicResource MaterialDesignBody}"
+                         Margin="24,8,24,16" />
+
+                <Expander Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Top">
+                    <Expander.Header>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Text="Stack trace"
+                                       Foreground="{DynamicResource MaterialDesignBody}"
+                                       Style="{StaticResource MaterialDesignSubtitle1TextBlock}" />
+
+                            <Button
+                                Foreground="{DynamicResource MaterialDesignBody}"
+                                Margin="10, 2" Grid.Column="1"
+                                Style="{StaticResource MaterialDesignFlatLightButton}"
+                                Command="{Binding CopyToClipboardCommand}"
+                                Content="{materialDesign:PackIcon ContentCopy}"
+                                ToolTip="Copy Stack trace to clipBoard" />
+                        </Grid>
+                    </Expander.Header>
+                    <ScrollViewer HorizontalScrollBarVisibility="Auto">
+                        <TextBox Text="{Binding StackTrace, Mode=OneTime}" IsReadOnly="True"
+                                 Foreground="{DynamicResource MaterialDesignBody}"
+                                 Margin="24,8,24,16" />
+                    </ScrollViewer>
+                </Expander>
+
+                <!-- Control Buttons -->
+                <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"
+                            VerticalAlignment="Bottom"
+                            HorizontalAlignment="Center"
+                            Orientation="Horizontal">
+                    <Button Content="Ignore" ToolTip="Ignore this Error and continue execution normally"
+                            Margin="10, 5"
+                            Style="{StaticResource MaterialDesignRaisedSecondaryLightButton}"
+                            IsCancel="True" />
+
+                    <Button Content="Export Trace to Zip" ToolTip="Export current trace and debug information"
+                            Command="{Binding ExportTraceCommand}"
+                            Margin="10, 5" />
+
+                    <Button Content="Debug" ToolTip="Try to debug the code from this assertion"
+                            Style="{StaticResource MaterialDesignPaperButton}"
+                            Command="{Binding DebugCommand}"
+                            Margin="10, 5" />
+
+
+                    <Button Content="Kill Application"
+                            Style="{StaticResource MaterialDesignFlatLightButton}"
+                            Opacity="0.9"
+                            ToolTip="Terminate the application"
+                            Command="{Binding KillApplicationCommand}"
+                            Margin="20, 5" />
+                </StackPanel>
+            </Grid>
+        </materialDesign:Card>
+    </Grid>
+</Window>

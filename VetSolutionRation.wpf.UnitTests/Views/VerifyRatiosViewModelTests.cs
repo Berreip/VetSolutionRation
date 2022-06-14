@@ -3,9 +3,9 @@ using NUnit.Framework;
 using VetSolutionRation.wpf.Services.Feed;
 using VetSolutionRation.wpf.Services.PopupManager;
 using VetSolutionRation.wpf.UnitTests.UnitTestUtils;
-using VetSolutionRation.wpf.Views.RatioPanel.SubPanels.FeedSelection.Adapters;
-using VetSolutionRation.wpf.Views.RatioPanel.SubPanels.FeedSelection.Verify;
-using VetSolutionRation.wpf.Views.RatioPanel.SubPanels.Recipe;
+using VetSolutionRation.wpf.Views.Adapter;
+using VetSolutionRation.wpf.Views.RatioPanel.Recipe;
+using VetSolutionRation.wpf.Views.RatioPanel.VerifyRatio;
 using VetSolutionRationLib.Enums;
 
 namespace VetSolutionRation.wpf.UnitTests.Views;

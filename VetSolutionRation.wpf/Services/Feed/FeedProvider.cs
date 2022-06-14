@@ -9,7 +9,6 @@ using VetSolutionRation.Common.Async;
 using VetSolutionRation.DataProvider.Dto;
 using VetSolutionRation.wpf.Helpers;
 using VetSolutionRation.wpf.Services.Configuration;
-using VetSolutionRation.wpf.Views.RatioPanel.SubPanels.FeedSelection.Adapters;
 using VetSolutionRationLib.Models.Feed;
 using VetSolutionRationLib.Models.Recipe;
 

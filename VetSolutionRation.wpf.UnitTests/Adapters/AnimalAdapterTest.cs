@@ -1,5 +1,5 @@
 ﻿using NUnit.Framework;
-using VetSolutionRation.wpf.Views.RatioPanel.Adapter;
+using VetSolutionRation.wpf.Views.Adapter;
 using VetSolutionRationLib.Enums;
 
 namespace VetSolutionRation.wpf.UnitTests.Adapters

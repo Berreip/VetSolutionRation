@@ -1,0 +1,124 @@
+﻿<UserControl x:Class="VetSolutionRation.wpf.Views.RatioPanel.VerifyRatio.VerifyRatiosView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:adapters="clr-namespace:VetSolutionRation.wpf.Views.Adapter"
+             xmlns:verifyRatio="clr-namespace:VetSolutionRation.wpf.Views.RatioPanel.VerifyRatio"
+             mc:Ignorable="d"
+             d:DesignHeight="400"
+             d:DesignWidth="600"
+             d:DataContext="{d:DesignInstance verifyRatio:VerifyRatiosViewModel, IsDesignTimeCreatable=False}" x:ClassModifier="internal"
+             x:Name="VerifyRatiosPanel">
+    <!-- SELECTED FEED PANEL -->
+    <materialDesign:Card Margin="0, 5, 0, 0"
+                         Padding="2"
+                         materialDesign:ShadowAssist.ShadowDepth="Depth2"
+                         Background="{StaticResource MaterialDesignPaper}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <!-- LIST OF FEEDS -->
+                <RowDefinition Height="*"/>
+                
+                <!-- BUTTONS CONTROLS -->
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            
+            <!-- LIST OF FEEDS -->
+            <ItemsControl ItemsSource="{Binding SelectedFeedsForVerifyPanel}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="{x:Type adapters:FeedVerifySpecificAdapter}">
+                        <materialDesign:Card
+                            Margin="2"
+                            Padding="2">
+                            <materialDesign:Card.Style>
+                                <Style TargetType="{x:Type materialDesign:Card}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ElementName=ItemFeedCheckBox, Path=IsChecked}" Value="False">
+                                            <Setter Property="Opacity" Value="0.4" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </materialDesign:Card.Style>
+
+                            <Button Style="{StaticResource MaterialDesignFlatButton}"
+                                    Height="40"
+                                    HorizontalContentAlignment="Stretch"
+                                    VerticalContentAlignment="Stretch"
+                                    Command="{Binding ClickOnLineCommand}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <!-- IS SELECTED AND FEED NAME -->
+                                        <ColumnDefinition Width="*" />
+                                        <!-- QUANTITY -->
+                                        <ColumnDefinition Width="70" />
+                                        <!-- QUANTITY UNIT -->
+                                        <ColumnDefinition Width="50" />
+                                        <!-- REMOVE FROM SELECTION BUTTON -->
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- CHECKBOW AND FEED NAME -->
+                                    <CheckBox
+                                        Grid.Column="0"
+                                        x:Name="ItemFeedCheckBox"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Left"
+                                        Margin="2, 2"
+                                        IsChecked="{Binding IsSelected}">
+
+                                        <TextBlock
+                                            VerticalAlignment="Center"
+                                            Margin="2"
+                                            Text="{Binding Name, Mode=OneTime}"
+                                            TextTrimming="CharacterEllipsis"
+                                            ToolTip="{Binding Name, Mode=OneTime}" />
+                                    </CheckBox>
+
+                                    <!-- QUANTITY -->
+                                    <TextBox
+                                        Grid.Column="1"
+                                        VerticalAlignment="Center"
+                                        HorizontalContentAlignment="Right"
+                                        Margin="5, 2"
+                                        Text="{Binding FeedQuantity.Quantity}" />
+
+                                    <!-- QUANTITY UNIT -->
+                                    <TextBlock
+                                        Grid.Column="2"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Left"
+                                        Margin="2"
+                                        Text="{Binding FeedQuantity.UnitDisplayName}" />
+
+                                    <!-- REMOVE FEED FROM SELECTION BUTTON -->
+                                    <Button Grid.Column="3"
+                                            Margin="1" Padding="1"
+                                            Width="35"
+                                            VerticalAlignment="Center"
+                                            ToolTip="Retire cet aliment de la liste"
+                                            Command="{Binding Path=DataContext.RemoveFromSelectedFeedsCommand, ElementName=VerifyRatiosPanel}"
+                                            CommandParameter="{Binding .}"
+                                            Style="{StaticResource MaterialDesignFlatButton}">
+                                        <materialDesign:PackIcon Kind="Delete" Margin="0" Padding="0" Height="20" Width="20" />
+                                    </Button>
+                                </Grid>
+                            </Button>
+                        </materialDesign:Card>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            
+            <!-- BUTTONS CONTROLS -->
+            <StackPanel Grid.Row="1">
+                <Button Content="Créer une recette"
+                        ToolTip="Créer une recette à partir des aliment sélectionné dans les proportion spécifié"
+                        Style="{StaticResource MaterialDesignFlatButton}"
+                        Command="{Binding CreateRecipeCommand}">
+                </Button>
+            </StackPanel>
+        </Grid>
+    </materialDesign:Card>
+</UserControl>

@@ -6,8 +6,8 @@ using PRF.WPFCore.Commands;
 using PRF.WPFCore.CustomCollections;
 using VetSolutionRation.wpf.Services.Feed;
 using VetSolutionRation.wpf.Services.PopupManager;
+using VetSolutionRation.wpf.Views.Adapter;
 using VetSolutionRation.wpf.Views.Popups.Adapters;
-using VetSolutionRation.wpf.Views.RatioPanel.SubPanels.FeedSelection.Adapters;
 using VetSolutionRationLib.Enums;
 using VetSolutionRationLib.Models.Feed;
 

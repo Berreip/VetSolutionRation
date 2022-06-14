@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using VetSolutionRation.wpf.Helpers;
-using VetSolutionRation.wpf.Views.RatioPanel.SubPanels.FeedSelection.Adapters;
+using VetSolutionRation.wpf.Views.Adapter;
 using VetSolutionRationLib.Enums;
 using VetSolutionRationLib.Models.Recipe;
 

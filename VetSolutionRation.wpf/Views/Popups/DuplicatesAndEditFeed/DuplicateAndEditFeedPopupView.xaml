@@ -6,7 +6,7 @@
         xmlns:duplicatesAndEditFeed="clr-namespace:VetSolutionRation.wpf.Views.Popups.DuplicatesAndEditFeed"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:adapter="clr-namespace:VetSolutionRation.wpf.Views.Popups.Adapters"
-        xmlns:selector="clr-namespace:VetSolutionRation.wpf.Views.TemplateSelector"
+        xmlns:templateSelector="clr-namespace:VetSolutionRation.wpf.Helpers.TemplateSelector"
         mc:Ignorable="d"
         Title="Duplication et édition aliment"
         Height="800" Width="450"
@@ -21,8 +21,8 @@
         d:DataContext="{d:DesignInstance duplicatesAndEditFeed:DuplicateAndEditFeedPopupViewModel, IsDesignTimeCreatable=true}" x:ClassModifier="internal">
 
     <Window.Resources>
-        <selector:UnitTemplateSelector x:Key="UnitTemplateSelector">
-            <selector:UnitTemplateSelector.NoUnit>
+        <templateSelector:UnitTemplateSelector x:Key="UnitTemplateSelector">
+            <templateSelector:UnitTemplateSelector.NoUnit>
                 <DataTemplate DataType="{x:Type adapter:FeedDetailInEditionAdapter}">
                     <TextBox Text="{Binding CellValue, UpdateSourceTrigger=PropertyChanged}"
                              VerticalContentAlignment="Center"
@@ -39,8 +39,8 @@
                         </TextBox.Style>
                     </TextBox>
                 </DataTemplate>
-            </selector:UnitTemplateSelector.NoUnit>
-            <selector:UnitTemplateSelector.Percentage>
+            </templateSelector:UnitTemplateSelector.NoUnit>
+            <templateSelector:UnitTemplateSelector.Percentage>
                 <DataTemplate DataType="{x:Type adapter:FeedDetailInEditionAdapter}">
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -69,8 +69,8 @@
                             VerticalAlignment="Center" />
                     </Grid>
                 </DataTemplate>
-            </selector:UnitTemplateSelector.Percentage>
-            <selector:UnitTemplateSelector.Specific>
+            </templateSelector:UnitTemplateSelector.Percentage>
+            <templateSelector:UnitTemplateSelector.Specific>
                 <DataTemplate DataType="{x:Type adapter:FeedDetailInEditionAdapter}">
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -99,8 +99,8 @@
                             VerticalAlignment="Center" />
                     </Grid>
                 </DataTemplate>
-            </selector:UnitTemplateSelector.Specific>
-        </selector:UnitTemplateSelector>
+            </templateSelector:UnitTemplateSelector.Specific>
+        </templateSelector:UnitTemplateSelector>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>

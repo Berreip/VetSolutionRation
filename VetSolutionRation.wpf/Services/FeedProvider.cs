@@ -4,7 +4,7 @@ using PRF.WPFCore;
 using PRF.WPFCore.CustomCollections;
 using VetSolutionRation.wpf.Helpers;
 using VetSolutionRation.wpf.Services.Feed;
-using VetSolutionRation.wpf.Views.RatioPanel.SubPanels.FeedSelection.Adapters;
+using VetSolutionRation.wpf.Views.Adapter;
 using VetSolutionRationLib.Helpers;
 
 namespace VetSolutionRation.wpf.Services;
