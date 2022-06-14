@@ -77,13 +77,23 @@
                                     </CheckBox>
 
                                     <!-- QUANTITY -->
-                                    <TextBox
-                                        Grid.Column="1"
-                                        VerticalAlignment="Center"
-                                        HorizontalContentAlignment="Right"
-                                        Margin="5, 2"
-                                        Text="{Binding FeedQuantity.Quantity}" />
-
+                                    <TextBox  Grid.Column="1"
+                                              Margin="5, 2"
+                                              Text="{Binding FeedQuantity.QuantityString, UpdateSourceTrigger=PropertyChanged}"
+                                              VerticalAlignment="Center"
+                                              HorizontalContentAlignment="Right">
+                                        <TextBox.Style>
+                                            <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource MaterialDesignTextBox}">
+                                                <Setter Property="Foreground" Value="{StaticResource MaterialDesignBody}" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding FeedQuantity.IsValid}" Value="False">
+                                                        <Setter Property="Foreground" Value="Red" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBox.Style>
+                                    </TextBox>
+                                    
                                     <!-- QUANTITY UNIT -->
                                     <TextBlock
                                         Grid.Column="2"

@@ -2,7 +2,9 @@
 using NUnit.Framework;
 using VetSolutionRation.wpf.Views.Adapter;
 using VetSolutionRation.wpf.Views.Popups.RecipeConfiguration;
+using VetSolutionRation.wpf.Views.RatioPanel.Recipe;
 using VetSolutionRationLib.Enums;
+using VetSolutionRationLib.Models.Feed;
 
 namespace VetSolutionRation.wpf.UnitTests.Views.Popups.RecipeConfiguration;
 
@@ -13,9 +15,9 @@ internal sealed class RecipeConfigurationCalculatorTests
     public void CalculateRecipeConfiguration_same_repartition()
     {
         //Arrange
-        var feed1 = CreateFeedMock(10, FeedUnit.Kg);
-        var feed2 = CreateFeedMock(10, FeedUnit.Kg);
-        var feed3 = CreateFeedMock(10, FeedUnit.Kg);
+        var feed1 = CreateFeedAdapterMock(10, FeedUnit.Kg);
+        var feed2 = CreateFeedAdapterMock(10, FeedUnit.Kg);
+        var feed3 = CreateFeedAdapterMock(10, FeedUnit.Kg);
 
         //Act
         var res = new[] { feed1.Object, feed2.Object, feed3.Object }.CalculateRecipeConfiguration("feedName");
@@ -35,9 +37,9 @@ internal sealed class RecipeConfigurationCalculatorTests
     public void CalculateRecipeConfiguration_nominal()
     {
         //Arrange
-        var feed1 = CreateFeedMock(10, FeedUnit.Kg);
-        var feed2 = CreateFeedMock(45, FeedUnit.Kg);
-        var feed3 = CreateFeedMock(9, FeedUnit.Kg);
+        var feed1 = CreateFeedAdapterMock(10, FeedUnit.Kg);
+        var feed2 = CreateFeedAdapterMock(45, FeedUnit.Kg);
+        var feed3 = CreateFeedAdapterMock(9, FeedUnit.Kg);
 
         //Act
         var res = new[] { feed1.Object, feed2.Object, feed3.Object }.CalculateRecipeConfiguration("feedName");
@@ -57,16 +59,16 @@ internal sealed class RecipeConfigurationCalculatorTests
     public void CalculateRecipeConfiguration_with_another_recipe()
     {
         //Arrange
-        var feedAdapter = new Mock<IFeedAdapter>();
-        var feedAdapter2 = new Mock<IFeedAdapter>();
+        var f = new Mock<IFeed>();
+        var f2 = new Mock<IFeed>();
 
-        var feed1 = CreateFeedMock(10, FeedUnit.Kg);
-        var feed2 = CreateFeedMock(45, FeedUnit.Kg);
+        var feed1 = CreateFeedAdapterMock(10, FeedUnit.Kg);
+        var feed2 = CreateFeedAdapterMock(45, FeedUnit.Kg);
 
         var recipe = CreateRecipeMock(70, FeedUnit.Kg, new[]
         {
-            (feedAdapter.Object, 0.3),
-            (feedAdapter2.Object, 0.7),
+            (f.Object, 0.3),
+            (f2.Object, 0.7),
         });
 
         //Act
@@ -82,20 +84,19 @@ internal sealed class RecipeConfigurationCalculatorTests
         Assert.AreEqual(0.36, ingredients[2].Percentage, 0.0001);
         Assert.AreEqual(0.08, ingredients[3].Percentage, 0.0001);
         Assert.AreEqual(1, ingredients.Sum(o => o.Percentage), 0.01);
-        
     }
 
     [Test]
     public void CalculateRecipeConfiguration_with_another_recipe_And_duplicates()
     {
         //Arrange
-        var feedAdapter = new Mock<IFeedAdapter>();
-        var feedAdapter2 = new Mock<IFeedAdapter>();
-        var feed2 = CreateFeedMock(45, FeedUnit.Kg);
+        var f = new Mock<IFeed>();
+        var f2 = new Mock<IFeed>();
+        var feed2 = CreateFeedAdapterMock(45, FeedUnit.Kg);
         var recipe = CreateRecipeMock(70, FeedUnit.Kg, new[]
         {
-            (feedAdapter.Object, 0.3),
-            (feedAdapter2.Object, 0.7),
+            (f.Object, 0.3),
+            (f2.Object, 0.7),
         });
 
         //Act
@@ -111,7 +112,102 @@ internal sealed class RecipeConfigurationCalculatorTests
         Assert.AreEqual(1, ingredients.Sum(o => o.Percentage), 0.01);
     }
 
-    private static Mock<IFeedForRecipeCreationAdapter> CreateRecipeMock(int quantity, FeedUnit feedUnit, params (IFeedAdapter Feed, double Percentage)[] feeds)
+    [Test]
+    public void GetAllIndividualFeeds_returns_empty_empty_input()
+    {
+        //Arrange
+
+        //Act
+        var res = RecipeConfigurationCalculator.GetAllIndividualFeeds(Array.Empty<IFeedThatCouldBeAddedIntoRecipe>());
+
+        //Assert
+        Assert.IsEmpty(res);
+    }
+
+    [Test]
+    public void GetAllIndividualFeeds_returns_all_individual_feed_if_no_recipe()
+    {
+        //Arrange
+        var f = new Mock<IFeedVerifySpecificAdapter>();
+        var f2 = new Mock<IFeedVerifySpecificAdapter>();
+        var f3 = new Mock<IFeedVerifySpecificAdapter>();
+
+        //Act
+        var res = RecipeConfigurationCalculator.GetAllIndividualFeeds(
+            new List<IFeedThatCouldBeAddedIntoRecipe>
+            {
+                f.Object,
+                f2.Object,
+                f3.Object,
+            });
+
+        //Assert
+        Assert.AreEqual(3, res.Count);
+        Assert.AreSame(f.Object, res[0]);
+        Assert.AreSame(f2.Object, res[1]);
+        Assert.AreSame(f3.Object, res[2]);
+    }
+
+    [Test]
+    public void GetAllIndividualFeeds_returns_recipe_ingredient_if_recipe()
+    {
+        //Arrange
+        var f = new Mock<IFeedVerifySpecificAdapter>();
+        var f2 = new Mock<IFeedVerifySpecificAdapter>();
+        var f3 = new Mock<IFeedVerifySpecificAdapter>();
+        var recipe = new Mock<IRecipeAdapter>();
+        recipe.Setup(o => o.Ingredients)
+            .Returns(new List<IVerifyFeed>
+            {
+                f.Object,
+                f2.Object,
+                f3.Object,
+            });
+
+        //Act
+        var res = RecipeConfigurationCalculator.GetAllIndividualFeeds(new List<IFeedThatCouldBeAddedIntoRecipe>
+        {
+            recipe.Object,
+        });
+
+        //Assert
+        Assert.AreEqual(3, res.Count);
+        Assert.AreSame(f.Object, res[0]);
+        Assert.AreSame(f2.Object, res[1]);
+        Assert.AreSame(f3.Object, res[2]);
+    }
+
+    [Test]
+    public void GetAllIndividualFeeds_returns_recipe_ingredients_and_individuals_if_recipe_mixed_with_single_ingredient()
+    {
+        //Arrange
+        var f = new Mock<IFeedVerifySpecificAdapter>();
+        var f2 = new Mock<IFeedVerifySpecificAdapter>();
+        var recipe = new Mock<IRecipeAdapter>();
+        recipe.Setup(o => o.Ingredients)
+            .Returns(new List<IVerifyFeed>
+            {
+                f.Object,
+                f2.Object,
+            });
+
+        var f3 = new Mock<IFeedVerifySpecificAdapter>();
+        
+        //Act
+        var res = RecipeConfigurationCalculator.GetAllIndividualFeeds(new List<IFeedThatCouldBeAddedIntoRecipe>
+        {
+            recipe.Object, // recipe with 2 ingredients
+            f3.Object, // single ingredient
+        });
+
+        //Assert
+        Assert.AreEqual(3, res.Count);
+        Assert.AreSame(f.Object, res[0]);
+        Assert.AreSame(f2.Object, res[1]);
+        Assert.AreSame(f3.Object, res[2]);
+    }
+
+    private static Mock<IFeedForRecipeCreationAdapter> CreateRecipeMock(int quantity, FeedUnit feedUnit, params (IFeed Feed, double Percentage)[] feeds)
     {
         var recipe = new Mock<IFeedForRecipeCreationAdapter>();
         recipe.Setup(o => o.FeedQuantity.Quantity).Returns(quantity);
@@ -120,13 +216,13 @@ internal sealed class RecipeConfigurationCalculatorTests
         return recipe;
     }
 
-    private static Mock<IFeedForRecipeCreationAdapter> CreateFeedMock(int quantity, FeedUnit feedUnit, IFeedAdapter feedAdapterProvided = null)
+    private static Mock<IFeedForRecipeCreationAdapter> CreateFeedAdapterMock(int quantity, FeedUnit feedUnit, IFeed feedProvided = null)
     {
-        var feed = new Mock<IFeedForRecipeCreationAdapter>();
-        feed.Setup(o => o.FeedQuantity.Quantity).Returns(quantity);
-        feed.Setup(o => o.FeedQuantity.Unit).Returns(feedUnit);
+        var adapter = new Mock<IFeedForRecipeCreationAdapter>();
+        adapter.Setup(o => o.FeedQuantity.Quantity).Returns(quantity);
+        adapter.Setup(o => o.FeedQuantity.Unit).Returns(feedUnit);
         // single ingredient
-        feed.Setup(o => o.GetUnderlyingFeeds()).Returns(new[] { (feedAdapterProvided ?? new Mock<IFeedAdapter>().Object, 1d) });
-        return feed;
+        adapter.Setup(o => o.GetUnderlyingFeeds()).Returns(new[] { (feedProvided ?? new Mock<IFeed>().Object, 1d) });
+        return adapter;
     }
 }

@@ -99,7 +99,7 @@ namespace VetSolutionRation.Common.Async
         
         private static void OnException(Exception e)
         {
-            DebugCore.Fail($"Error in AsyncWrapper: {e}");
+            ErrorHandler.HandleError($"Error in AsyncWrapper: {e}");
         }
     }
 }

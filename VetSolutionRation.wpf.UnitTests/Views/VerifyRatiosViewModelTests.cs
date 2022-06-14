@@ -7,6 +7,7 @@ using VetSolutionRation.wpf.Views.Adapter;
 using VetSolutionRation.wpf.Views.RatioPanel.Recipe;
 using VetSolutionRation.wpf.Views.RatioPanel.VerifyRatio;
 using VetSolutionRationLib.Enums;
+using VetSolutionRationLib.Models.Feed;
 
 namespace VetSolutionRation.wpf.UnitTests.Views;
 
@@ -53,7 +54,7 @@ internal sealed class VerifyRatiosViewModelTests
     {
         //Arrange
         _recipeCalculator
-            .Setup(o => o.CouldCalculateRecipe(It.IsAny<IReadOnlyCollection<IFeedThatCouldBeAddedIntoReciepe>>()))
+            .Setup(o => o.CouldCalculateRecipe(It.IsAny<IReadOnlyCollection<IFeedThatCouldBeAddedIntoRecipe>>()))
             .Returns(recipeCalculatorResult);
 
         //Act
@@ -67,20 +68,20 @@ internal sealed class VerifyRatiosViewModelTests
     public void CreateRecipeCommand_can_execute_evaluated_if_feed_is_added()
     {
         //Arrange
-        var feed = new Mock<IFeedAdapter>();
+        var feed = new Mock<IFeed>();
 
         //Act
         _sut.AddSelectedFeed(feed.Object);
 
         //Assert
-        _recipeCalculator.Verify(o => o.CouldCalculateRecipe(It.IsAny<IReadOnlyCollection<IFeedThatCouldBeAddedIntoReciepe>>()), Times.Once);
+        _recipeCalculator.Verify(o => o.CouldCalculateRecipe(It.IsAny<IReadOnlyCollection<IFeedThatCouldBeAddedIntoRecipe>>()), Times.Once);
     }
     
     [Test]
     public void CreateRecipeCommand_can_execute_evaluated_if_feed_selection_changed()
     {
         //Arrange
-        var feed = new Mock<IFeedAdapter>();
+        var feed = new Mock<IFeed>();
         _sut.AddSelectedFeed(feed.Object);
         var feedAdapter = _sut.SelectedFeedsForVerifyPanel.ToArray<FeedVerifySpecificAdapter>().Single();
         
@@ -91,14 +92,14 @@ internal sealed class VerifyRatiosViewModelTests
         feedAdapter.IsSelected = false;
         
         //Assert
-        _recipeCalculator.Verify(o => o.CouldCalculateRecipe(It.IsAny<IReadOnlyCollection<IFeedThatCouldBeAddedIntoReciepe>>()), Times.Once);
+        _recipeCalculator.Verify(o => o.CouldCalculateRecipe(It.IsAny<IReadOnlyCollection<IFeedThatCouldBeAddedIntoRecipe>>()), Times.Once);
     }
     
     [Test]
     public void CreateRecipeCommand_can_execute_evaluated_if_feed_is_removed()
     {
         //Arrange
-        var feed = new Mock<IFeedAdapter>();
+        var feed = new Mock<IFeed>();
         _sut.AddSelectedFeed(feed.Object);
         var feedAdapter = _sut.SelectedFeedsForVerifyPanel.ToArray<FeedVerifySpecificAdapter>().Single();
         
@@ -109,14 +110,14 @@ internal sealed class VerifyRatiosViewModelTests
         _sut.RemoveFromSelectedFeedsCommand.Execute(feedAdapter);
 
         //Assert
-        _recipeCalculator.Verify(o => o.CouldCalculateRecipe(It.IsAny<IReadOnlyCollection<IFeedThatCouldBeAddedIntoReciepe>>()), Times.Once);
+        _recipeCalculator.Verify(o => o.CouldCalculateRecipe(It.IsAny<IReadOnlyCollection<IFeedThatCouldBeAddedIntoRecipe>>()), Times.Once);
     }
 
     [Test]
     public void AddSelectedFeed_add_once_when_not_known_before()
     {
         //Arrange
-        var feed = new Mock<IFeedAdapter>();
+        var feed = new Mock<IFeed>();
 
         //Act
         _sut.AddSelectedFeed(feed.Object);
@@ -124,14 +125,14 @@ internal sealed class VerifyRatiosViewModelTests
         //Assert
         var verifyFeeds = _sut.SelectedFeedsForVerifyPanel.ToArray<IVerifyFeed>();
         Assert.AreEqual(1, verifyFeeds.Count);
-        Assert.AreSame(feed.Object, verifyFeeds[0].GetUnderlyingFeedAdapter());
+        Assert.AreSame(feed.Object, verifyFeeds[0].GetUnderlyingFeed());
     }
     
     [Test]
     public void AddSelectedFeed_add_once_when_duplicated()
     {
         //Arrange
-        var feed = new Mock<IFeedAdapter>();
+        var feed = new Mock<IFeed>();
 
         //Act
         for (var i = 0; i < 10; i++)
@@ -142,14 +143,14 @@ internal sealed class VerifyRatiosViewModelTests
         //Assert
         var verifyFeeds = _sut.SelectedFeedsForVerifyPanel.ToArray<IVerifyFeed>();
         Assert.AreEqual(1, verifyFeeds.Count);
-        Assert.AreSame(feed.Object, verifyFeeds[0].GetUnderlyingFeedAdapter());
+        Assert.AreSame(feed.Object, verifyFeeds[0].GetUnderlyingFeed());
     }
     
     [Test]
     public void AddSelectedFeed_add_recipe()
     {
         //Arrange
-        var recipe = new Mock<IRecipeAdapter>();
+        var recipe = new Mock<IFeed>();
 
         //Act
         _sut.AddSelectedFeed(recipe.Object);
@@ -157,7 +158,7 @@ internal sealed class VerifyRatiosViewModelTests
         //Assert
         var verifyFeeds = _sut.SelectedFeedsForVerifyPanel.ToArray<IVerifyFeed>();
         Assert.AreEqual(1, verifyFeeds.Count);
-        Assert.AreSame(recipe.Object, verifyFeeds[0].GetUnderlyingFeedAdapter());
+        Assert.AreSame(recipe.Object, verifyFeeds[0].GetUnderlyingFeed());
     }
 
 }

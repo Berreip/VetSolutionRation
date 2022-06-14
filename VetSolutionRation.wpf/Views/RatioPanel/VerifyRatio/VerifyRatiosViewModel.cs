@@ -13,6 +13,8 @@ using VetSolutionRation.wpf.Views.Adapter;
 using VetSolutionRation.wpf.Views.Popups.RecipeConfiguration;
 using VetSolutionRation.wpf.Views.RatioPanel.Recipe;
 using VetSolutionRationLib.Enums;
+using VetSolutionRationLib.Models.Feed;
+using VetSolutionRationLib.Models.Recipe;
 
 namespace VetSolutionRation.wpf.Views.RatioPanel.VerifyRatio;
 
@@ -27,7 +29,7 @@ internal sealed class VerifyRatiosViewModel : ViewModelBase, IVerifyRatiosViewMo
     private readonly IFeedProvider _feedProvider;
     private readonly IPopupManagerLight _popupManagerLight;
     public ICollectionView SelectedFeedsForVerifyPanel { get; }
-    private readonly ObservableCollectionRanged<IVerifyFeed> _selectedFeedForVerifyPanel;
+    private readonly ObservableCollectionRanged<IFeedThatCouldBeAddedIntoRecipe> _selectedFeedForVerifyPanel;
     private readonly HashSet<IFeedOrReciepe> _alreadyAddedHash = new HashSet<IFeedOrReciepe>();
 
     public IDelegateCommandLight<FeedVerifySpecificAdapter> RemoveFromSelectedFeedsCommand { get; }
@@ -62,10 +64,10 @@ internal sealed class VerifyRatiosViewModel : ViewModelBase, IVerifyRatiosViewMo
                 var recipe = _recipeCalculator.CreateNewReciepe(recipeConfiguration);
             
                 // save it:
-                _feedProvider.SaveReciepe(recipe);
+                _feedProvider.AddRecipeAndSave(recipe);
             
-                // do not remove the feed that leads to the reciepe if the user wants to create another one
-                AddSelectedFeed(new RecipeAdapter(recipe));
+                // do not remove the feed that leads to the recipe if the user wants to create another one
+                AddSelectedFeed(recipe);
             }
 
         }).ConfigureAwait(false);
@@ -83,12 +85,11 @@ internal sealed class VerifyRatiosViewModel : ViewModelBase, IVerifyRatiosViewMo
         {
             switch (feedOrRecipe)
             {
-                case IFeedAdapter feedAdapter:
-                    _selectedFeedForVerifyPanel.Add(new FeedVerifySpecificAdapter(feedAdapter, FeedUnit.Kg, OnIsSelectedChanged,  true));
+                case IFeed feed:
+                    _selectedFeedForVerifyPanel.Add(new FeedVerifySpecificAdapter(feed, FeedUnit.Kg, OnIsSelectedChanged,  true));
                     break;
-                case IRecipeAdapter recipe:
-                    throw new NotImplementedException("TODO PBO");
-                    // _selectedFeedForVerifyPanel.Add(new FeedVerifySpecificAdapter(feedAdapter, "kg", true));
+                case IRecipe recipe:
+                    _selectedFeedForVerifyPanel.Add(new RecipeAdapter(recipe));
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(feedOrRecipe));
@@ -104,7 +105,7 @@ internal sealed class VerifyRatiosViewModel : ViewModelBase, IVerifyRatiosViewMo
 
     private void ExecuteRemoveFromSelectedFeedsCommand(FeedVerifySpecificAdapter feed)
     {
-        if(_alreadyAddedHash.Remove(feed.GetUnderlyingFeedAdapter()))
+        if(_alreadyAddedHash.Remove(feed.GetUnderlyingFeed()))
         {
             _selectedFeedForVerifyPanel.Remove(feed);
             CreateRecipeCommand.RaiseCanExecuteChanged();

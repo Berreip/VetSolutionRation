@@ -5,10 +5,10 @@ using VetSolutionRationLib.Enums;
 namespace VetSolutionRation.wpf.UnitTests.Helpers;
 
 [TestFixture]
-internal sealed class FeedUnitExtensionsTests
+internal sealed class FeedUnitWpfExtensionsTests
 {
     [Test]
-    public void FeedUnitExtensions_ToDisplayName_all_enum_memebers_have_a_value()
+    public void ToDisplayName_all_enum_memebers_have_a_value()
     {
         //Arrange
 

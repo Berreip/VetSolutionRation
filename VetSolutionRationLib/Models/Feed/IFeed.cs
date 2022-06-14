@@ -6,9 +6,17 @@ using VetSolutionRationLib.Helpers;
 namespace VetSolutionRationLib.Models.Feed;
 
 /// <summary>
+/// Represent either a feed or a recipe
+/// </summary>
+public interface IFeedOrReciepe
+{
+}
+
+
+/// <summary>
 /// Represent a feed. Could be either a reference feed or a custom one
 /// </summary>
-public interface IFeed
+public interface IFeed : IFeedOrReciepe
 {
     /// <summary>
     /// The main label of the feed

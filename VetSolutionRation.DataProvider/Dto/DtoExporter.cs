@@ -1,6 +1,8 @@
 ﻿using Newtonsoft.Json;
+using PRF.Utils.CoreComponents.Diagnostic;
 using VetSolutionRationLib.Enums;
 using VetSolutionRationLib.Models.Feed;
+using VetSolutionRationLib.Models.Recipe;
 
 namespace VetSolutionRation.DataProvider.Dto;
 
@@ -13,7 +15,18 @@ public static class DtoExporter
     {
         return new ReferenceDataDto
         {
-            Feeds = CreateLinesDto(feeds)
+            Feeds = CreateFeedsDto(feeds),
+        };
+    }
+
+    /// <summary>
+    /// Export a model into a dto
+    /// </summary>
+    public static ReferenceDataDto ConvertToDto(this IEnumerable<IRecipe> recipes)
+    {
+        return new ReferenceDataDto
+        {
+            Recipes = CreateRecipeDto(recipes),
         };
     }
 
@@ -27,15 +40,39 @@ public static class DtoExporter
         return JsonConvert.DeserializeObject<ReferenceDataDto>(json) ?? throw new ArgumentException("DeSerializeFromJson: null result");
     }
 
-    private static List<FeedDto> CreateLinesDto(IEnumerable<IFeed> feeds)
+    private static List<RecipeDto> CreateRecipeDto(IEnumerable<IRecipe> recipes)
     {
-        return feeds.Select(o => new FeedDto
+        return recipes.Select(o => new RecipeDto
+        {
+            Name = o.RecipeName,
+            UnitLabel = o.Unit.ToReferenceLabel(),
+            Ingredients = o.Ingredients.Select(CreateIngredientsDto).ToList(),
+        }).ToList();
+    }
+
+    private static IngredientDto CreateIngredientsDto(IIngredientForRecipe ingredientForRecipe)
+    {
+        return new IngredientDto
+        {
+            Percentage = ingredientForRecipe.Percentage,
+            FeedsInRecipe = ingredientForRecipe.Ingredient.ConvertToDto(),
+        };
+    }
+
+    private static List<FeedDto> CreateFeedsDto(IEnumerable<IFeed> feeds)
+    {
+        return feeds.Select(ConvertToDto).ToList();
+    }
+
+    private static FeedDto ConvertToDto(this IFeed o)
+    {
+        return new FeedDto
         {
             IsReferenceFeed = o is IReferenceFeed,
             Labels = o.GetLabels(),
             NutritionDetails = ConvertToDto(o.NutritionalDetails),
             StringDetails = ConvertToDto(o.StringDetailsContent),
-        }).ToList();
+        };
     }
 
     private static List<StringDetailDto> ConvertToDto(IReadOnlyList<IStringDetailsContent> stringDetailsContent)
@@ -53,7 +90,7 @@ public static class DtoExporter
     }
 
     /// <summary>
-    /// Import a dto into a model
+    /// Import a dto Feed into a model
     /// </summary>
     public static IFeed ConvertFromDto(this FeedDto dto)
     {
@@ -70,14 +107,56 @@ public static class DtoExporter
             ConvertFromDto(dto.NutritionDetails));
     }
 
-    private static IEnumerable<IStringDetailsContent> ConvertFromDto(IEnumerable<StringDetailDto>? dtoStringDetails)
+    /// <summary>
+    /// Import a dto into a model
+    /// </summary>
+    public static IRecipe ConvertFromDto(this RecipeDto dto)
     {
-        var converted = new List<IStringDetailsContent>();
-        if (dtoStringDetails == null)
+        return new RecipeModel(
+            dto.Name ?? throw new InvalidOperationException(),
+            FeedUnitExtensions.ParseFromReferenceLabel(dto.UnitLabel),
+            dto.Ingredients.ConvertFromDto());
+    }
+
+    private static IReadOnlyList<IIngredientForRecipe> ConvertFromDto(this IReadOnlyCollection<IngredientDto>? ingredientDtos)
+    {
+        if (ingredientDtos == null)
         {
-            return converted;
+            return Array.Empty<IIngredientForRecipe>();
         }
 
+        var percentageAll = 0d;
+        var converted = new List<IIngredientForRecipe>(ingredientDtos.Count);
+        foreach (var detail in ingredientDtos)
+        {
+            if (detail.FeedsInRecipe == null || detail.Percentage == null)
+            {
+                DebugCore.Fail($"invalid data loaded for recipe: {detail}");
+                return Array.Empty<IIngredientForRecipe>();
+            }
+
+            percentageAll += detail.Percentage.Value;
+            
+            converted.Add(new IngredientForRecipe(detail.Percentage.Value, detail.FeedsInRecipe.ConvertFromDto()));
+        }
+
+        if (Math.Abs(percentageAll - 100) > 0.001)
+        {
+            DebugCore.Fail($"the total percentage for ingredientDtos: {string.Join(";", ingredientDtos)} is not 100%");
+            return Array.Empty<IIngredientForRecipe>();
+        }
+        return converted;
+    }
+
+    
+    private static IEnumerable<IStringDetailsContent> ConvertFromDto(IEnumerable<StringDetailDto>? dtoStringDetails)
+    {
+        if (dtoStringDetails == null)
+        {
+            return Array.Empty<IStringDetailsContent>();
+        }
+
+        var converted = new List<IStringDetailsContent>();
         foreach (var detail in dtoStringDetails)
         {
             if (detail.HeaderKind != null &&
@@ -87,17 +166,18 @@ public static class DtoExporter
                 converted.Add(new StringDetailsContent(inraHeader, detail.CellContent));
             }
         }
+
         return converted;
     }
 
     private static IEnumerable<INutritionalFeedDetails> ConvertFromDto(IEnumerable<NutritionDetailDto>? nutritionDetail)
     {
-        var converted = new List<INutritionalFeedDetails>();
         if (nutritionDetail == null)
-        {
-            return converted;
+        {           
+            return Array.Empty<INutritionalFeedDetails>();
         }
 
+        var converted = new List<INutritionalFeedDetails>();
         foreach (var detail in nutritionDetail)
         {
             if (detail.HeaderKind != null &&
@@ -110,47 +190,4 @@ public static class DtoExporter
 
         return converted;
     }
-    //
-    // /// <summary>
-    // /// Import a dto into a model
-    // /// </summary>
-    // public static IInraRationTableImportModel ImportFromDto(this ReferenceDataDto dto)
-    // {
-    //     // TODO PBO delete
-    //     if (dto.Feeds == null)
-    //     {
-    //         return new InraRationTableImportModel(Array.Empty<IInraRationLineImportModel>());
-    //     }
-    //
-    //     List<IInraRationLineImportModel> lines = new List<IInraRationLineImportModel>();
-    //     foreach (var line in dto.Feeds)
-    //     {
-    //         var labels = line.Labels ?? throw new InvalidOperationException("no label for the line");
-    //         lines.Add(new InraRationLineImportModel(ConvertCells(line), labels));
-    //     }
-    //
-    //     return new InraRationTableImportModel(lines);
-    // }
-    //
-    // private static IReadOnlyCollection<FeedCellModel> ConvertCells(FeedDto line)
-    // {
-    //     // TODO PBO delete
-    //     if (line.NutritionDetails == null)
-    //     {
-    //         DebugCore.Fail($"no cell retrieve for line {line}");
-    //         return Array.Empty<FeedCellModel>();
-    //     }
-    //
-    //     var lines = new List<FeedCellModel>();
-    //     foreach (var cell in line.NutritionDetails)
-    //     {
-    //         if (cell.HeaderKind != null && 
-    //             cell.CellContent != null && 
-    //             InraHeaderExtensions.TryParseDtoInraHeader(cell.HeaderKind, out var inraHeader))
-    //         {
-    //             lines.Add(new FeedCellModel(inraHeader, cell.CellContent));
-    //         }
-    //     }
-    //     return lines;
-    // }
 }

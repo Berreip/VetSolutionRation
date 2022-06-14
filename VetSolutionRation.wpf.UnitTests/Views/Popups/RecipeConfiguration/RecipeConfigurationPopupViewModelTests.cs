@@ -5,6 +5,7 @@ using VetSolutionRation.wpf.Services.PopupManager;
 using VetSolutionRation.wpf.UnitTests.UnitTestUtils;
 using VetSolutionRation.wpf.Views.Adapter;
 using VetSolutionRation.wpf.Views.Popups.RecipeConfiguration;
+using VetSolutionRationLib.Models.Feed;
 
 namespace VetSolutionRation.wpf.UnitTests.Views.Popups.RecipeConfiguration;
 
@@ -15,8 +16,8 @@ internal sealed class RecipeConfigurationPopupViewModelTests
     private Mock<IPopupManagerLight> _popupManager;
     private Mock<IFeedProvider> _feedProvider;
     private List<IVerifyFeed> _selectedFeed;
-    private Mock<IVerifyFeed> _feed1;
-    private Mock<IVerifyFeed> _feed2;
+    private Mock<IFeedVerifySpecificAdapter> _feed1;
+    private Mock<IFeedVerifySpecificAdapter> _feed2;
     private Mock<IFeedQuantityAdapter> _quantity1;
     private Mock<IFeedQuantityAdapter> _quantity2;
 
@@ -27,11 +28,11 @@ internal sealed class RecipeConfigurationPopupViewModelTests
         _popupManager = new Mock<IPopupManagerLight>();
         _feedProvider = new Mock<IFeedProvider>();
         
-        _feed1 = new Mock<IVerifyFeed>();
-        _feed2 = new Mock<IVerifyFeed>();
+        _feed1 = new Mock<IFeedVerifySpecificAdapter>();
+        _feed2 = new Mock<IFeedVerifySpecificAdapter>();
 
-        _feed1.Setup(o => o.GetUnderlyingFeedAdapter()).Returns(new Mock<IFeedAdapter>().Object);
-        _feed2.Setup(o => o.GetUnderlyingFeedAdapter()).Returns(new Mock<IFeedAdapter>().Object);
+        _feed1.Setup(o => o.GetUnderlyingFeed()).Returns(new Mock<IFeed>().Object);
+        _feed2.Setup(o => o.GetUnderlyingFeed()).Returns(new Mock<IFeed>().Object);
 
         _feed1.Setup(o => o.Name).Returns("feed1_name");
         _feed2.Setup(o => o.Name).Returns("feed2_name");
@@ -39,8 +40,8 @@ internal sealed class RecipeConfigurationPopupViewModelTests
         _quantity1 = new Mock<IFeedQuantityAdapter>();
         _quantity2 = new Mock<IFeedQuantityAdapter>();
 
-        _quantity1.Setup(o => o.Quantity).Returns(60d);
-        _quantity2.Setup(o => o.Quantity).Returns(20d);
+        _quantity1.Setup(o => o.Quantity).Returns(60);
+        _quantity2.Setup(o => o.Quantity).Returns(20);
 
         _feed1.Setup(o => o.FeedQuantity).Returns(_quantity1.Object);
         _feed2.Setup(o => o.FeedQuantity).Returns(_quantity2.Object);
@@ -80,7 +81,7 @@ internal sealed class RecipeConfigurationPopupViewModelTests
         //Arrange
 
         //Act
-        _sut.ReciepeName = "stubName";
+        _sut.RecipeName = "stubName";
 
         //Assert
         Assert.IsTrue(_sut.ValidateRecipeCreationCommand.CanExecute());
@@ -90,7 +91,7 @@ internal sealed class RecipeConfigurationPopupViewModelTests
     public void Execute_validate_setup_recipe_configuration()
     {
         //Arrange
-        _sut.ReciepeName = "stubName";
+        _sut.RecipeName = "stubName";
 
         //Act
         _sut.ValidateRecipeCreationCommand.Execute();

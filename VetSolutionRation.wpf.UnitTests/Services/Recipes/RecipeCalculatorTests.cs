@@ -21,9 +21,9 @@ internal sealed class RecipeCalculatorTests
         _sut = new RecipeCalculator();
     }
 
-    private static IFeedThatCouldBeAddedIntoReciepe CreateFeedMock(bool isSelected = true)
+    private static IFeedThatCouldBeAddedIntoRecipe CreateFeedMock(bool isSelected = true)
     {
-        var mock = new Mock<IFeedThatCouldBeAddedIntoReciepe>();
+        var mock = new Mock<IFeedThatCouldBeAddedIntoRecipe>();
         mock.Setup(o => o.IsSelected).Returns(isSelected);
         return mock.Object;
     }
@@ -34,7 +34,7 @@ internal sealed class RecipeCalculatorTests
         //Arrange
 
         //Act
-        var res = _sut.CouldCalculateRecipe(Array.Empty<IFeedThatCouldBeAddedIntoReciepe>());
+        var res = _sut.CouldCalculateRecipe(Array.Empty<IFeedThatCouldBeAddedIntoRecipe>());
 
         //Assert
         Assert.IsFalse(res);
@@ -44,7 +44,7 @@ internal sealed class RecipeCalculatorTests
     public void CouldCalculateRecipe_returns_false_when_only_one_ingredient()
     {
         //Arrange
-        var feeds = new List<IFeedThatCouldBeAddedIntoReciepe> { CreateFeedMock() };
+        var feeds = new List<IFeedThatCouldBeAddedIntoRecipe> { CreateFeedMock() };
 
         //Act
         var res = _sut.CouldCalculateRecipe(feeds);
@@ -57,7 +57,7 @@ internal sealed class RecipeCalculatorTests
     public void CouldCalculateRecipe_returns_true_when_more_than_one_ingredient()
     {
         //Arrange
-        var feeds = new List<IFeedThatCouldBeAddedIntoReciepe> { CreateFeedMock(), CreateFeedMock() };
+        var feeds = new List<IFeedThatCouldBeAddedIntoRecipe> { CreateFeedMock(), CreateFeedMock() };
 
         //Act
         var res = _sut.CouldCalculateRecipe(feeds);
@@ -70,7 +70,7 @@ internal sealed class RecipeCalculatorTests
     public void CouldCalculateRecipe_returns_false_when_more_than_one_ingredient_but_only_one_selected()
     {
         //Arrange
-        var feeds = new List<IFeedThatCouldBeAddedIntoReciepe>
+        var feeds = new List<IFeedThatCouldBeAddedIntoRecipe>
         {
             CreateFeedMock(false), // not selected
             CreateFeedMock(),
@@ -105,13 +105,12 @@ internal sealed class RecipeCalculatorTests
         Assert.IsNotNull(res);
         Assert.AreEqual("Name", res.RecipeName);
         Assert.AreEqual(FeedUnit.Kg, res.Unit);
-        Assert.AreEqual(0, res.Quantity);
-        
+        Assert.AreEqual(3, res.Ingredients.Count);
     }
-
-    private static Mock<IFeedForRecipe> CreateIngredientMock(int percentage)
+    
+    private static Mock<IIngredientForRecipe> CreateIngredientMock(int percentage)
     {
-        var ingredient = new Mock<IFeedForRecipe>();
+        var ingredient = new Mock<IIngredientForRecipe>();
         ingredient.Setup(o => o.Percentage).Returns(percentage);
         return ingredient;
     }

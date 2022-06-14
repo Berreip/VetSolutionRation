@@ -7,7 +7,7 @@
         xmlns:local="clr-namespace:VetSolutionRation.wpf.Views.Popups.RecipeConfiguration"
         mc:Ignorable="d"
         Title="Création de recette"
-        Height="800" Width="450"
+        Height="400" Width="600"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="Regular"
         TextElement.FontSize="13"
@@ -41,8 +41,9 @@
                 ToolTip="Nom de la recette"
                 Margin="10"
                 VerticalAlignment="Center"
+                materialDesign:HintAssist.Hint="Nom de la recette"
                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                Text="{Binding ReciepeName, UpdateSourceTrigger=PropertyChanged}" />
+                Text="{Binding RecipeName, UpdateSourceTrigger=PropertyChanged}" />
             <StackPanel Grid.Row="1" Orientation="Horizontal"
                         Visibility="{Binding IsDuplicatedLabel, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <materialDesign:PackIcon Kind="AlertOutline"
@@ -58,80 +59,129 @@
         </Grid>
 
         <!-- ALL SELECTED FEEDS FOR RECIPE -->
-        <ItemsControl Grid.Row="1" Margin="2, 5" Padding="5"
-                      HorizontalAlignment="Stretch"
-                      ItemsSource="{Binding SelectedFeedsCollection}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <VirtualizingStackPanel IsVirtualizing="True"
-                                            VirtualizationMode="Recycling" />
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.Template>
-                <ControlTemplate TargetType="ItemsControl">
-                    <ScrollViewer CanContentScroll="True"
-                                  VerticalScrollBarVisibility="Auto"
-                                  HorizontalScrollBarVisibility="Hidden"
-                                  Padding="{TemplateBinding Padding}"
-                                  Background="{DynamicResource MaterialDesignPaper}"
-                                  Focusable="False">
-                        <ItemsPresenter />
-                    </ScrollViewer>
-                </ControlTemplate>
-            </ItemsControl.Template>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate DataType="{x:Type local:FeedForRecipeCreationAdapter}">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <!-- QUANTITY -->
-                            <ColumnDefinition Width="70" />
-                            <!-- QUANTITY UNIT -->
-                            <ColumnDefinition Width="50" />
-                        </Grid.ColumnDefinitions>
-
-                        <!-- FEED NAME -->
+        <GroupBox
+            Grid.Row="1"
+            Style="{DynamicResource MaterialDesignCardGroupBox}"
+            Margin="10, 5"
+            Padding="5"
+            materialDesign:ShadowAssist.ShadowDepth="Depth3"
+            BorderThickness="0">
+            <GroupBox.HeaderTemplate>
+                <DataTemplate>
+                    <StackPanel
+                        Orientation="Horizontal">
+                        <materialDesign:PackIcon
+                            Kind="Barley"
+                            Height="32"
+                            Width="32"
+                            VerticalAlignment="Center" />
                         <TextBlock
+                            Margin="8,0,0,0"
                             VerticalAlignment="Center"
-                            Margin="2"
-                            Text="{Binding Name, Mode=OneTime}"
-                            TextTrimming="CharacterEllipsis"
-                            ToolTip="{Binding Name, Mode=OneTime}" />
-                        
-                        <!-- QUANTITY -->
-                        <TextBox
-                            Grid.Column="1"
-                            VerticalAlignment="Center"
-                            HorizontalContentAlignment="Right"
-                            Margin="5, 2"
-                            Text="{Binding FeedQuantity.Quantity}" />
-
-                        <!-- QUANTITY UNIT -->
-                        <TextBlock
-                            Grid.Column="2"
-                            VerticalAlignment="Center"
-                            HorizontalAlignment="Left"
-                            Margin="2"
-                            Text="{Binding FeedQuantity.UnitDisplayName}" />
-                    </Grid>
+                            Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
+                            Text="Ingrédients" />
+                    </StackPanel>
                 </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
-
-        <StackPanel Grid.Row="2" 
-                    Margin="20, 5"
-                    VerticalAlignment="Center" HorizontalAlignment="Stretch">
+            </GroupBox.HeaderTemplate>
             
-            <Button 
+            <ItemsControl Margin="2, 5" Padding="5"
+                          HorizontalAlignment="Stretch"
+                          ItemsSource="{Binding SelectedFeedsCollection}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <VirtualizingStackPanel IsVirtualizing="True"
+                                                VirtualizationMode="Recycling" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.Template>
+                    <ControlTemplate TargetType="ItemsControl">
+                        <ScrollViewer CanContentScroll="True"
+                                      VerticalScrollBarVisibility="Auto"
+                                      HorizontalScrollBarVisibility="Hidden"
+                                      Padding="{TemplateBinding Padding}"
+                                      Focusable="False">
+                            <ItemsPresenter />
+                        </ScrollViewer>
+                    </ControlTemplate>
+                </ItemsControl.Template>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="{x:Type local:FeedForRecipeCreationAdapter}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <!-- QUANTITY -->
+                                <ColumnDefinition Width="70" />
+                                <!-- QUANTITY UNIT -->
+                                <ColumnDefinition Width="50" />
+                            </Grid.ColumnDefinitions>
+
+                            <!-- FEED NAME -->
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                Margin="10, 2, 4, 2"
+                                Text="{Binding Name, Mode=OneTime}"
+                                TextTrimming="CharacterEllipsis"
+                                ToolTip="{Binding Name, Mode=OneTime}" />
+                            
+                            <!-- ~1~ PERCENTAGE @1@ -->
+                            <!-- <TextBox -->
+                            <!--     Grid.Column="1" -->
+                            <!--     VerticalAlignment="Center" -->
+                            <!--     HorizontalContentAlignment="Right" -->
+                            <!--     Margin="5, 2" -->
+                            <!--     Text="{Binding FeedQuantity.Quantity}" /> -->
+                            
+                            <!-- QUANTITY -->
+                            <TextBox  Grid.Column="1"
+                                      Margin="5, 2"
+                                      Text="{Binding FeedQuantity.QuantityString, UpdateSourceTrigger=PropertyChanged}"
+                                      VerticalAlignment="Center"
+                                      HorizontalContentAlignment="Right">
+                                <TextBox.Style>
+                                    <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource MaterialDesignTextBox}">
+                                        <Setter Property="Foreground" Value="{StaticResource MaterialDesignBody}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding FeedQuantity.IsValid}" Value="False">
+                                                <Setter Property="Foreground" Value="Red" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBox.Style>
+                            </TextBox>
+
+                            <!-- QUANTITY UNIT -->
+                            <TextBlock
+                                Grid.Column="2"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Left"
+                                Margin="2"
+                                Text="{Binding FeedQuantity.UnitDisplayName}" />
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </GroupBox>
+
+        <StackPanel Grid.Row="2"
+                    Orientation="Horizontal"
+                    Margin="20, 5"
+                    VerticalAlignment="Center" 
+                    HorizontalAlignment="Center">
+
+            <Button
                 Margin="20, 5"
+                MinWidth="150"
                 Style="{StaticResource MaterialDesignOutlinedButton}"
                 Content="Annuler"
+                Background="{StaticResource Color_Warning}"
+                Foreground="{StaticResource Color_Warning_Text}"
                 Command="{Binding CancelCreationCommand}" />
             <Button
-                    Margin="20, 5"
-                    Style="{StaticResource MaterialDesignOutlinedButton}"
-                    Content="Valider"
-                    Command="{Binding ValidateRecipeCreationCommand}" />
+                Margin="20, 5"
+                MinWidth="150"
+                Style="{StaticResource MaterialDesignOutlinedButton}"
+                Content="Valider"
+                Command="{Binding ValidateRecipeCreationCommand}" />
         </StackPanel>
     </Grid>
 </Window>

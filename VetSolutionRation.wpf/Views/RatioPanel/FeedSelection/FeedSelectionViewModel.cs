@@ -108,7 +108,7 @@ internal sealed class FeedSelectionViewModel : ViewModelBase, IFeedSelectionView
         if (feedAdapter != null)
         {
             _calculateRatiosView.ViewModel.AddSelectedFeed(feedAdapter);
-            _verifyRatiosView.ViewModel.AddSelectedFeed(feedAdapter);
+            _verifyRatiosView.ViewModel.AddSelectedFeed(feedAdapter.GetUnderlyingFeed());
         }
     }
 

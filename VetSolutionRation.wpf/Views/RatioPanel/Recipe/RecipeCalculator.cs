@@ -7,13 +7,14 @@ using VetSolutionRationLib.Models.Recipe;
 namespace VetSolutionRation.wpf.Views.RatioPanel.Recipe;
 
 /// <summary>
-/// Represent a feed that could be aded into a reciepe
+/// Represent a feed that could be aded into a recipe
+/// <remarks>It could be a recipe itself</remarks>
 /// </summary>
-internal interface IFeedThatCouldBeAddedIntoReciepe
+internal interface IFeedThatCouldBeAddedIntoRecipe
 {
-    bool IsSelected { get; }
     string Name { get; }
     IFeedQuantityAdapter FeedQuantity { get; }
+    bool IsSelected { get; }
 }
 
 internal interface IRecipeCalculator
@@ -21,7 +22,7 @@ internal interface IRecipeCalculator
     /// <summary>
     /// Returns true if the given list of feed could create a reciepe
     /// </summary>
-    bool CouldCalculateRecipe(IReadOnlyCollection<IFeedThatCouldBeAddedIntoReciepe> feeds);
+    bool CouldCalculateRecipe(IReadOnlyCollection<IFeedThatCouldBeAddedIntoRecipe> feeds);
     IRecipe CreateNewReciepe(IRecipeConfiguration recipeConfiguration);
 }
 
@@ -29,7 +30,7 @@ internal interface IRecipeCalculator
 internal sealed class RecipeCalculator : IRecipeCalculator
 {
     /// <inheritdoc />
-    public bool CouldCalculateRecipe(IReadOnlyCollection<IFeedThatCouldBeAddedIntoReciepe> feeds)
+    public bool CouldCalculateRecipe(IReadOnlyCollection<IFeedThatCouldBeAddedIntoRecipe> feeds)
     {
         // doing a recipe with one ingredient just pollute the database
         return feeds.Count(o => o.IsSelected) > 1;

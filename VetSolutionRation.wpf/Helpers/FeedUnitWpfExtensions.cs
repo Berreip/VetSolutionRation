@@ -3,7 +3,7 @@ using VetSolutionRationLib.Enums;
 
 namespace VetSolutionRation.wpf.Helpers;
 
-internal static class FeedUnitExtensions
+internal static class FeedUnitWpfExtensions
 {
     public static string ToDiplayName(this FeedUnit unit)
     {

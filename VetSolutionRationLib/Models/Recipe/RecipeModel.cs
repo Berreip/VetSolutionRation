@@ -1,14 +1,13 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using VetSolutionRationLib.Enums;
 using VetSolutionRationLib.Models.Feed;
 
 namespace VetSolutionRationLib.Models.Recipe;
 
 /// <summary>
-/// A group of feed in a certains proportion
+/// A Recipe containing a group of ingredient (feed) and a proportion for each
 /// </summary>
-public interface IRecipe
+public interface IRecipe : IFeedOrReciepe
 {
     /// <summary>
     /// The name of the recipe
@@ -21,15 +20,15 @@ public interface IRecipe
     FeedUnit Unit { get; }
     
     /// <summary>
-    /// The quantity
+    /// List of ingredient for this recipe
     /// </summary>
-    double Quantity { get; }
+    IReadOnlyList<IIngredientForRecipe> Ingredients { get; }
 }
 
 /// <summary>
 /// An ingredient which is a part of a recipe
 /// </summary>
-public interface IFeedForRecipe
+public interface IIngredientForRecipe
 {
     /// <summary>
     /// The percentage of this ingredient in the recipe total
@@ -42,9 +41,27 @@ public interface IFeedForRecipe
     IFeed Ingredient { get; }
 }
 
+/// <inheritdoc />
+public sealed class IngredientForRecipe : IIngredientForRecipe
+{
+    /// <inheritdoc />
+    public double Percentage { get; }
+
+    /// <inheritdoc />
+    public IFeed Ingredient { get; }
+    
+    public IngredientForRecipe(double percentage, IFeed feed)
+    {
+        Percentage = percentage;
+        Ingredient = feed;
+    }
+}
+
+/// <inheritdoc />
 public sealed class RecipeModel : IRecipe
 {
-    private readonly IReadOnlyList<IFeedForRecipe> _ingredients;
+    /// <inheritdoc />
+    public IReadOnlyList<IIngredientForRecipe> Ingredients { get; }
 
     /// <inheritdoc />
     public string RecipeName { get; }
@@ -52,14 +69,10 @@ public sealed class RecipeModel : IRecipe
     /// <inheritdoc />
     public FeedUnit Unit { get; }
 
-    /// <inheritdoc />
-    public double Quantity { get; }
-
-    public RecipeModel(string recipeName, FeedUnit unit,  IReadOnlyList<IFeedForRecipe> ingredients)
+    public RecipeModel(string recipeName, FeedUnit unit,  IReadOnlyList<IIngredientForRecipe> ingredients)
     {
-        _ingredients = ingredients;
+        Ingredients = ingredients;
         RecipeName = recipeName;
         Unit = unit;
-        Quantity = 0;
     }
 }

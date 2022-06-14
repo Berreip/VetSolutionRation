@@ -11,6 +11,9 @@ public sealed class ReferenceDataDto
 {
     [JsonProperty("Feeds")]
     public List<FeedDto>? Feeds { get; set; }
+
+    [JsonProperty("Recipes")]
+    public List<RecipeDto>? Recipes { get; set; }
 }
 
 [JsonObject("ReferenceLineDto")]
@@ -45,6 +48,41 @@ public sealed class FeedDto
     public override string ToString() => Labels.JoinAsLabel();
 }
 
+[JsonObject("RecipeDto")]
+public sealed class RecipeDto
+{
+    [JsonProperty("Name")]
+    public string? Name { get; set;}
+    
+    [JsonProperty("UnitLabel")]
+    public string? UnitLabel{ get; set;}
+    
+    [JsonProperty("Ingredients")]
+    public List<IngredientDto>? Ingredients { get; set;}
+    
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return $"RecipeDto: [Name={Name ?? "NULL"} ({UnitLabel ?? "NULL"}) = {string.Join(Environment.NewLine, Ingredients ?? new List<IngredientDto>())}]";
+    }
+}
+
+[JsonObject("IngredientDto")]
+public sealed class IngredientDto
+{
+    [JsonProperty("Percentage")]
+    public double? Percentage { get; set; }
+    
+    [JsonProperty("FeedsInRecipe")]
+    public FeedDto? FeedsInRecipe { get; set; }
+
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return $"IngredientDto: [{Percentage}% - {FeedsInRecipe}]";
+    }
+}
+
 [JsonObject("StringDetail")]
 public sealed class StringDetailDto
 {
@@ -53,6 +91,12 @@ public sealed class StringDetailDto
     
     [JsonProperty("k")]
     public string? HeaderKind { get;set;}
+    
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return $"StringDetail: [{HeaderKind} = {CellContent}]";
+    }
 }
 
 [JsonObject("NutritionDetails")]
@@ -63,5 +107,11 @@ public sealed class NutritionDetailDto
     
     [JsonProperty("k")]
     public string? HeaderKind { get;set;}
+    
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return $"StringDetail: [{HeaderKind} = {CellContent}]";
+    }
 }
 

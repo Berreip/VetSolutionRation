@@ -28,8 +28,11 @@
 
   
     <SolidColorBrush x:Key="Color_Ok" Color="DarkSeaGreen" />
+    <SolidColorBrush x:Key="Color_Ok_Text" Color="Black" />
     <SolidColorBrush x:Key="Color_Warning" Color="Orange" />
+    <SolidColorBrush x:Key="Color_Warning_Text" Color="Black" />
     <SolidColorBrush x:Key="Color_Danger" Color="Red" />
+    <SolidColorBrush x:Key="Color_Danger_Text" Color="White" />
 
     <!-- ~1~Label@1@ -->
     <!-- <Style x:Key="Label_Base" TargetType="{x:Type Label}" BasedOn="{StaticResource MaterialDesignLabel}"> -->

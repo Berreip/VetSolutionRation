@@ -5,9 +5,12 @@ using System.Linq;
 using PRF.WPFCore;
 using PRF.WPFCore.Commands;
 using PRF.WPFCore.CustomCollections;
+using PRF.WPFCore.UiWorkerThread;
+using VetSolutionRation.Common.Async;
 using VetSolutionRation.wpf.Services.Feed;
 using VetSolutionRation.wpf.Services.PopupManager;
 using VetSolutionRation.wpf.Views.Adapter;
+using VetSolutionRation.wpf.Views.RatioPanel.Recipe;
 using VetSolutionRationLib.Enums;
 using VetSolutionRationLib.Models.Feed;
 using VetSolutionRationLib.Models.Recipe;
@@ -20,20 +23,20 @@ internal sealed class RecipeConfigurationPopupViewModel : ViewModelBase, IPopupV
     private readonly IFeedProvider _feedProvider;
     private readonly ObservableCollectionRanged<FeedForRecipeCreationAdapter> _feedSelectedForRecipe;
     public ICollectionView SelectedFeedsCollection { get; }
-    private string? _reciepeName;
+    private string? _recipeName;
     private bool _isDuplicatedLabel;
 
     public IDelegateCommandLight ValidateRecipeCreationCommand { get; }
     public IDelegateCommandLight CancelCreationCommand { get; }
     public IRecipeConfiguration? ReciepedConfiguration { get; private set; }
 
-    public RecipeConfigurationPopupViewModel(IPopupManagerLight popupManager, IFeedProvider feedProvider, IReadOnlyList<IVerifyFeed> selectedFeeds)
+    public RecipeConfigurationPopupViewModel(IPopupManagerLight popupManager, IFeedProvider feedProvider, IReadOnlyList<IFeedThatCouldBeAddedIntoRecipe> selectedFeeds)
     {
         _popupManager = popupManager;
         _feedProvider = feedProvider;
 
-        SelectedFeedsCollection = ObservableCollectionSource.GetDefaultView(selectedFeeds.Select(o => new FeedForRecipeCreationAdapter(o)).ToArray(), out _feedSelectedForRecipe);
-
+        var allFeeds = RecipeConfigurationCalculator.GetAllIndividualFeeds(selectedFeeds);
+        SelectedFeedsCollection = ObservableCollectionSource.GetDefaultView(allFeeds.Select(o => new FeedForRecipeCreationAdapter(o)).ToArray(), out _feedSelectedForRecipe);
         ValidateRecipeCreationCommand = new DelegateCommandLight(ExecuteValidateRecipeCreationCommand, CanExecuteValidateRecipeCreationCommand);
         CancelCreationCommand = new DelegateCommandLight(ExecuteCancelCreationCommand);
     }
@@ -46,28 +49,35 @@ internal sealed class RecipeConfigurationPopupViewModel : ViewModelBase, IPopupV
 
     private bool CanExecuteValidateRecipeCreationCommand()
     {
-        return !string.IsNullOrWhiteSpace(_reciepeName) &&
+        return !string.IsNullOrWhiteSpace(_recipeName) &&
                _isDuplicatedLabel == false &&
                _feedSelectedForRecipe.Count != 0 &&
                _feedSelectedForRecipe.All(o => o.IsValidForRecipe());
     }
 
-    private void ExecuteValidateRecipeCreationCommand()
+    private async void ExecuteValidateRecipeCreationCommand()
     {
-        if (_reciepeName == null)
+        await AsyncWrapper.DispatchAndWrapAsync(async () =>
         {
-            throw new InvalidOperationException("Can execute should not let the cmd be executed if null");
-        }
-        ReciepedConfiguration = _feedSelectedForRecipe.CalculateRecipeConfiguration(_reciepeName);
-        _popupManager.RequestClosing(this);
+            if (_recipeName == null)
+            {
+                throw new InvalidOperationException("Can execute should not let the cmd be executed if null");
+            }
+
+            ReciepedConfiguration = _feedSelectedForRecipe.CalculateRecipeConfiguration(_recipeName);
+            await UiThreadDispatcher.ExecuteOnUIAsync(() =>
+            {
+                _popupManager.RequestClosing(this);
+            }).ConfigureAwait(false);
+        }).ConfigureAwait(false);
     }
 
-    public string? ReciepeName
+    public string? RecipeName
     {
-        get => _reciepeName;
+        get => _recipeName;
         set
         {
-            if (SetProperty(ref _reciepeName, value))
+            if (SetProperty(ref _recipeName, value))
             {
                 RefreshValidity();
             }
@@ -82,7 +92,7 @@ internal sealed class RecipeConfigurationPopupViewModel : ViewModelBase, IPopupV
 
     private void RefreshValidity()
     {
-        IsDuplicatedLabel = _reciepeName != null && _feedProvider.ContainsRecipeName(_reciepeName);
+        IsDuplicatedLabel = _recipeName != null && _feedProvider.ContainsRecipeName(_recipeName);
         ValidateRecipeCreationCommand.RaiseCanExecuteChanged();
     }
 }
@@ -91,7 +101,7 @@ internal interface IFeedForRecipeCreationAdapter
 {
     string Name { get; }
     IFeedQuantityAdapter FeedQuantity { get; }
-    IReadOnlyList<(IFeedAdapter Feed, double Percentage)> GetUnderlyingFeeds();
+    IReadOnlyList<(IFeed Feed, double Percentage)> GetUnderlyingFeeds();
 }
 
 internal sealed class FeedForRecipeCreationAdapter : ViewModelBase, IFeedForRecipeCreationAdapter
@@ -115,27 +125,11 @@ internal sealed class FeedForRecipeCreationAdapter : ViewModelBase, IFeedForReci
         return FeedQuantity.Quantity > 0d;
     }
 
-    public IReadOnlyList<(IFeedAdapter Feed, double Percentage)> GetUnderlyingFeeds()
+    public IReadOnlyList<(IFeed Feed, double Percentage)> GetUnderlyingFeeds()
     {
         // simple case: one unique ingredient
-        return new[] { (_feed.GetUnderlyingFeedAdapter(), 1d) };
+        return new[] { (_feed.GetUnderlyingFeed(), 1d) };
     }
-}
-
-
-internal sealed class FeedForRecipe : IFeedForRecipe
-{
-    public FeedForRecipe(double percentage, IFeedAdapter feedAdapter)
-    {
-        Percentage = percentage;
-        Ingredient = feedAdapter.GetUnderlyingFeed();
-    }
-
-    /// <inheritdoc />
-    public double Percentage { get; }
-
-    /// <inheritdoc />
-    public IFeed Ingredient { get; }
 }
 
 internal interface IRecipeConfiguration
@@ -144,8 +138,8 @@ internal interface IRecipeConfiguration
     /// Returns the list of all ingredient recipe
     /// </summary>
     /// <returns></returns>
-    IReadOnlyList<IFeedForRecipe> GetIngredients();
-    
+    IReadOnlyList<IIngredientForRecipe> GetIngredients();
+
     /// <summary>
     /// The recipe name
     /// </summary>
@@ -159,9 +153,9 @@ internal interface IRecipeConfiguration
 
 internal sealed class RecipeConfiguration : IRecipeConfiguration
 {
-    private readonly IReadOnlyList<IFeedForRecipe> _feedForRecipeCreations;
+    private readonly IReadOnlyList<IIngredientForRecipe> _feedForRecipeCreations;
 
-    public RecipeConfiguration(string recipeName, IReadOnlyList<IFeedForRecipe> feedForRecipeCreations, FeedUnit recipeUnit)
+    public RecipeConfiguration(string recipeName, IReadOnlyList<IIngredientForRecipe> feedForRecipeCreations, FeedUnit recipeUnit)
     {
         _feedForRecipeCreations = feedForRecipeCreations;
         RecipeUnit = recipeUnit;
@@ -169,7 +163,7 @@ internal sealed class RecipeConfiguration : IRecipeConfiguration
     }
 
     /// <inheritdoc />
-    public IReadOnlyList<IFeedForRecipe> GetIngredients() => _feedForRecipeCreations;
+    public IReadOnlyList<IIngredientForRecipe> GetIngredients() => _feedForRecipeCreations;
 
     /// <inheritdoc />
     public string RecipeName { get; }

@@ -10,6 +10,7 @@ namespace VetSolutionRation.wpf.Helpers
         public const string LOADED_DATA_CACHE_FOLDER = "LoadedData";
         public const string SAVED_DATA_REFERENCE_FILE_NAME = "SavedData_Reference.vtRatio";
         public const string SAVED_DATA_USER_FILE_NAME = "SavedData_User.vtRatio";
+        public const string SAVED_RECIPE_USER_FILE_NAME = "SavedData_User_Recipe.vtRatio";
         public const double DEFAULT_FEED_VALUE = 1d;
 
         /// <summary>

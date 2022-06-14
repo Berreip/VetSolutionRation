@@ -6,14 +6,7 @@ using VetSolutionRationLib.Models.Feed;
 
 namespace VetSolutionRation.wpf.Views.Adapter;
 
-/// <summary>
-/// Represent either a feed or a recipe
-/// </summary>
-internal interface IFeedOrReciepe
-{
-}
-
-internal interface IFeedWithValue : IFeedOrReciepe
+internal interface IFeedWithValue
 {
     double GetInraValue(InraHeader inraHeader);
 }
