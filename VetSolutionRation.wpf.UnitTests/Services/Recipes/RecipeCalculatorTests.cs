@@ -3,7 +3,6 @@ using NUnit.Framework;
 using VetSolutionRation.wpf.Views.Popups.RecipeConfiguration;
 using VetSolutionRation.wpf.Views.RatioPanel.SubPanels.Recipe;
 using VetSolutionRationLib.Enums;
-using VetSolutionRationLib.Models.Feed;
 using VetSolutionRationLib.Models.Recipe;
 
 namespace VetSolutionRation.wpf.UnitTests.Services.Recipes;
@@ -32,6 +31,39 @@ internal sealed class RecipeCalculatorTests
 
         //Assert
         Assert.IsFalse(res);
+    }
+    
+    [Test]
+    public void CouldCalculateRecipe_returns_false_when_only_one_ingredient()
+    {
+        //Arrange
+        var feeds = new List<IFeedThatCouldBeAddedIntoReciepe>
+        {
+            new Mock<IFeedThatCouldBeAddedIntoReciepe>().Object,
+        };
+
+        //Act
+        var res = _sut.CouldCalculateRecipe(feeds);
+
+        //Assert
+        Assert.IsFalse(res);
+    }
+    
+    [Test]
+    public void CouldCalculateRecipe_returns_true_when_more_than_one_ingredient()
+    {
+        //Arrange
+        var feeds = new List<IFeedThatCouldBeAddedIntoReciepe>
+        {
+            new Mock<IFeedThatCouldBeAddedIntoReciepe>().Object,
+            new Mock<IFeedThatCouldBeAddedIntoReciepe>().Object,
+        };
+
+        //Act
+        var res = _sut.CouldCalculateRecipe(feeds);
+
+        //Assert
+        Assert.IsTrue(res);
     }
 
     [Test]

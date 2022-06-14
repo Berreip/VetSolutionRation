@@ -31,7 +31,8 @@ internal sealed class RecipeCalculator : IRecipeCalculator
     /// <inheritdoc />
     public bool CouldCalculateRecipe(IReadOnlyCollection<IFeedThatCouldBeAddedIntoReciepe> feeds)
     {
-        return feeds.Count != 0;
+        // doing a recipe with one ingredient just pollute the database
+        return feeds.Count > 1;
     }
 
     /// <inheritdoc />

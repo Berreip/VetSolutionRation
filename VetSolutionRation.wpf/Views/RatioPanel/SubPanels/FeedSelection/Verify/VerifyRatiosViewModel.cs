@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using PRF.WPFCore;
 using PRF.WPFCore.Commands;
 using PRF.WPFCore.CustomCollections;
@@ -11,7 +9,6 @@ using PRF.WPFCore.UiWorkerThread;
 using VetSolutionRation.Common.Async;
 using VetSolutionRation.wpf.Services.Feed;
 using VetSolutionRation.wpf.Services.PopupManager;
-using VetSolutionRation.wpf.Views.Popups.DuplicatesAndEditFeed;
 using VetSolutionRation.wpf.Views.Popups.RecipeConfiguration;
 using VetSolutionRation.wpf.Views.RatioPanel.SubPanels.FeedSelection.Adapters;
 using VetSolutionRation.wpf.Views.RatioPanel.SubPanels.Recipe;
@@ -105,6 +102,7 @@ internal sealed class VerifyRatiosViewModel : ViewModelBase, IVerifyRatiosViewMo
         if(_alreadyAddedHash.Remove(feed.GetUnderlyingFeedAdapter()))
         {
             _selectedFeedForVerifyPanel.Remove(feed);
+            CreateRecipeCommand.RaiseCanExecuteChanged();
         }
     }
 }

@@ -4,8 +4,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        xmlns:adapter="clr-namespace:VetSolutionRation.wpf.Views.Popups.Adapters"
-        xmlns:selector="clr-namespace:VetSolutionRation.wpf.Views.TemplateSelector"
         xmlns:local="clr-namespace:VetSolutionRation.wpf.Views.Popups.RecipeConfiguration"
         mc:Ignorable="d"
         Title="Création de recette"
@@ -19,89 +17,6 @@
         FontFamily="{DynamicResource MaterialDesignFont}"
         x:Name="DuplicateAndEditPopup"
         d:DataContext="{d:DesignInstance local:RecipeConfigurationPopupViewModel, IsDesignTimeCreatable=true}" x:ClassModifier="internal">
-
-    <Window.Resources>
-        <selector:UnitTemplateSelector x:Key="UnitTemplateSelector">
-            <selector:UnitTemplateSelector.NoUnit>
-                <DataTemplate DataType="{x:Type adapter:FeedDetailInEditionAdapter}">
-                    <TextBox Text="{Binding CellValue, UpdateSourceTrigger=PropertyChanged}"
-                             VerticalContentAlignment="Center"
-                             VerticalAlignment="Center">
-                        <TextBox.Style>
-                            <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource MaterialDesignTextBox}">
-                                <Setter Property="Foreground" Value="{StaticResource MaterialDesignBody}" />
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsValid}" Value="False">
-                                        <Setter Property="Foreground" Value="Red" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </TextBox.Style>
-                    </TextBox>
-                </DataTemplate>
-            </selector:UnitTemplateSelector.NoUnit>
-            <selector:UnitTemplateSelector.Percentage>
-                <DataTemplate DataType="{x:Type adapter:FeedDetailInEditionAdapter}">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <TextBox Text="{Binding CellValue, UpdateSourceTrigger=PropertyChanged}"
-                                 VerticalContentAlignment="Center"
-                                 VerticalAlignment="Center">
-                            <TextBox.Style>
-                                <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource MaterialDesignTextBox}">
-                                    <Setter Property="Foreground" Value="{StaticResource MaterialDesignBody}" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsValid}" Value="False">
-                                            <Setter Property="Foreground" Value="Red" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBox.Style>
-                        </TextBox>
-                        <TextBlock
-                            Grid.Column="1"
-                            Margin="10, 2"
-                            Text="{Binding Unit.DisplayLabel, Mode=OneTime}"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Center" />
-                    </Grid>
-                </DataTemplate>
-            </selector:UnitTemplateSelector.Percentage>
-            <selector:UnitTemplateSelector.Specific>
-                <DataTemplate DataType="{x:Type adapter:FeedDetailInEditionAdapter}">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <TextBox Text="{Binding CellValue, UpdateSourceTrigger=PropertyChanged}"
-                                 VerticalContentAlignment="Center"
-                                 VerticalAlignment="Center">
-                            <TextBox.Style>
-                                <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource MaterialDesignTextBox}">
-                                    <Setter Property="Foreground" Value="{StaticResource MaterialDesignBody}" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsValid}" Value="False">
-                                            <Setter Property="Foreground" Value="Red" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBox.Style>
-                        </TextBox>
-                        <TextBlock
-                            Grid.Column="1"
-                            Margin="10, 2"
-                            Text="{Binding Unit.DisplayLabel, Mode=OneTime}"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Center" />
-                    </Grid>
-                </DataTemplate>
-            </selector:UnitTemplateSelector.Specific>
-        </selector:UnitTemplateSelector>
-    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <!-- RECIPE NAME -->
@@ -168,22 +83,36 @@
                 <DataTemplate DataType="{x:Type local:FeedForRecipeCreationAdapter}">
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="100" />
                             <ColumnDefinition Width="*" />
+                            <!-- QUANTITY -->
+                            <ColumnDefinition Width="70" />
+                            <!-- QUANTITY UNIT -->
+                            <ColumnDefinition Width="50" />
                         </Grid.ColumnDefinitions>
 
                         <!-- FEED NAME -->
-                        <TextBlock Text="{Binding Name}"
-                                   ToolTip="{Binding Name}"
-                                   VerticalAlignment="Center"
-                                   HorizontalAlignment="Right"
-                                   Margin="10, 2" />
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            Margin="2"
+                            Text="{Binding Name, Mode=OneTime}"
+                            TextTrimming="CharacterEllipsis"
+                            ToolTip="{Binding Name, Mode=OneTime}" />
+                        
+                        <!-- QUANTITY -->
+                        <TextBox
+                            Grid.Column="1"
+                            VerticalAlignment="Center"
+                            HorizontalContentAlignment="Right"
+                            Margin="5, 2"
+                            Text="{Binding FeedQuantity.Quantity}" />
 
-                        <!-- CELL VALUE AND UNIT -->
-                        <ContentControl Grid.Column="1"
-                                        Content="{Binding .}"
-                                        ContentTemplateSelector="{StaticResource UnitTemplateSelector}" />
-                   
+                        <!-- QUANTITY UNIT -->
+                        <TextBlock
+                            Grid.Column="2"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Left"
+                            Margin="2"
+                            Text="{Binding FeedQuantity.UnitDisplayName}" />
                     </Grid>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
