@@ -76,7 +76,6 @@ internal sealed class VerifyRatiosViewModelTests
         _recipeCalculator.Verify(o => o.CouldCalculateRecipe(It.IsAny<IReadOnlyCollection<IFeedThatCouldBeAddedIntoReciepe>>()), Times.Once);
     }
     
-      
     [Test]
     public void CreateRecipeCommand_can_execute_evaluated_if_feed_selection_changed()
     {

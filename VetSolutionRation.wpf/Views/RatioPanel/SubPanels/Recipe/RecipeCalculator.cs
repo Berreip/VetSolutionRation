@@ -3,6 +3,7 @@ using VetSolutionRation.wpf.Views.Popups.RecipeConfiguration;
 using VetSolutionRation.wpf.Views.RatioPanel.SubPanels.FeedSelection.Adapters;
 using VetSolutionRationLib.Models.Feed;
 using VetSolutionRationLib.Models.Recipe;
+using System.Linq;
 
 namespace VetSolutionRation.wpf.Views.RatioPanel.SubPanels.Recipe;
 
@@ -32,7 +33,7 @@ internal sealed class RecipeCalculator : IRecipeCalculator
     public bool CouldCalculateRecipe(IReadOnlyCollection<IFeedThatCouldBeAddedIntoReciepe> feeds)
     {
         // doing a recipe with one ingredient just pollute the database
-        return feeds.Count > 1;
+        return feeds.Count(o => o.IsSelected) > 1;
     }
 
     /// <inheritdoc />

@@ -21,6 +21,13 @@ internal sealed class RecipeCalculatorTests
         _sut = new RecipeCalculator();
     }
 
+    private static IFeedThatCouldBeAddedIntoReciepe CreateFeedMock(bool isSelected = true)
+    {
+        var mock = new Mock<IFeedThatCouldBeAddedIntoReciepe>();
+        mock.Setup(o => o.IsSelected).Returns(isSelected);
+        return mock.Object;
+    }
+
     [Test]
     public void CouldCalculateRecipe_returns_false_for_empty_feeds_list()
     {
@@ -37,10 +44,7 @@ internal sealed class RecipeCalculatorTests
     public void CouldCalculateRecipe_returns_false_when_only_one_ingredient()
     {
         //Arrange
-        var feeds = new List<IFeedThatCouldBeAddedIntoReciepe>
-        {
-            new Mock<IFeedThatCouldBeAddedIntoReciepe>().Object,
-        };
+        var feeds = new List<IFeedThatCouldBeAddedIntoReciepe> { CreateFeedMock() };
 
         //Act
         var res = _sut.CouldCalculateRecipe(feeds);
@@ -53,17 +57,30 @@ internal sealed class RecipeCalculatorTests
     public void CouldCalculateRecipe_returns_true_when_more_than_one_ingredient()
     {
         //Arrange
-        var feeds = new List<IFeedThatCouldBeAddedIntoReciepe>
-        {
-            new Mock<IFeedThatCouldBeAddedIntoReciepe>().Object,
-            new Mock<IFeedThatCouldBeAddedIntoReciepe>().Object,
-        };
+        var feeds = new List<IFeedThatCouldBeAddedIntoReciepe> { CreateFeedMock(), CreateFeedMock() };
 
         //Act
         var res = _sut.CouldCalculateRecipe(feeds);
 
         //Assert
         Assert.IsTrue(res);
+    }
+    
+    [Test]
+    public void CouldCalculateRecipe_returns_false_when_more_than_one_ingredient_but_only_one_selected()
+    {
+        //Arrange
+        var feeds = new List<IFeedThatCouldBeAddedIntoReciepe>
+        {
+            CreateFeedMock(false), // not selected
+            CreateFeedMock(),
+        };
+
+        //Act
+        var res = _sut.CouldCalculateRecipe(feeds);
+
+        //Assert
+        Assert.IsFalse(res);
     }
 
     [Test]
