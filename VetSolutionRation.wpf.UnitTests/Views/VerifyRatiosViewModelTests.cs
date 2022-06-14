@@ -76,15 +76,35 @@ internal sealed class VerifyRatiosViewModelTests
         _recipeCalculator.Verify(o => o.CouldCalculateRecipe(It.IsAny<IReadOnlyCollection<IFeedThatCouldBeAddedIntoReciepe>>()), Times.Once);
     }
     
+      
+    [Test]
+    public void CreateRecipeCommand_can_execute_evaluated_if_feed_selection_changed()
+    {
+        //Arrange
+        var feed = new Mock<IFeedAdapter>();
+        _sut.AddSelectedFeed(feed.Object);
+        var feedAdapter = _sut.SelectedFeedsForVerifyPanel.ToArray<FeedVerifySpecificAdapter>().Single();
+        
+        // reset the mock to count calls from here
+        _recipeCalculator.Reset();
+        
+        //Act
+        feedAdapter.IsSelected = false;
+        
+        //Assert
+        _recipeCalculator.Verify(o => o.CouldCalculateRecipe(It.IsAny<IReadOnlyCollection<IFeedThatCouldBeAddedIntoReciepe>>()), Times.Once);
+    }
+    
     [Test]
     public void CreateRecipeCommand_can_execute_evaluated_if_feed_is_removed()
     {
         //Arrange
         var feed = new Mock<IFeedAdapter>();
         _sut.AddSelectedFeed(feed.Object);
-        // reseting the mock to count calls from here
+        var feedAdapter = _sut.SelectedFeedsForVerifyPanel.ToArray<FeedVerifySpecificAdapter>().Single();
+        
+        // reset the mock to count calls from here
         _recipeCalculator.Reset();
-        var feedAdapter = new FeedVerifySpecificAdapter(feed.Object, FeedUnit.Kg);
 
         //Act
         _sut.RemoveFromSelectedFeedsCommand.Execute(feedAdapter);

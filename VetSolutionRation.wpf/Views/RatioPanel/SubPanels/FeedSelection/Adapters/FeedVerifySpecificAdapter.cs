@@ -1,4 +1,5 @@
-﻿using PRF.WPFCore;
+﻿using System;
+using PRF.WPFCore;
 using PRF.WPFCore.Commands;
 using VetSolutionRation.wpf.Helpers;
 using VetSolutionRation.wpf.Views.RatioPanel.SubPanels.Recipe;
@@ -18,14 +19,16 @@ internal interface IFeedVerifySpecificAdapter : IVerifyFeed
 internal sealed class FeedVerifySpecificAdapter : ViewModelBase, IFeedVerifySpecificAdapter
 {
     private readonly IFeedAdapter _feedAdapter;
+    private readonly Action<bool>? _onSelectedChangedCallback;
     private bool _isSelected;
     public IDelegateCommandLight ClickOnLineCommand { get; }
     
-    public FeedVerifySpecificAdapter(IFeedAdapter feedAdapter, FeedUnit quantityUnit, bool initialIsSelected = true)
+    public FeedVerifySpecificAdapter(IFeedAdapter feedAdapter, FeedUnit quantityUnit, Action<bool>? onSelectedChangedCallback, bool initialIsSelected = true)
     {
         Name = feedAdapter.FeedName;
         FeedQuantity = new FeedQuantityAdapter(quantityUnit);
         _feedAdapter = feedAdapter;
+        _onSelectedChangedCallback = onSelectedChangedCallback;
         _isSelected = initialIsSelected;
         ClickOnLineCommand = new DelegateCommandLight(ExecuteClickOnLineCommand);
     }
@@ -43,7 +46,13 @@ internal sealed class FeedVerifySpecificAdapter : ViewModelBase, IFeedVerifySpec
     public bool IsSelected
     {
         get => _isSelected;
-        set => SetProperty(ref _isSelected, value);
+        set
+        {
+            if (SetProperty(ref _isSelected, value))
+            {
+                _onSelectedChangedCallback?.Invoke(value);
+            };
+        }
     }
 
     public string Name { get; }

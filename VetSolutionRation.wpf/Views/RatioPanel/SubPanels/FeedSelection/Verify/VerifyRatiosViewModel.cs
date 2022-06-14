@@ -84,7 +84,7 @@ internal sealed class VerifyRatiosViewModel : ViewModelBase, IVerifyRatiosViewMo
             switch (feedOrRecipe)
             {
                 case IFeedAdapter feedAdapter:
-                    _selectedFeedForVerifyPanel.Add(new FeedVerifySpecificAdapter(feedAdapter, FeedUnit.Kg, true));
+                    _selectedFeedForVerifyPanel.Add(new FeedVerifySpecificAdapter(feedAdapter, FeedUnit.Kg, OnIsSelectedChanged,  true));
                     break;
                 case IRecipeAdapter recipe:
                     throw new NotImplementedException("TODO PBO");
@@ -96,7 +96,12 @@ internal sealed class VerifyRatiosViewModel : ViewModelBase, IVerifyRatiosViewMo
             CreateRecipeCommand.RaiseCanExecuteChanged();
         }
     }
-    
+
+    private void OnIsSelectedChanged(bool isSelected)
+    {
+        CreateRecipeCommand.RaiseCanExecuteChanged();
+    }
+
     private void ExecuteRemoveFromSelectedFeedsCommand(FeedVerifySpecificAdapter feed)
     {
         if(_alreadyAddedHash.Remove(feed.GetUnderlyingFeedAdapter()))
