@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using PRF.WPFCore;
 using PRF.WPFCore.Commands;
 using VetSolutionRation.wpf.Helpers;
@@ -62,28 +63,33 @@ internal sealed class FeedVerifySpecificAdapter : ViewModelBase, IFeedVerifySpec
     public IFeedQuantityAdapter FeedQuantity { get; }
 }
 
-internal interface IFeedQuantityAdapter
+internal interface IFeedQuantityAdapter : IFeedQuantityAdapterBase
 {
-    string UnitDisplayName { get; set; }
-    int Quantity { get; }
-    string? QuantityString { get; set; }
-    FeedUnit Unit { get; }
-    bool IsValid { get; }
 }
 
-internal sealed class FeedQuantityAdapter : ViewModelBase, IFeedQuantityAdapter
+internal interface IFeedQuantityAdapterBase
+{
+    FeedUnit Unit { get; }
+    string UnitDisplayName { get; set; }
+    int Quantity { get; }
+    bool IsValid { get; }
+    string? QuantityString { get; set; }
+}
+
+internal abstract class FeedQuantityAdapterBase : ViewModelBase, IFeedQuantityAdapterBase
 {
     public FeedUnit Unit { get; }
     private string _unitDisplayName;
     private bool _isValid;
     private string? _quantityString;
+    private int _quantity;
 
-    public FeedQuantityAdapter(FeedUnit unit, int initialQuantity = 1)
+    public FeedQuantityAdapterBase(FeedUnit unit, int initialQuantity = 1)
     {
         Unit = unit;
         _unitDisplayName = unit.ToDiplayName();
-        Quantity = initialQuantity;
-        _quantityString = Quantity.ToString();
+        _quantity = initialQuantity;
+        _quantityString = _quantity.ToString();
         _isValid = true;
     }
 
@@ -93,7 +99,19 @@ internal sealed class FeedQuantityAdapter : ViewModelBase, IFeedQuantityAdapter
         set => SetProperty(ref _unitDisplayName, value);
     }
 
-    public int Quantity { get; private set; }
+    public int Quantity
+    {
+        get => _quantity;
+        private set
+        {
+            if(SetProperty(ref _quantity, value))
+            {
+                QuantityUpdatedSpecific(value);
+            }
+        }
+    }
+
+    protected abstract void QuantityUpdatedSpecific(int quantity);
 
     public bool IsValid
     {
@@ -101,7 +119,6 @@ internal sealed class FeedQuantityAdapter : ViewModelBase, IFeedQuantityAdapter
         private set => SetProperty(ref _isValid, value);
     }
 
-    /// <inheritdoc />
     public string? QuantityString
     {
         get => _quantityString;
@@ -120,5 +137,18 @@ internal sealed class FeedQuantityAdapter : ViewModelBase, IFeedQuantityAdapter
                 }
             }
         }
+    }
+}
+
+internal sealed class FeedQuantityAdapter : FeedQuantityAdapterBase, IFeedQuantityAdapter
+{
+    public FeedQuantityAdapter(FeedUnit unit, int initialQuantity = 1) : base(unit, initialQuantity)
+    {
+    }
+
+    /// <inheritdoc />
+    protected override void QuantityUpdatedSpecific(int quantity)
+    {
+        // do nothing
     }
 }

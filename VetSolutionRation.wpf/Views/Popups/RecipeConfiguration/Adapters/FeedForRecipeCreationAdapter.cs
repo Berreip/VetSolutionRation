@@ -1,31 +1,40 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using PRF.WPFCore;
 using VetSolutionRation.wpf.Views.Adapter;
+using VetSolutionRationLib.Enums;
 using VetSolutionRationLib.Models.Feed;
 
 namespace VetSolutionRation.wpf.Views.Popups.RecipeConfiguration.Adapters;
 
 internal interface IFeedForRecipeCreationAdapter
 {
-    string Name { get; }
-    IFeedQuantityAdapter FeedQuantity { get; }
-    IReadOnlyList<(IFeed Feed, double Percentage)> GetUnderlyingFeeds();
+    IFeedQuantityForRecipeAdapter FeedQuantity { get; }
+    IFeed GetUnderlyingFeed();
 }
 
+/// <summary>
+/// Represent a single feed for the recipe creation popup
+/// </summary>
 internal sealed class FeedForRecipeCreationAdapter : ViewModelBase, IFeedForRecipeCreationAdapter
 {
     private readonly IVerifyFeed _feed;
+    private double _percentage;
 
     public FeedForRecipeCreationAdapter(IVerifyFeed feed)
     {
         _feed = feed;
         Name = feed.Name;
-        // copy the adapter to avoid multipe reference pointing to the same adapter
-        FeedQuantity = new FeedQuantityAdapter(feed.FeedQuantity.Unit, feed.FeedQuantity.Quantity);
+        FeedQuantity = new FeedQuantityForRecipeAdapter(feed.FeedQuantity.Unit, feed.FeedQuantity.Quantity);
     }
 
     public string Name { get; }
-    public IFeedQuantityAdapter FeedQuantity { get; }
+    public IFeedQuantityForRecipeAdapter FeedQuantity { get; }
+
+    public double Percentage
+    {
+        get => _percentage;
+        set => SetProperty(ref _percentage, value);
+    }
 
     public bool IsValidForRecipe()
     {
@@ -33,9 +42,34 @@ internal sealed class FeedForRecipeCreationAdapter : ViewModelBase, IFeedForReci
         return FeedQuantity.Quantity > 0d;
     }
 
-    public IReadOnlyList<(IFeed Feed, double Percentage)> GetUnderlyingFeeds()
+    public IFeed GetUnderlyingFeed()
     {
-        // simple case: one unique ingredient
-        return new[] { (_feed.GetUnderlyingFeed(), 1d) };
+        return _feed.GetUnderlyingFeed();
+    }
+}
+
+internal interface IFeedQuantityForRecipeAdapter : IFeedQuantityAdapterBase
+{
+    event Action? OnQuantityChanged;
+}
+
+internal sealed class FeedQuantityForRecipeAdapter : FeedQuantityAdapterBase, IFeedQuantityForRecipeAdapter
+{
+    public event Action? OnQuantityChanged;
+    
+    public FeedQuantityForRecipeAdapter(FeedUnit unit, int initialQuantity) : base(unit, initialQuantity)
+    {
+        
+    }
+
+    /// <inheritdoc />
+    protected override void QuantityUpdatedSpecific(int quantity)
+    {
+        RaiseOnQuantityChanged();
+    }
+
+    private void RaiseOnQuantityChanged()
+    {
+        OnQuantityChanged?.Invoke();
     }
 }

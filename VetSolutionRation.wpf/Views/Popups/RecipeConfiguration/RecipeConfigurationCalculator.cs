@@ -6,7 +6,6 @@ using VetSolutionRation.wpf.Views.Adapter;
 using VetSolutionRation.wpf.Views.Popups.RecipeConfiguration.Adapters;
 using VetSolutionRation.wpf.Views.RatioPanel.Recipe;
 using VetSolutionRationLib.Enums;
-using VetSolutionRationLib.Models.Feed;
 using VetSolutionRationLib.Models.Recipe;
 
 namespace VetSolutionRation.wpf.Views.Popups.RecipeConfiguration;
@@ -15,29 +14,36 @@ internal static class RecipeConfigurationCalculator
 {
     public static RecipeConfiguration CalculateRecipeConfiguration(this IReadOnlyCollection<IFeedForRecipeCreationAdapter> feedForRecipeCreationAdapters, string recipeName)
     {
-        var normalizedQuantityByFeed = new Dictionary<IFeed, double>();
-        double totalByUnit = 0;
-        foreach (var adapter in feedForRecipeCreationAdapters)
-        {
-            var quantityInKg = adapter.FeedQuantity.Unit.GetNormalizedQuantityInKg(adapter.FeedQuantity.Quantity);
-            // a recipe could be created from another recipe
-            foreach (var subIngredient in adapter.GetUnderlyingFeeds())
-            {
-                var relativeQuantity = subIngredient.Percentage * quantityInKg;
-                normalizedQuantityByFeed.Add(subIngredient.Feed, relativeQuantity); 
-                totalByUnit += relativeQuantity;
-            }
-        }
+        var percentageByElement = NormalizedQuantityByFeedAndGetPercentage(feedForRecipeCreationAdapters);
 
         var ingredients = new List<IIngredientForRecipe>();
-        foreach (var feed in normalizedQuantityByFeed)
+        foreach (var data in percentageByElement)
         {
-            ingredients.Add(new IngredientForRecipe(feed.Value / totalByUnit, feed.Key));
+            ingredients.Add(new IngredientForRecipe(data.Value, data.Key.GetUnderlyingFeed()));
         }
 
         return new RecipeConfiguration(recipeName, ingredients, FeedUnit.Kg);
     }
-    
+
+    public static Dictionary<IFeedForRecipeCreationAdapter, double> NormalizedQuantityByFeedAndGetPercentage(this IReadOnlyCollection<IFeedForRecipeCreationAdapter> feedForRecipeCreationAdapters)
+    {
+        var normalizedQuantityByFeed = new Dictionary<IFeedForRecipeCreationAdapter, double>();
+        var totalByUnit = 0d;
+        foreach (var adapter in feedForRecipeCreationAdapters)
+        {
+            var quantityInKg = adapter.FeedQuantity.Unit.GetNormalizedQuantityInKg(adapter.FeedQuantity.Quantity);
+            normalizedQuantityByFeed.Add(adapter, quantityInKg);
+            totalByUnit += quantityInKg;
+        }
+
+        var percentageByElement = new Dictionary<IFeedForRecipeCreationAdapter, double>();
+        foreach (var feed in normalizedQuantityByFeed)
+        {
+            percentageByElement.Add(feed.Key, feed.Value / totalByUnit);
+        }
+        return percentageByElement;
+    }
+
 
     public static IReadOnlyList<IVerifyFeed> GetAllIndividualFeeds(IReadOnlyCollection<IFeedThatCouldBeAddedIntoRecipe> selectedFeeds)
     {

@@ -57,63 +57,6 @@ internal sealed class RecipeConfigurationCalculatorTests
     }
 
     [Test]
-    public void CalculateRecipeConfiguration_with_another_recipe()
-    {
-        //Arrange
-        var f = new Mock<IFeed>();
-        var f2 = new Mock<IFeed>();
-
-        var feed1 = CreateFeedAdapterMock(10, FeedUnit.Kg);
-        var feed2 = CreateFeedAdapterMock(45, FeedUnit.Kg);
-
-        var recipe = CreateRecipeMock(70, FeedUnit.Kg, new[]
-        {
-            (f.Object, 0.3),
-            (f2.Object, 0.7),
-        });
-
-        //Act
-        var res = new[] { recipe.Object, feed2.Object, feed1.Object }.CalculateRecipeConfiguration("feedName");
-
-        //Assert
-        Assert.IsNotNull(res);
-        Assert.AreEqual("feedName", res.RecipeName);
-        var ingredients = res.GetIngredients();
-        Assert.AreEqual(4, ingredients.Count);
-        Assert.AreEqual(0.1680, ingredients[0].Percentage, 0.0001);
-        Assert.AreEqual(0.3920, ingredients[1].Percentage, 0.0001);
-        Assert.AreEqual(0.36, ingredients[2].Percentage, 0.0001);
-        Assert.AreEqual(0.08, ingredients[3].Percentage, 0.0001);
-        Assert.AreEqual(1, ingredients.Sum(o => o.Percentage), 0.01);
-    }
-
-    [Test]
-    public void CalculateRecipeConfiguration_with_another_recipe_And_duplicates()
-    {
-        //Arrange
-        var f = new Mock<IFeed>();
-        var f2 = new Mock<IFeed>();
-        var feed2 = CreateFeedAdapterMock(45, FeedUnit.Kg);
-        var recipe = CreateRecipeMock(70, FeedUnit.Kg, new[]
-        {
-            (f.Object, 0.3),
-            (f2.Object, 0.7),
-        });
-
-        //Act
-        var res = new[] { recipe.Object, feed2.Object }.CalculateRecipeConfiguration("feedName");
-
-        //Assert
-        Assert.IsNotNull(res);
-        var ingredients = res.GetIngredients();
-        Assert.AreEqual(3, ingredients.Count); // should also have feed 3
-        Assert.AreEqual(0.1826, ingredients[0].Percentage, 0.0001);
-        Assert.AreEqual(0.4260, ingredients[1].Percentage, 0.0001);
-        Assert.AreEqual(0.3913, ingredients[2].Percentage, 0.0001);
-        Assert.AreEqual(1, ingredients.Sum(o => o.Percentage), 0.01);
-    }
-
-    [Test]
     public void GetAllIndividualFeeds_returns_empty_empty_input()
     {
         //Arrange
@@ -274,14 +217,6 @@ internal sealed class RecipeConfigurationCalculatorTests
         Assert.IsTrue(res.Contains(feed3.Object));
     }
 
-    private static Mock<IFeedForRecipeCreationAdapter> CreateRecipeMock(int quantity, FeedUnit feedUnit, params (IFeed Feed, double Percentage)[] feeds)
-    {
-        var recipe = new Mock<IFeedForRecipeCreationAdapter>();
-        recipe.Setup(o => o.FeedQuantity.Quantity).Returns(quantity);
-        recipe.Setup(o => o.FeedQuantity.Unit).Returns(feedUnit);
-        recipe.Setup(o => o.GetUnderlyingFeeds()).Returns(feeds);
-        return recipe;
-    }
 
     private static Mock<IFeedForRecipeCreationAdapter> CreateFeedAdapterMock(int quantity, FeedUnit feedUnit, IFeed feedProvided = null)
     {
@@ -289,7 +224,7 @@ internal sealed class RecipeConfigurationCalculatorTests
         adapter.Setup(o => o.FeedQuantity.Quantity).Returns(quantity);
         adapter.Setup(o => o.FeedQuantity.Unit).Returns(feedUnit);
         // single ingredient
-        adapter.Setup(o => o.GetUnderlyingFeeds()).Returns(new[] { (feedProvided ?? new Mock<IFeed>().Object, 1d) });
+        adapter.Setup(o => o.GetUnderlyingFeed()).Returns(feedProvided ?? new Mock<IFeed>().Object);
         return adapter;
     }
     

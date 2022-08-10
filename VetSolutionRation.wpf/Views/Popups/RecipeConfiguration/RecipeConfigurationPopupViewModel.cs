@@ -39,8 +39,24 @@ internal sealed class RecipeConfigurationPopupViewModel : ViewModelBase, IPopupV
 
         var allFeeds = RecipeConfigurationCalculator.GetAllIndividualFeeds(selectedFeeds);
         SelectedFeedsCollection = ObservableCollectionSource.GetDefaultView(allFeeds.Select(o => new FeedForRecipeCreationAdapter(o)).ToArray(), out _feedSelectedForRecipe);
+
         ValidateRecipeCreationCommand = new DelegateCommandLight(ExecuteValidateRecipeCreationCommand, CanExecuteValidateRecipeCreationCommand);
         CancelCreationCommand = new DelegateCommandLight(ExecuteCancelCreationCommand);
+        
+        foreach (var adapter in _feedSelectedForRecipe)
+        {
+            adapter.FeedQuantity.OnQuantityChanged += RefreshPercentage;
+        }
+        RefreshPercentage();
+    }
+
+    private void RefreshPercentage()
+    {
+        var percentagesByAdapter = _feedSelectedForRecipe.NormalizedQuantityByFeedAndGetPercentage();
+        foreach (var adapter in _feedSelectedForRecipe)
+        {
+            adapter.Percentage = percentagesByAdapter[adapter];
+        }
     }
 
     private void ExecuteCancelCreationCommand()
