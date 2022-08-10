@@ -5,6 +5,8 @@ using VetSolutionRation.wpf.Services.PopupManager;
 using VetSolutionRation.wpf.UnitTests.UnitTestUtils;
 using VetSolutionRation.wpf.Views.Adapter;
 using VetSolutionRation.wpf.Views.Popups.RecipeConfiguration;
+using VetSolutionRation.wpf.Views.RatioPanel.Recipe;
+using VetSolutionRationLib.Enums;
 using VetSolutionRationLib.Models.Feed;
 
 namespace VetSolutionRation.wpf.UnitTests.Views.Popups.RecipeConfiguration;
@@ -27,16 +29,13 @@ internal sealed class RecipeConfigurationPopupViewModelTests
         // mock:
         _popupManager = new Mock<IPopupManagerLight>();
         _feedProvider = new Mock<IFeedProvider>();
-        
-        _feed1 = new Mock<IFeedVerifySpecificAdapter>();
-        _feed2 = new Mock<IFeedVerifySpecificAdapter>();
+
+        _feed1 = CreateFeed("feed1_name");
+        _feed2 = CreateFeed("feed2_name");
 
         _feed1.Setup(o => o.GetUnderlyingFeed()).Returns(new Mock<IFeed>().Object);
         _feed2.Setup(o => o.GetUnderlyingFeed()).Returns(new Mock<IFeed>().Object);
 
-        _feed1.Setup(o => o.Name).Returns("feed1_name");
-        _feed2.Setup(o => o.Name).Returns("feed2_name");
-        
         _quantity1 = new Mock<IFeedQuantityAdapter>();
         _quantity2 = new Mock<IFeedQuantityAdapter>();
 
@@ -45,13 +44,13 @@ internal sealed class RecipeConfigurationPopupViewModelTests
 
         _feed1.Setup(o => o.FeedQuantity).Returns(_quantity1.Object);
         _feed2.Setup(o => o.FeedQuantity).Returns(_quantity2.Object);
-        
+
         _selectedFeed = new List<IVerifyFeed>
         {
-            _feed1.Object, 
+            _feed1.Object,
             _feed2.Object,
         };
-        
+
         // software under test:
         _sut = new RecipeConfigurationPopupViewModel(_popupManager.Object, _feedProvider.Object, _selectedFeed);
     }
@@ -95,18 +94,57 @@ internal sealed class RecipeConfigurationPopupViewModelTests
 
         //Act
         _sut.ValidateRecipeCreationCommand.Execute();
-        
+
         //Assert
         var config = _sut.RecipeConfiguration;
         Assert.IsNotNull(config);
-        
+
         var ingredients = config.GetIngredients();
         Assert.AreEqual(2, ingredients.Count);
         Assert.AreEqual(0.75d, ingredients[0].Percentage);
         Assert.AreEqual(0.25d, ingredients[1].Percentage);
-        
     }
 
-    
 
+    [Test]
+    public void Ctor_do_not_duplicate_ingredient_even_if_provided_multiple_times()
+    {
+        //Arrange
+        var feed1 = CreateFeed("feed1");
+        var feed2 = CreateFeed("feed2");
+        var feed3 = CreateFeed("feed3");
+        var recipe = new Mock<IRecipeAdapter>();
+        // the recipe already contains all previous feed except feed3
+        recipe.Setup(o => o.Ingredients).Returns(new List<IVerifyFeed> { feed1.Object, feed2.Object });
+
+        var feeds = new List<IFeedThatCouldBeAddedIntoRecipe>
+        {
+            feed1.Object,
+            feed2.Object,
+            feed3.Object,
+            recipe.Object,
+        };
+
+        //Act
+        var sut = new RecipeConfigurationPopupViewModel(_popupManager.Object, _feedProvider.Object, feeds);
+
+        //Assert
+        var selectedFeeds = sut.SelectedFeedsCollection.ToArray<FeedForRecipeCreationAdapter>();
+        Assert.AreEqual(3, selectedFeeds.Count);
+        Assert.IsTrue(selectedFeeds.Any(o => o.Name == feed1.Object.Name));
+        Assert.IsTrue(selectedFeeds.Any(o => o.Name == feed2.Object.Name));
+        Assert.IsTrue(selectedFeeds.Any(o => o.Name == feed3.Object.Name));
+    }
+
+    private static Mock<IFeedVerifySpecificAdapter> CreateFeed(string name)
+    {
+        var feed = new Mock<IFeedVerifySpecificAdapter>();
+        feed.Setup(o => o.Name).Returns(name);
+        feed.Setup(o => o.Guid).Returns(Guid.NewGuid());
+        var qty = new Mock<IFeedQuantityAdapter>();
+        qty.Setup(o => o.Unit).Returns(FeedUnit.Kg);
+        qty.Setup(o => o.Quantity).Returns(1);
+        feed.Setup(o => o.FeedQuantity).Returns(qty.Object);
+        return feed;
+    }
 }

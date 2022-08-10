@@ -19,14 +19,18 @@ public static class InraRationImportModelExtensions
     public static IReferenceFeed ToReferenceFeed(this IInraRationLineImportModel lineImportModel)
     {
         var details = GetAllNutritionalDetails(lineImportModel);
-        return new ReferenceFeed(lineImportModel.GetLabels(), details.NutritionalDetails, details.StringDetails);
+        // create a unique id for further reference
+        var newGuid = Guid.NewGuid();
+        return new ReferenceFeed(lineImportModel.GetLabels(), details.NutritionalDetails, details.StringDetails, newGuid);
     }
 
 
     public static ICustomFeed ToCustomFeed(this IInraRationLineImportModel lineImportModel)
     {
         var details = GetAllNutritionalDetails(lineImportModel);
-        return new CustomFeed(lineImportModel.GetLabels(), details.NutritionalDetails);
+        // create a unique id for further reference
+        var newGuid = Guid.NewGuid();
+        return new CustomFeed(lineImportModel.GetLabels(), details.NutritionalDetails, newGuid);
     }
     
     private static (IReadOnlyList<INutritionalFeedDetails> NutritionalDetails, IReadOnlyList<IStringDetailsContent> StringDetails) GetAllNutritionalDetails(IInraRationLineImportModel lineImportModel)

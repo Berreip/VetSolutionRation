@@ -13,9 +13,10 @@ public interface ICustomFeed: IFeed
 /// <inheritdoc cref="VetSolutionRationLib.Models.Feed.ICustomFeed" />
 public sealed class CustomFeed : FeedBase, ICustomFeed
 {
-    public CustomFeed(IReadOnlyCollection<string> labels, 
-        IEnumerable<INutritionalFeedDetails> nutritionalDetails) 
-        : base(labels, nutritionalDetails, Array.Empty<IStringDetailsContent>())
+    public CustomFeed(IReadOnlyCollection<string> labels,
+        IEnumerable<INutritionalFeedDetails> nutritionalDetails, 
+        Guid guid) 
+        : base(labels, nutritionalDetails, Array.Empty<IStringDetailsContent>(), guid)
     {
     }
 }

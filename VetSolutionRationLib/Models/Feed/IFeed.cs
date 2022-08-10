@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using VetSolutionRationLib.Enums;
 using VetSolutionRationLib.Helpers;
@@ -33,6 +34,8 @@ public interface IFeed : IFeedOrReciepe
     /// </summary>
     IReadOnlyList<INutritionalFeedDetails> NutritionalDetails { get; }
 
+    Guid Guid { get; }
+
     List<string> GetLabels();
     bool TryGetInraValue(InraHeader inraHeader, out double currentValue);
 }
@@ -46,9 +49,11 @@ public abstract class FeedBase : IFeed
 
     protected FeedBase(IReadOnlyCollection<string> labels,
         IEnumerable<INutritionalFeedDetails> nutritionalDetails,
-        IEnumerable<IStringDetailsContent> stringDetails)
+        IEnumerable<IStringDetailsContent> stringDetails,
+        Guid guid)
     {
         _labels = labels;
+        Guid = guid;
         Label = labels.JoinAsLabel();
         NutritionalDetails = nutritionalDetails.ToArray();
         _nutritionByInraHeader = NutritionalDetails.ToDictionary(o => o.Header);
@@ -63,6 +68,9 @@ public abstract class FeedBase : IFeed
 
     /// <inheritdoc />
     public IReadOnlyList<INutritionalFeedDetails> NutritionalDetails { get; }
+
+    /// <inheritdoc />
+    public Guid Guid { get; }
 
     public bool TryGetInraValue(InraHeader inraHeader, out double currentValue)
     {

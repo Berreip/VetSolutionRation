@@ -17,7 +17,7 @@ internal sealed class FeedVerificationAdapterTests
     public void SearchReturns_expected_results(string adapterName, string searchText, bool expectedMatch)
     {
         //Arrange
-        var feed = new ReferenceFeedAdapter(new ReferenceFeed(new[] { adapterName }, Array.Empty<INutritionalFeedDetails>(), Array.Empty<IStringDetailsContent>()));
+        var feed = new ReferenceFeedAdapter(new ReferenceFeed(new[] { adapterName }, Array.Empty<INutritionalFeedDetails>(), Array.Empty<IStringDetailsContent>(), Guid.NewGuid()));
 
         //Act
         var res = feed.MatchSearch(new[] { searchText });

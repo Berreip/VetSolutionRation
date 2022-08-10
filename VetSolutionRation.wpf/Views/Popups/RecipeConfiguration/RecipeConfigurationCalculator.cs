@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using VetSolutionRation.wpf.Helpers;
 using VetSolutionRation.wpf.Views.Adapter;
 using VetSolutionRation.wpf.Views.RatioPanel.Recipe;
@@ -39,22 +40,32 @@ internal static class RecipeConfigurationCalculator
 
     public static IReadOnlyList<IVerifyFeed> GetAllIndividualFeeds(IReadOnlyCollection<IFeedThatCouldBeAddedIntoRecipe> selectedFeeds)
     {
-        var individualFeeds = new List<IVerifyFeed>(selectedFeeds.Count);
+        var individualFeeds = new Dictionary<Guid, IVerifyFeed>();
         foreach (var feedOrRecipeAdapter in selectedFeeds)
         {
             switch (feedOrRecipeAdapter)
             {
                 case IRecipeAdapter recipeAdapter:
-                    individualFeeds.AddRange(recipeAdapter.Ingredients);
+                    foreach (var ingredient in recipeAdapter.Ingredients)
+                    {
+                        AddIngredientIfNotAlreadyThere(individualFeeds, ingredient);
+                    }
                     break;
-                case IFeedVerifySpecificAdapter feedVerifySpecificAdapter:
-                    individualFeeds.Add(feedVerifySpecificAdapter);
+                case IFeedVerifySpecificAdapter ingredient:
+                    AddIngredientIfNotAlreadyThere(individualFeeds, ingredient);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(feedOrRecipeAdapter));
             }
         }
-        return individualFeeds;
+        return individualFeeds.Values.ToArray();
     }
-    
+
+    private static void AddIngredientIfNotAlreadyThere(Dictionary<Guid, IVerifyFeed> individualFeeds, IVerifyFeed ingredient)
+    {
+        if (!individualFeeds.ContainsKey(ingredient.Guid))
+        {
+            individualFeeds.Add(ingredient.Guid, ingredient);
+        }
+    }
 }

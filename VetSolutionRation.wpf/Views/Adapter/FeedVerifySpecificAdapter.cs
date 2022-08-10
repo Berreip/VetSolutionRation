@@ -11,6 +11,7 @@ namespace VetSolutionRation.wpf.Views.Adapter;
 internal interface IVerifyFeed : IFeedThatCouldBeAddedIntoRecipe
 {
     IFeed GetUnderlyingFeed();
+    Guid Guid { get; }
 }
 
 internal interface IFeedVerifySpecificAdapter : IVerifyFeed
@@ -35,6 +36,9 @@ internal sealed class FeedVerifySpecificAdapter : ViewModelBase, IFeedVerifySpec
     }
 
     public IFeed GetUnderlyingFeed() => _feed;
+
+    /// <inheritdoc />
+    public Guid Guid => _feed.Guid;
 
     private void ExecuteClickOnLineCommand()
     {

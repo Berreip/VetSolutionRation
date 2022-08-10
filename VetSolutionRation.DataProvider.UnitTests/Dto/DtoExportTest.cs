@@ -21,20 +21,21 @@ internal sealed class DtoExportTest
         //Arrange
         var sut = new IFeed[]
         {
-            new ReferenceFeed(new[] { "foo1" }, Array.Empty<INutritionalFeedDetails>(), Array.Empty<IStringDetailsContent>()),
-            new ReferenceFeed(new[] { "foo2" }, Array.Empty<INutritionalFeedDetails>(), Array.Empty<IStringDetailsContent>()),
-            new ReferenceFeed(new[] { "foo3" }, Array.Empty<INutritionalFeedDetails>(), Array.Empty<IStringDetailsContent>()),
-            new ReferenceFeed(new[] { "foo4" }, Array.Empty<INutritionalFeedDetails>(), Array.Empty<IStringDetailsContent>()),
-            new ReferenceFeed(new[] { "foo5" }, Array.Empty<INutritionalFeedDetails>(), Array.Empty<IStringDetailsContent>()),
-            new ReferenceFeed(new[] { "foo6" }, Array.Empty<INutritionalFeedDetails>(), Array.Empty<IStringDetailsContent>()),
+            new ReferenceFeed(new[] { "foo1" }, Array.Empty<INutritionalFeedDetails>(), Array.Empty<IStringDetailsContent>(), Guid.NewGuid()),
+            new ReferenceFeed(new[] { "foo2" }, Array.Empty<INutritionalFeedDetails>(), Array.Empty<IStringDetailsContent>(), Guid.NewGuid()),
+            new ReferenceFeed(new[] { "foo3" }, Array.Empty<INutritionalFeedDetails>(), Array.Empty<IStringDetailsContent>(), Guid.NewGuid()),
+            new ReferenceFeed(new[] { "foo4" }, Array.Empty<INutritionalFeedDetails>(), Array.Empty<IStringDetailsContent>(), Guid.NewGuid()),
+            new ReferenceFeed(new[] { "foo5" }, Array.Empty<INutritionalFeedDetails>(), Array.Empty<IStringDetailsContent>(), Guid.NewGuid()),
+            new ReferenceFeed(new[] { "foo6" }, Array.Empty<INutritionalFeedDetails>(), Array.Empty<IStringDetailsContent>(), Guid.NewGuid()),
         };
 
         //Act
         var res = DtoExporter.DeserializeFromJson(sut.ConvertToDto().SerializeToJson());
 
         //Assert
-        Assert.IsNotNull(res);
-        Assert.AreEqual(6, res.Feeds?.Count);
+        Assert.IsNotNull(res.Feeds);
+        Assert.AreEqual(6, res.Feeds!.Count);
+        Assert.IsTrue(res.Feeds.All(o => o.Guid != Guid.Empty));
     }
 
     [Test]
@@ -53,7 +54,8 @@ internal sealed class DtoExportTest
                 new IStringDetailsContent[]
                 {
                     new StringDetailsContent(InraHeader.Amidon, "foo"),
-                }),
+                }, 
+                Guid.NewGuid()),
         };
 
         //Act
@@ -98,6 +100,7 @@ internal sealed class DtoExportTest
         {
             IsReferenceFeed = true,
             Labels = new List<string> { "label1", "label2" },
+            Guid = new Guid("8DB0359F-12CE-464A-9B83-41DDBC9B4F03"),
             NutritionDetails = new List<NutritionDetailDto> { new NutritionDetailDto { CellContent = 56, HeaderKind = InraHeader.Ca.ToDtoKey() } },
             StringDetails = new List<StringDetailDto> { new StringDetailDto { CellContent = "content_foo", HeaderKind = InraHeader.Ca.ToDtoKey() } },
         };
@@ -110,6 +113,7 @@ internal sealed class DtoExportTest
         Assert.AreEqual("label1 | label2", res.Label);
         Assert.AreEqual(1, res.NutritionalDetails.Count);
         Assert.AreEqual(1, res.StringDetailsContent.Count);
+        Assert.AreEqual(new Guid("8DB0359F-12CE-464A-9B83-41DDBC9B4F03"), res.Guid);
     }
 
     [Test]
@@ -156,11 +160,12 @@ internal sealed class DtoExportTest
     public void ExportDto_then_import_returns_expected_Recipe()
     {
         //Arrange
+        var guid = Guid.NewGuid();
         var sut = new IRecipe[]
         {
             new RecipeModel("foo1", FeedUnit.Kg, new[]
             {
-                new IngredientForRecipe(78.7d, new CustomFeed(new[] { "labels" }, new INutritionalFeedDetails[] { new NutritionalFeedDetails(InraHeader.Pabs, 67d) })),
+                new IngredientForRecipe(78.7d, new CustomFeed(new[] { "labels" }, new INutritionalFeedDetails[] { new NutritionalFeedDetails(InraHeader.Pabs, 67d) }, guid)),
             }),
             new RecipeModel("foo2", FeedUnit.Kg, Array.Empty<IIngredientForRecipe>()),
             new RecipeModel("foo3", FeedUnit.Kg, Array.Empty<IIngredientForRecipe>()),
@@ -182,9 +187,9 @@ internal sealed class DtoExportTest
     public void Recipe_ConvertToDto()
     {
         //Arrange
-        var ingredient1 = new CustomFeed(new[] { "ingredient1" }, new INutritionalFeedDetails[] { new NutritionalFeedDetails(InraHeader.Pabs, It.IsAny<double>()) });
-        var ingredient2 = new CustomFeed(new[] { "ingredient2" }, new INutritionalFeedDetails[] { new NutritionalFeedDetails(InraHeader.C18_3, It.IsAny<double>()) });
-        var ingredient3 = new CustomFeed(new[] { "ingredient3" }, new INutritionalFeedDetails[] { new NutritionalFeedDetails(InraHeader.Cl, It.IsAny<double>()) });
+        var ingredient1 = new CustomFeed(new[] { "ingredient1" }, new INutritionalFeedDetails[] { new NutritionalFeedDetails(InraHeader.Pabs, It.IsAny<double>()) }, Guid.NewGuid());
+        var ingredient2 = new CustomFeed(new[] { "ingredient2" }, new INutritionalFeedDetails[] { new NutritionalFeedDetails(InraHeader.C18_3, It.IsAny<double>()) }, Guid.NewGuid());
+        var ingredient3 = new CustomFeed(new[] { "ingredient3" }, new INutritionalFeedDetails[] { new NutritionalFeedDetails(InraHeader.Cl, It.IsAny<double>()) }, Guid.NewGuid());
 
         var sut = new IRecipe[]
         {

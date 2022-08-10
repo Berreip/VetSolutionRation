@@ -27,6 +27,12 @@ public sealed class FeedDto
     public List<string>? Labels { get; set; }
     
     /// <summary>
+    /// the unique identifier for this Feed
+    /// </summary>
+    [JsonProperty("Guid")]
+    public Guid Guid { get; set; }
+    
+    /// <summary>
     /// Feed details characteristics
     /// </summary>
     [JsonProperty("Nutrition")]

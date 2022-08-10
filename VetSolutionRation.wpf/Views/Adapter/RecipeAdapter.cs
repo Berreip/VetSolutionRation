@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using PRF.WPFCore;
 using VetSolutionRation.wpf.Views.RatioPanel.Recipe;
@@ -68,6 +69,9 @@ internal sealed class RecipeAdapter : ViewModelBase, IRecipeAdapter
 
         /// <inheritdoc />
         public IFeed GetUnderlyingFeed() => _feed;
+
+        /// <inheritdoc />
+        public Guid Guid => _feed.Guid;
     }
 
 }

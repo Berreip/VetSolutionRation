@@ -6,6 +6,9 @@ using VetSolutionRationLib.Helpers;
 
 namespace VetSolutionRation.DataProvider.Models;
 
+/// <summary>
+/// Rpresent a line in a feed table reference
+/// </summary>
 public interface IInraRationLineImportModel
 {
     string JoinedLabel { get; }

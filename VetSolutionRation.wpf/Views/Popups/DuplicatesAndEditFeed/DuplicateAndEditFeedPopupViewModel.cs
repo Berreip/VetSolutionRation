@@ -106,7 +106,7 @@ internal sealed class DuplicateAndEditFeedPopupViewModel : ViewModelBase, IDupli
 
     private void ExecuteValidateDuplicateAndEditCommand()
     {
-        var customFeed = new CustomFeed(new[] { _feedEditedName }, _feedDetailsInEdition.Select(o => o.CreateNutritionalFeedDetails()));
+        var customFeed = new CustomFeed(new[] { _feedEditedName }, _feedDetailsInEdition.Select(o => o.CreateNutritionalFeedDetails()), Guid.NewGuid());
         _feedProvider.AddFeedsAndSave(new[] { customFeed });
         
         // request closing

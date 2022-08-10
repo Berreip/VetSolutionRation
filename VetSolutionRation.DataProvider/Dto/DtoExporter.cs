@@ -68,6 +68,7 @@ public static class DtoExporter
     {
         return new FeedDto
         {
+            Guid = o.Guid,
             IsReferenceFeed = o is IReferenceFeed,
             Labels = o.GetLabels(),
             NutritionDetails = ConvertToDto(o.NutritionalDetails),
@@ -99,12 +100,13 @@ public static class DtoExporter
             return new ReferenceFeed(
                 dto.Labels ?? throw new InvalidOperationException(),
                 ConvertFromDto(dto.NutritionDetails),
-                ConvertFromDto(dto.StringDetails));
+                ConvertFromDto(dto.StringDetails), 
+                dto.Guid);
         }
 
         return new CustomFeed(
             dto.Labels ?? throw new InvalidOperationException(),
-            ConvertFromDto(dto.NutritionDetails));
+            ConvertFromDto(dto.NutritionDetails), dto.Guid);
     }
 
     /// <summary>

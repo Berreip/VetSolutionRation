@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace VetSolutionRationLib.Models.Feed;
 
@@ -12,11 +13,19 @@ public interface IReferenceFeed : IFeed
 /// <inheritdoc cref="VetSolutionRationLib.Models.Feed.IReferenceFeed"/>
 public sealed class ReferenceFeed : FeedBase, IReferenceFeed
 {
-    public ReferenceFeed(
-        IReadOnlyCollection<string> labels, 
-        IEnumerable<INutritionalFeedDetails> nutritionalDetails, 
-        IEnumerable<IStringDetailsContent> stringDetails) 
-        : base(labels, nutritionalDetails, stringDetails)
+    public ReferenceFeed(IReadOnlyCollection<string> labels,
+        IEnumerable<INutritionalFeedDetails> nutritionalDetails,
+        IEnumerable<IStringDetailsContent> stringDetails,
+        Guid guid)
+        : base(labels, nutritionalDetails, stringDetails, guid)
+    {
+    }
+
+    public ReferenceFeed(string labels,
+        IEnumerable<INutritionalFeedDetails> nutritionalDetails,
+        IEnumerable<IStringDetailsContent> stringDetails, 
+        Guid guid)
+        : this(new[] { labels }, nutritionalDetails, stringDetails, guid)
     {
     }
 }
