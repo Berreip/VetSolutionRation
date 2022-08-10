@@ -5,6 +5,7 @@ using VetSolutionRation.wpf.Services.PopupManager;
 using VetSolutionRation.wpf.UnitTests.UnitTestUtils;
 using VetSolutionRation.wpf.Views.Adapter;
 using VetSolutionRation.wpf.Views.Popups.RecipeConfiguration;
+using VetSolutionRation.wpf.Views.Popups.RecipeConfiguration.Adapters;
 using VetSolutionRation.wpf.Views.RatioPanel.Recipe;
 using VetSolutionRationLib.Enums;
 using VetSolutionRationLib.Models.Feed;

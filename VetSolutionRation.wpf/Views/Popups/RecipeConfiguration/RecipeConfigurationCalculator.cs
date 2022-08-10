@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using VetSolutionRation.wpf.Helpers;
 using VetSolutionRation.wpf.Views.Adapter;
+using VetSolutionRation.wpf.Views.Popups.RecipeConfiguration.Adapters;
 using VetSolutionRation.wpf.Views.RatioPanel.Recipe;
 using VetSolutionRationLib.Enums;
 using VetSolutionRationLib.Models.Feed;

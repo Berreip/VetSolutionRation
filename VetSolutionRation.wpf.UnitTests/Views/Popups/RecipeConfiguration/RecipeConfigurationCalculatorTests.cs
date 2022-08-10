@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using VetSolutionRation.wpf.Views.Adapter;
 using VetSolutionRation.wpf.Views.Popups.RecipeConfiguration;
+using VetSolutionRation.wpf.Views.Popups.RecipeConfiguration.Adapters;
 using VetSolutionRation.wpf.Views.RatioPanel.Recipe;
 using VetSolutionRationLib.Enums;
 using VetSolutionRationLib.Models.Feed;

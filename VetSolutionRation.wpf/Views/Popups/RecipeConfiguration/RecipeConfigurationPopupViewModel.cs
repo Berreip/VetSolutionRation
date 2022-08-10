@@ -9,10 +9,9 @@ using PRF.WPFCore.UiWorkerThread;
 using VetSolutionRation.Common.Async;
 using VetSolutionRation.wpf.Services.Feed;
 using VetSolutionRation.wpf.Services.PopupManager;
-using VetSolutionRation.wpf.Views.Adapter;
+using VetSolutionRation.wpf.Views.Popups.RecipeConfiguration.Adapters;
 using VetSolutionRation.wpf.Views.RatioPanel.Recipe;
 using VetSolutionRationLib.Enums;
-using VetSolutionRationLib.Models.Feed;
 using VetSolutionRationLib.Models.Recipe;
 
 namespace VetSolutionRation.wpf.Views.Popups.RecipeConfiguration;
@@ -97,41 +96,6 @@ internal sealed class RecipeConfigurationPopupViewModel : ViewModelBase, IPopupV
     {
         IsDuplicatedLabel = _recipeName != null && _feedProvider.ContainsRecipeName(_recipeName);
         ValidateRecipeCreationCommand.RaiseCanExecuteChanged();
-    }
-}
-
-internal interface IFeedForRecipeCreationAdapter
-{
-    string Name { get; }
-    IFeedQuantityAdapter FeedQuantity { get; }
-    IReadOnlyList<(IFeed Feed, double Percentage)> GetUnderlyingFeeds();
-}
-
-internal sealed class FeedForRecipeCreationAdapter : ViewModelBase, IFeedForRecipeCreationAdapter
-{
-    private readonly IVerifyFeed _feed;
-
-    public FeedForRecipeCreationAdapter(IVerifyFeed feed)
-    {
-        _feed = feed;
-        Name = feed.Name;
-        // copy the adapter to avoid multipe reference pointing to the same adapter
-        FeedQuantity = new FeedQuantityAdapter(feed.FeedQuantity.Unit, feed.FeedQuantity.Quantity);
-    }
-
-    public string Name { get; }
-    public IFeedQuantityAdapter FeedQuantity { get; }
-
-    public bool IsValidForRecipe()
-    {
-        // should have a positive quantity
-        return FeedQuantity.Quantity > 0d;
-    }
-
-    public IReadOnlyList<(IFeed Feed, double Percentage)> GetUnderlyingFeeds()
-    {
-        // simple case: one unique ingredient
-        return new[] { (_feed.GetUnderlyingFeed(), 1d) };
     }
 }
 
