@@ -97,7 +97,7 @@ internal sealed class RecipeConfigurationPopupViewModelTests
         _sut.ValidateRecipeCreationCommand.Execute();
         
         //Assert
-        var config = _sut.ReciepedConfiguration;
+        var config = _sut.RecipeConfiguration;
         Assert.IsNotNull(config);
         
         var ingredients = config.GetIngredients();

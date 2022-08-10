@@ -28,9 +28,12 @@ internal sealed class RecipeConfigurationPopupViewModel : ViewModelBase, IPopupV
 
     public IDelegateCommandLight ValidateRecipeCreationCommand { get; }
     public IDelegateCommandLight CancelCreationCommand { get; }
-    public IRecipeConfiguration? ReciepedConfiguration { get; private set; }
+    public IRecipeConfiguration? RecipeConfiguration { get; private set; }
 
-    public RecipeConfigurationPopupViewModel(IPopupManagerLight popupManager, IFeedProvider feedProvider, IReadOnlyList<IFeedThatCouldBeAddedIntoRecipe> selectedFeeds)
+    public RecipeConfigurationPopupViewModel(
+        IPopupManagerLight popupManager,
+        IFeedProvider feedProvider, 
+        IReadOnlyList<IFeedThatCouldBeAddedIntoRecipe> selectedFeeds)
     {
         _popupManager = popupManager;
         _feedProvider = feedProvider;
@@ -43,7 +46,7 @@ internal sealed class RecipeConfigurationPopupViewModel : ViewModelBase, IPopupV
 
     private void ExecuteCancelCreationCommand()
     {
-        ReciepedConfiguration = null;
+        RecipeConfiguration = null;
         _popupManager.RequestClosing(this);
     }
 
@@ -56,15 +59,15 @@ internal sealed class RecipeConfigurationPopupViewModel : ViewModelBase, IPopupV
     }
 
     private async void ExecuteValidateRecipeCreationCommand()
-    {
-        await AsyncWrapper.DispatchAndWrapAsync(async () =>
+    { 
+        await AsyncWrapper.WrapAsync(async () =>
         {
             if (_recipeName == null)
             {
                 throw new InvalidOperationException("Can execute should not let the cmd be executed if null");
             }
 
-            ReciepedConfiguration = _feedSelectedForRecipe.CalculateRecipeConfiguration(_recipeName);
+            RecipeConfiguration = _feedSelectedForRecipe.CalculateRecipeConfiguration(_recipeName);
             await UiThreadDispatcher.ExecuteOnUIAsync(() =>
             {
                 _popupManager.RequestClosing(this);

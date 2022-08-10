@@ -55,7 +55,7 @@ internal sealed class VerifyRatiosViewModel : ViewModelBase, IVerifyRatiosViewMo
             {
                 var vm = new RecipeConfigurationPopupViewModel(_popupManagerLight, _feedProvider, _selectedFeedForVerifyPanel.Where(o => o.IsSelected).ToArray());
                 _popupManagerLight.ShowDialog(() => vm, vmCreated => new RecipeConfigurationPopupView(vmCreated));
-                return vm.ReciepedConfiguration;
+                return vm.RecipeConfiguration;
             }).ConfigureAwait(false);
 
             if (recipeConfiguration != null)
