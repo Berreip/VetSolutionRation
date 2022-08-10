@@ -131,12 +131,12 @@ internal sealed class DtoExportTest
             {
                 new IngredientDto
                 {
-                    Percentage = 80,
+                    Percentage = 0.8d,
                     FeedsInRecipe = feed,
                 }, 
                 new IngredientDto
                 {
-                    Percentage = 20,
+                    Percentage = 0.2d,
                     FeedsInRecipe = feed,
                 },
             },
@@ -190,9 +190,9 @@ internal sealed class DtoExportTest
         {
             new RecipeModel("recipe_name", FeedUnit.Kg, new[]
             {
-                new IngredientForRecipe(78.7d, ingredient1),
-                new IngredientForRecipe(1.3d, ingredient2),
-                new IngredientForRecipe(20d, ingredient3),
+                new IngredientForRecipe(0.787d, ingredient1),
+                new IngredientForRecipe(0.13d, ingredient2),
+                new IngredientForRecipe(0.2d, ingredient3),
             }),
         };
 
@@ -206,13 +206,13 @@ internal sealed class DtoExportTest
         Assert.IsNotNull(res.Ingredients);
         Assert.AreEqual(3, res.Ingredients!.Count);
 
-        Assert.AreEqual(78.7d, res.Ingredients[0].Percentage);
+        Assert.AreEqual(0.787d, res.Ingredients[0].Percentage);
         Assert.AreEqual("ingredient1", res.Ingredients[0].FeedsInRecipe!.Labels!.Single());
 
-        Assert.AreEqual(1.3d, res.Ingredients[1].Percentage);
+        Assert.AreEqual(0.13d, res.Ingredients[1].Percentage);
         Assert.AreEqual("ingredient2", res.Ingredients[1].FeedsInRecipe!.Labels!.Single());
 
-        Assert.AreEqual(20d, res.Ingredients[2].Percentage);
+        Assert.AreEqual(0.2d, res.Ingredients[2].Percentage);
         Assert.AreEqual("ingredient3", res.Ingredients[2].FeedsInRecipe!.Labels!.Single());
     }
 }

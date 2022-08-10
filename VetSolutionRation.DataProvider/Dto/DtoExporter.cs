@@ -140,7 +140,7 @@ public static class DtoExporter
             converted.Add(new IngredientForRecipe(detail.Percentage.Value, detail.FeedsInRecipe.ConvertFromDto()));
         }
 
-        if (Math.Abs(percentageAll - 100) > 0.001)
+        if (Math.Abs(percentageAll - 1) > 0.001)
         {
             DebugCore.Fail($"the total percentage for ingredientDtos: {string.Join(";", ingredientDtos)} is not 100%");
             return Array.Empty<IIngredientForRecipe>();
