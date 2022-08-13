@@ -3,10 +3,11 @@ using System.Windows;
 using PRF.Utils.Injection.BootStrappers;
 using PRF.Utils.Injection.Containers;
 using PRF.Utils.Injection.Utils;
+using VetSolutionRation.Common.Async;
 using VetSolutionRation.wpf.Services.Configuration;
-using VetSolutionRation.wpf.Services.Feed;
 using VetSolutionRation.wpf.Services.Navigation;
 using VetSolutionRation.wpf.Services.PopupManager;
+using VetSolutionRation.wpf.Services.Saves;
 using VetSolutionRation.wpf.Views;
 using VetSolutionRation.wpf.Views.Import;
 using VetSolutionRation.wpf.Views.Parameters;
@@ -23,6 +24,7 @@ namespace VetSolutionRation.wpf.Services.Injection
     internal sealed class VetSolutionRatioBoot
     {
         private readonly IInjectionContainer _internalContainer;
+
         private readonly List<IBootstrapperCore> _bootstrappers = new List<IBootstrapperCore>
         {
             new VetSolutionRatioLibBootstrapper()
@@ -46,11 +48,13 @@ namespace VetSolutionRation.wpf.Services.Injection
             {
                 bootstrapper.Register(_internalContainer);
             }
+
             _internalContainer.RegisterType<MainWindowView>(LifeTime.Singleton);
             _internalContainer.Register<IMainWindowViewModel, MainWindowViewModel>(LifeTime.Singleton);
 
             _internalContainer.Register<IMenuNavigator, MenuNavigator>(LifeTime.Singleton);
-            _internalContainer.RegisterWithInitializer<IFeedProvider, FeedProvider>(LifeTime.Singleton, o => o.LoadInitialSavedFeeds());
+            _internalContainer.RegisterWithInitializer<IFeedProvider, FeedProvider>(LifeTime.Singleton,
+                o => AsyncWrapper.DispatchAndWrapInFireAndForget(o.LoadInitialSavedFeeds));
             _internalContainer.Register<IConfigurationManager, ConfigurationManager>(LifeTime.Singleton);
 
             // // views:
@@ -65,19 +69,19 @@ namespace VetSolutionRation.wpf.Services.Injection
 
             _internalContainer.RegisterType<FeedSelectionView>(LifeTime.Singleton);
             _internalContainer.Register<IFeedSelectionViewModel, FeedSelectionViewModel>(LifeTime.Singleton);
-            
+
             _internalContainer.RegisterType<VerifyRatiosView>(LifeTime.Singleton);
             _internalContainer.Register<IVerifyRatiosViewModel, VerifyRatiosViewModel>(LifeTime.Singleton);
-            
+
             _internalContainer.RegisterType<CalculateRatiosView>(LifeTime.Singleton);
             _internalContainer.Register<ICalculateRatiosViewModel, CalculateRatiosViewModel>(LifeTime.Singleton);
-            
+
             _internalContainer.RegisterType<VerifyResultView>(LifeTime.Singleton);
             _internalContainer.Register<IVerifyResultViewModel, VerifyResultViewModel>(LifeTime.Singleton);
-            
+
             _internalContainer.RegisterType<CalculateResultView>(LifeTime.Singleton);
             _internalContainer.Register<ICalculateResultViewModel, CalculateResultViewModel>(LifeTime.Singleton);
-            
+
             _internalContainer.RegisterType<ImportView>(LifeTime.Singleton);
             _internalContainer.Register<IImportViewModel, ImportViewModel>(LifeTime.Singleton);
 
@@ -94,6 +98,7 @@ namespace VetSolutionRation.wpf.Services.Injection
             {
                 bootstrapper.InitializeAsync(_internalContainer).Wait();
             }
+
             _internalContainer.Resolve<IMenuNavigator>().NavigateToFirstView();
         }
 

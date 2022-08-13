@@ -12,7 +12,7 @@ using VetSolutionRation.wpf.Services.Configuration;
 using VetSolutionRationLib.Models.Feed;
 using VetSolutionRationLib.Models.Recipe;
 
-namespace VetSolutionRation.wpf.Services.Feed;
+namespace VetSolutionRation.wpf.Services.Saves;
 
 internal interface IFeedProvider
 {
@@ -67,47 +67,44 @@ public sealed class FeedProvider : IFeedProvider
 
     public void LoadInitialSavedFeeds()
     {
-        AsyncWrapper.DispatchAndWrapInFireAndForget(() =>
+        if (!_cacheFolder.ExistsExplicit()) return;
+
+        // load every saved data file (reference and user) if they exists
+        foreach (var fileName in _filesToLoad)
         {
-            if (!_cacheFolder.ExistsExplicit()) return;
-
-            // load every saved data file (reference and user) if they exists
-            foreach (var fileName in _filesToLoad)
+            try
             {
-                try
+                if (_cacheFolder.TryGetFile(fileName, out var file))
                 {
-                    if (_cacheFolder.TryGetFile(fileName, out var file))
+                    var fileContent = DtoExporter.DeserializeFromJson(file.ReadAllText());
+                    if (fileContent.Feeds != null)
                     {
-                        var fileContent = DtoExporter.DeserializeFromJson(file.ReadAllText());
-                        if (fileContent.Feeds != null)
-                        {
-                            // add feeds without saving
-                            AddFeedsAndSaveIfNeeded(fileContent.Feeds.Select(o => o.ConvertFromDto()).ToArray(), false);
-                        }
+                        // add feeds without saving
+                        AddFeedsAndSaveIfNeeded(fileContent.Feeds.Select(o => o.ConvertFromDto()).ToArray(), false);
+                    }
 
-                        if (fileContent.Recipes != null)
+                    if (fileContent.Recipes != null)
+                    {
+                        // add feeds without saving
+                        foreach (var recipe in fileContent.Recipes)
                         {
-                            // add feeds without saving
-                            foreach (var recipe in fileContent.Recipes)
+                            try
                             {
-                                try
-                                {
-                                    AddOrUpdateRecipe(recipe.ConvertFromDto());
-                                }
-                                catch (Exception e)
-                                {
-                                    ErrorHandler.HandleError($"the recipe : {recipe} could not be loaded and will be ignored. Error: {e}");
-                                }
+                                AddOrUpdateRecipe(recipe.ConvertFromDto());
+                            }
+                            catch (Exception e)
+                            {
+                                ErrorHandler.HandleError($"the recipe : {recipe} could not be loaded and will be ignored. Error: {e}");
                             }
                         }
                     }
                 }
-                catch (Exception e)
-                {
-                    ErrorHandler.HandleError($"Error while loading the file: {fileName}: {e}");
-                }
             }
-        });
+            catch (Exception e)
+            {
+                ErrorHandler.HandleError($"Error while loading the file: {fileName}: {e}");
+            }
+        }
     }
 
 
