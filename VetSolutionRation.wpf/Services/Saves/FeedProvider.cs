@@ -16,6 +16,14 @@ namespace VetSolutionRation.wpf.Services.Saves;
 
 internal interface IFeedProvider
 {
+    /// <summary>
+    /// Returns all registered recipes
+    /// </summary>
+    IEnumerable<IRecipe> GetRecipe();
+
+    /// <summary>
+    /// Returns all registered feed (either reference or custom feed)
+    /// </summary>
     IEnumerable<IFeed> GetFeeds();
 
     /// <summary>
@@ -97,6 +105,9 @@ public sealed class FeedProvider : IFeedProvider
                                 ErrorHandler.HandleError($"the recipe : {recipe} could not be loaded and will be ignored. Error: {e}");
                             }
                         }
+
+                        // raise outside the lock
+                        RaiseOnRecipeChanged();
                     }
                 }
             }
@@ -114,6 +125,15 @@ public sealed class FeedProvider : IFeedProvider
         lock (_key)
         {
             return _feedByLabels.Values.ToArray();
+        }
+    }
+
+    /// <inheritdoc />
+    public IEnumerable<IRecipe> GetRecipe()
+    {
+        lock (_key)
+        {
+            return _recipeByLabels.Values.ToArray();
         }
     }
 

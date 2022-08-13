@@ -211,18 +211,103 @@ internal sealed class FeedProviderTests
         Assert.AreEqual(recipe.Object.Unit.ToReferenceLabel(), content.UnitLabel);
     }
 
-
-    [TestCase(VetSolutionRatioConstants.SAVED_DATA_REFERENCE_FILE_NAME)]
-    [TestCase(VetSolutionRatioConstants.SAVED_RECIPE_USER_FILE_NAME)]
-    [TestCase(VetSolutionRatioConstants.SAVED_DATA_USER_FILE_NAME)]
-    public void LoadInitialSavedFeeds_do_load_data_from_specified_file(string fileName)
+    [Test]
+    public void LoadInitialSavedFeeds_raise_OnFeedChanged_event_for_custom_feed()
     {
         //Arrange
+        var count = 0;
+        var feed = CreateCustomFeed("foo_label");
+        _sut.AddFeedsAndSave(new List<IFeed> { feed.Object });
+        _sut.OnFeedChanged += () => Interlocked.Increment(ref count);
 
         //Act
-        // _sut.LoadInitialSavedFeeds();
+        _sut.LoadInitialSavedFeeds();
 
         //Assert
-        Assert.Pass();
+        Assert.AreEqual(1, count);
+    }
+
+    [Test]
+    public void LoadInitialSavedFeeds_register_custom_feed()
+    {
+        //Arrange
+        var feed = CreateCustomFeed("foo_label");
+        _sut.AddFeedsAndSave(new List<IFeed> { feed.Object });
+
+        //Act
+        _sut.LoadInitialSavedFeeds();
+
+        //Assert
+        var res = _sut.GetFeeds().Cast<ICustomFeed>().ToArray();
+        Assert.AreEqual(1, res.Length);
+        Assert.AreEqual(feed.Object.Label, res[0].Label);
+    }
+
+    [Test]
+    public void LoadInitialSavedFeeds_raise_OnFeedChanged_event_for_reference_feed()
+    {
+        //Arrange
+        var count = 0;
+        var feed = CreateReferenceFeed("foo_label");
+        _sut.AddFeedsAndSave(new List<IFeed> { feed.Object });
+        _sut.OnFeedChanged += () => Interlocked.Increment(ref count);
+
+        //Act
+        _sut.LoadInitialSavedFeeds();
+
+        //Assert
+        Assert.AreEqual(1, count);
+    }
+
+    [Test]
+    public void LoadInitialSavedFeeds_register_reference_feed()
+    {
+        //Arrange
+        var feed = CreateReferenceFeed("foo_label");
+        _sut.AddFeedsAndSave(new List<IFeed> { feed.Object });
+
+        //Act
+        _sut.LoadInitialSavedFeeds();
+
+        //Assert
+        var res = _sut.GetFeeds().Cast<IReferenceFeed>().ToArray();
+        Assert.AreEqual(1, res.Length);
+        Assert.AreEqual(feed.Object.Label, res[0].Label);
+    }
+
+
+    [Test]
+    public void LoadInitialSavedFeeds_register_recipe()
+    {
+        //Arrange
+        var ingredient = CreateIngredient(1d, "foo_1");
+        var recipe = CreateRecipeFeed("foo_label_recipe", ingredient.Object);
+        _sut.AddRecipeAndSave(recipe.Object);
+
+        //Act
+        _sut.LoadInitialSavedFeeds();
+
+        //Assert
+        var res = _sut.GetRecipe().ToArray();
+        Assert.AreEqual(1, res.Length);
+        Assert.AreEqual("foo_label_recipe", res[0].RecipeName);
+    }
+
+    [Test]
+    public void LoadInitialSavedFeeds_raise_OnRecipeChanged_event()
+    {
+        //Arrange
+        var count = 0;
+        var ingredient = CreateIngredient(1d, "foo_1");
+        var recipe = CreateRecipeFeed("foo_label_recipe", ingredient.Object);
+        _sut.AddRecipeAndSave(recipe.Object);
+
+        _sut.OnRecipeChanged += () => Interlocked.Increment(ref count);
+
+        //Act
+        _sut.LoadInitialSavedFeeds();
+
+        //Assert
+        Assert.AreEqual(1, count);
     }
 }
