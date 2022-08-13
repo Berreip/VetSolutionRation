@@ -11,11 +11,29 @@ public static class DtoExporter
     /// <summary>
     /// Export a model into a dto
     /// </summary>
-    public static ReferenceDataDto ConvertToDto(this IEnumerable<IFeed> feeds)
+    public static ReferenceDataDto ConvertToDto(this IEnumerable<IFeedOrRecipe> data)
     {
+        var feeds = new List<IFeed>();
+        var recipes = new List<IRecipe>();
+        foreach (var item in data)
+        {
+            switch (item)
+            {
+                case IFeed feed:
+                    feeds.Add(feed);
+                    break;
+                case IRecipe recipe:
+                    recipes.Add(recipe);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(item));
+            }
+        }
+        
         return new ReferenceDataDto
         {
             Feeds = CreateFeedsDto(feeds),
+            Recipes = CreateRecipeDto(recipes),
         };
     }
 

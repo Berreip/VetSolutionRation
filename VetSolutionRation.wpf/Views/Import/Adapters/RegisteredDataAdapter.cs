@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using MaterialDesignThemes.Wpf;
 using PRF.WPFCore;
@@ -12,32 +13,37 @@ namespace VetSolutionRation.wpf.Views.Import.Adapters;
 /// </summary>
 internal sealed class RegisteredDataAdapter : ViewModelBase
 {
-    private readonly IFeed _feed;
+    private readonly IFeedOrRecipe _backingdata;
     private readonly bool _isReferenceFeed;
-    public string LoadedDataLabel => _feed.Label;
+    public string LoadedDataLabel => _backingdata.UniqueReferenceKey;
     public PackIconKind DataIconKind { get; }
 
-    public RegisteredDataAdapter(IFeed feed)
+    public RegisteredDataAdapter(IFeedOrRecipe backingdata)
     {
-        _feed = feed;
-        _isReferenceFeed = feed is IReferenceFeed;
+        _backingdata = backingdata;
+        _isReferenceFeed = backingdata is IReferenceFeed;
         DataIconKind = _isReferenceFeed ? PackIconKind.FileChart : PackIconKind.AccountEdit;
     }
 
-    public RegisteredNutrionalDetailsAdapter[] GetDetails()
+    public IReadOnlyCollection<RegisteredNutrionalDetailsAdapter> GetDetails()
     {
-        var detailsAdapters = new List<RegisteredNutrionalDetailsAdapter>();
-        foreach (var stringDetails in _feed.StringDetailsContent)
+        if (_backingdata is IFeed feed)
         {
-            detailsAdapters.Add(new RegisteredNutrionalDetailsAdapter(stringDetails.Header.GetInraHeaderLabel(), stringDetails.Details));
+            var detailsAdapters = new List<RegisteredNutrionalDetailsAdapter>();
+            foreach (var stringDetails in feed.StringDetailsContent)
+            {
+                detailsAdapters.Add(new RegisteredNutrionalDetailsAdapter(stringDetails.Header.GetInraHeaderLabel(), stringDetails.Details));
+            }
+
+            foreach (var nutritionalDetail in feed.NutritionalDetails)
+            {
+                detailsAdapters.Add(new RegisteredNutrionalDetailsAdapter(nutritionalDetail.Header.GetInraHeaderLabel(), nutritionalDetail.Value.ToString(CultureInfo.InvariantCulture)));
+            }
+
+            return detailsAdapters.ToArray();
         }
 
-        foreach (var nutritionalDetail in _feed.NutritionalDetails)
-        {
-            detailsAdapters.Add(new RegisteredNutrionalDetailsAdapter(nutritionalDetail.Header.GetInraHeaderLabel(), nutritionalDetail.Value.ToString(CultureInfo.InvariantCulture)));
-        }
-
-        return detailsAdapters.ToArray();
+        return Array.Empty<RegisteredNutrionalDetailsAdapter>();
     }
 }
 

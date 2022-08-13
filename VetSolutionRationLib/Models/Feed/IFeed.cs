@@ -9,15 +9,19 @@ namespace VetSolutionRationLib.Models.Feed;
 /// <summary>
 /// Represent either a feed or a recipe
 /// </summary>
-public interface IFeedOrReciepe
+public interface IFeedOrRecipe
 {
+    /// <summary>
+    /// the name used as reference for this item
+    /// </summary>
+    string UniqueReferenceKey { get; }
 }
 
 
 /// <summary>
 /// Represent a feed. Could be either a reference feed or a custom one
 /// </summary>
-public interface IFeed : IFeedOrReciepe
+public interface IFeed : IFeedOrRecipe
 {
     /// <summary>
     /// The main label of the feed
@@ -95,6 +99,9 @@ public abstract class FeedBase : IFeed
     {
         return Label;
     }
+
+    /// <inheritdoc />
+    public string UniqueReferenceKey => Label;
 }
 
 public interface IFeedDetails

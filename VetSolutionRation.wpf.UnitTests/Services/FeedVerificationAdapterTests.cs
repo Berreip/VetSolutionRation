@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using VetSolutionRation.wpf.Views.Adapter;
+using VetSolutionRation.wpf.Views.Adapter.Feeds;
 using VetSolutionRationLib.Models.Feed;
 
 namespace VetSolutionRation.wpf.UnitTests.Services;

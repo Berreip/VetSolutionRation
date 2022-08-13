@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -34,7 +35,7 @@ internal sealed class ImportViewModel : ViewModelBase, IImportViewModel
     private readonly object _key = new object();
     private bool _isIdle = true;
     private RegisteredDataAdapter? _selectedData;
-    private RegisteredNutrionalDetailsAdapter[]? _selectedDataDetails;
+    private IReadOnlyCollection<RegisteredNutrionalDetailsAdapter>? _selectedDataDetails;
 
     public ImportViewModel(IFeedProvider feedProvider, IConfigurationManager configurationManager)
     {
@@ -43,7 +44,7 @@ internal sealed class ImportViewModel : ViewModelBase, IImportViewModel
         ImportCommand = new DelegateCommandLight(ExecuteImportCommand);
         OpenCacheFolderCommand = new DelegateCommandLight(ExecuteOpenCacheFolderCommand);
         RefreshAllLoadedData();
-        feedProvider.OnFeedChanged += OnNewDataProvided;
+        feedProvider.OnFeedOrRecipeChanged += OnNewDataProvided;
     }
 
     public RegisteredDataAdapter[] AllLoadedData
@@ -81,7 +82,7 @@ internal sealed class ImportViewModel : ViewModelBase, IImportViewModel
         lock (_key)
         {
             SelectedData = null;
-            AllLoadedData = _feedProvider.GetFeeds()
+            AllLoadedData = _feedProvider.GetFeedsOrRecipes()
                 .Select(o => new RegisteredDataAdapter(o))
                 .OrderBy(o => o.LoadedDataLabel)
                 .ToArray();
@@ -143,7 +144,7 @@ internal sealed class ImportViewModel : ViewModelBase, IImportViewModel
         }
     }
 
-    public RegisteredNutrionalDetailsAdapter[]? SelectedDataDetails
+    public IReadOnlyCollection<RegisteredNutrionalDetailsAdapter>? SelectedDataDetails
     {
         get => _selectedDataDetails;
         private set => SetProperty(ref _selectedDataDetails, value);

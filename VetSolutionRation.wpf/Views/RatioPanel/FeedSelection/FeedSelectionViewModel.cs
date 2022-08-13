@@ -6,6 +6,7 @@ using VetSolutionRation.wpf.Services;
 using VetSolutionRation.wpf.Services.PopupManager;
 using VetSolutionRation.wpf.Services.Saves;
 using VetSolutionRation.wpf.Views.Adapter;
+using VetSolutionRation.wpf.Views.Adapter.Feeds;
 using VetSolutionRation.wpf.Views.Adapter.FeedSelection;
 using VetSolutionRation.wpf.Views.Popups.DuplicatesAndEditFeed;
 using VetSolutionRation.wpf.Views.RatioPanel.CalculateRatio;
@@ -76,9 +77,9 @@ internal sealed class FeedSelectionViewModel : ViewModelBase, IFeedSelectionView
     {
         AsyncWrapper.Wrap(() =>
         {
-            if (customUserFeed != null && MessageBox.Show(@$"Voulez vous vraiment supprimer l'aliment {customUserFeed.FeedName} ? ", @"Confirmation", MessageBoxButtons.YesNoCancel) == DialogResult.Yes)
+            if (customUserFeed != null && MessageBox.Show(@$"Voulez vous vraiment supprimer l'aliment {customUserFeed.Name} ? ", @"Confirmation", MessageBoxButtons.YesNoCancel) == DialogResult.Yes)
             {
-                _feedProvider.DeleteFeedAndSave(customUserFeed.GetUnderlyingCustomFeed());
+                _feedProvider.DeleteCustomFeedAndSave(customUserFeed.GetUnderlyingCustomFeed());
             }
         });
     }

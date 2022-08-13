@@ -7,7 +7,7 @@ namespace VetSolutionRationLib.Models.Recipe;
 /// <summary>
 /// A Recipe containing a group of ingredient (feed) and a proportion for each
 /// </summary>
-public interface IRecipe : IFeedOrReciepe
+public interface IRecipe : IFeedOrRecipe
 {
     /// <summary>
     /// The name of the recipe
@@ -75,4 +75,7 @@ public sealed class RecipeModel : IRecipe
         RecipeName = recipeName;
         Unit = unit;
     }
+
+    /// <inheritdoc />
+    public string UniqueReferenceKey => RecipeName;
 }

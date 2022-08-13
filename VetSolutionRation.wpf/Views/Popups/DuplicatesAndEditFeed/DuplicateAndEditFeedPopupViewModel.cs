@@ -7,6 +7,7 @@ using PRF.WPFCore.CustomCollections;
 using VetSolutionRation.wpf.Services.PopupManager;
 using VetSolutionRation.wpf.Services.Saves;
 using VetSolutionRation.wpf.Views.Adapter;
+using VetSolutionRation.wpf.Views.Adapter.Feeds;
 using VetSolutionRation.wpf.Views.Popups.Adapters;
 using VetSolutionRationLib.Enums;
 using VetSolutionRationLib.Models.Feed;
@@ -43,7 +44,7 @@ internal sealed class DuplicateAndEditFeedPopupViewModel : ViewModelBase, IDupli
         _feedProvider = feedProvider;
         _currentData = feed;
         _mode = mode;
-        _feedEditedName = feed.FeedName;
+        _feedEditedName = feed.Name;
 
         if (mode == FeedEditionMode.Edition && feed is IReferenceFeedAdapter)
         {
@@ -164,7 +165,7 @@ internal sealed class DuplicateAndEditFeedPopupViewModel : ViewModelBase, IDupli
 
     private void RefreshValidity()
     {
-        IsDuplicatedLabel = CouldEditName && _feedProvider.ContainsFeedName(_feedEditedName);
+        IsDuplicatedLabel = CouldEditName && _feedProvider.ContainsName(_feedEditedName);
         ValidateDuplicateAndEditCommand.RaiseCanExecuteChanged();
     }
 }

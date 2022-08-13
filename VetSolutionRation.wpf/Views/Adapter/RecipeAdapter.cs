@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using PRF.WPFCore;
+using VetSolutionRation.wpf.Views.Adapter.Feeds;
 using VetSolutionRation.wpf.Views.RatioPanel.Recipe;
 using VetSolutionRationLib.Enums;
 using VetSolutionRationLib.Models.Feed;
@@ -17,7 +18,7 @@ internal interface IRecipeAdapter : IFeedThatCouldBeAddedIntoRecipe
     IReadOnlyList<IVerifyFeed> Ingredients { get; }
 }
 
-internal sealed class RecipeAdapter : ViewModelBase, IRecipeAdapter
+internal sealed class RecipeAdapter : ViewModelBase, IRecipeAdapter, IFeedOrRecipeAdapter
 {
     private bool _isSelected = true;
 
@@ -37,8 +38,10 @@ internal sealed class RecipeAdapter : ViewModelBase, IRecipeAdapter
         set => SetProperty(ref _isSelected, value);
     }
 
-    /// <inheritdoc />
     public string Name { get; }
+
+    /// <inheritdoc />
+    public bool IsCustom { get; } = true;
 
     /// <inheritdoc />
     public IFeedQuantityAdapter FeedQuantity { get; }

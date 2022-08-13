@@ -6,6 +6,7 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:adapter="clr-namespace:VetSolutionRation.wpf.Views.Adapter"
              xmlns:feedSelection="clr-namespace:VetSolutionRation.wpf.Views.RatioPanel.FeedSelection"
+             xmlns:feeds="clr-namespace:VetSolutionRation.wpf.Views.Adapter.Feeds"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance feedSelection:FeedSelectionViewModel, IsDesignTimeCreatable=False}"
              d:DesignHeight="300"
@@ -53,7 +54,7 @@
                     </ControlTemplate>
                 </ItemsControl.Template>
                 <ItemsControl.Resources>
-                    <DataTemplate DataType="{x:Type adapter:ReferenceFeedAdapter}">
+                    <DataTemplate DataType="{x:Type feeds:ReferenceFeedAdapter}">
                         <Button Grid.Column="1" Margin="1" Padding="1"
                                 HorizontalAlignment="Stretch"
                                 HorizontalContentAlignment="Stretch"
@@ -69,9 +70,9 @@
                                 </Grid.ColumnDefinitions>
 
                                 <!-- REFERENCE FEED NAME -->
-                                <TextBlock Text="{Binding FeedName}"
+                                <TextBlock Text="{Binding Name}"
                                            TextTrimming="CharacterEllipsis"
-                                           ToolTip="{Binding FeedName}"
+                                           ToolTip="{Binding Name}"
                                            VerticalAlignment="Center" />
 
                                 <!-- DUPLICATE AND EDIT -->
@@ -87,7 +88,7 @@
                             </Grid>
                         </Button>
                     </DataTemplate>
-                    <DataTemplate DataType="{x:Type adapter:CustomUserFeedAdapter}">
+                    <DataTemplate DataType="{x:Type feeds:CustomUserFeedAdapter}">
                         <Button Grid.Column="1" Margin="1" Padding="1"
                                 HorizontalAlignment="Stretch"
                                 HorizontalContentAlignment="Stretch"
@@ -105,7 +106,7 @@
                                 </Grid.ColumnDefinitions>
 
                                 <!-- CUSTOM FEED NAME -->
-                                <TextBlock Text="{Binding FeedName}"
+                                <TextBlock Text="{Binding Name}"
                                            VerticalAlignment="Center" />
 
                                 <!-- EDIT -->

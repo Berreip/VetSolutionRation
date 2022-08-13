@@ -9,6 +9,7 @@ using VetSolutionRation.Common.Async;
 using VetSolutionRation.DataProvider.Dto;
 using VetSolutionRation.wpf.Helpers;
 using VetSolutionRation.wpf.Services.Configuration;
+using VetSolutionRationLib.Extensions;
 using VetSolutionRationLib.Models.Feed;
 using VetSolutionRationLib.Models.Recipe;
 
@@ -17,49 +18,38 @@ namespace VetSolutionRation.wpf.Services.Saves;
 internal interface IFeedProvider
 {
     /// <summary>
-    /// Returns all registered recipes
+    /// Returns all registered feed (either reference or custom feed) or recipe
     /// </summary>
-    IEnumerable<IRecipe> GetRecipe();
+    IEnumerable<IFeedOrRecipe> GetFeedsOrRecipes();
 
     /// <summary>
-    /// Returns all registered feed (either reference or custom feed)
+    /// Event raised when feeds or recipe change
     /// </summary>
-    IEnumerable<IFeed> GetFeeds();
-
-    /// <summary>
-    /// Event raised when feeds reference change
-    /// </summary>
-    event Action? OnFeedChanged;
-
-    /// <summary>
-    /// Event raised when recipe reference change
-    /// </summary>
-    event Action? OnRecipeChanged;
+    event Action? OnFeedOrRecipeChanged;
 
     void AddFeedsAndSave(IReadOnlyCollection<IFeed> newFeeds);
-    bool ContainsFeedName(string feedEditedName);
+    bool ContainsName(string name);
 
     /// <summary>
     /// Delete the provided custom feed from reference
     /// </summary>
-    void DeleteFeedAndSave(ICustomFeed customFeed);
+    void DeleteCustomFeedAndSave(ICustomFeed customFeed);
 
     void AddRecipeAndSave(IRecipe recipe);
-    bool ContainsRecipeName(string recipeName);
 }
 
 public sealed class FeedProvider : IFeedProvider
 {
     private readonly object _key = new object();
-    private readonly Dictionary<string, IFeed> _feedByLabels = new Dictionary<string, IFeed>(StringComparer.OrdinalIgnoreCase);
-    private readonly Dictionary<string, IRecipe> _recipeByLabels = new Dictionary<string, IRecipe>(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, IReferenceFeed> _referenceFeedByLabel = new Dictionary<string, IReferenceFeed>(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, ICustomFeed> _customFeedByLabel = new Dictionary<string, ICustomFeed>(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, IRecipe> _recipeByLabel = new Dictionary<string, IRecipe>(StringComparer.OrdinalIgnoreCase);
+
+
     private readonly DirectoryInfo _cacheFolder;
 
     /// <inheritdoc />
-    public event Action? OnFeedChanged;
-
-    /// <inheritdoc />
-    public event Action? OnRecipeChanged;
+    public event Action? OnFeedOrRecipeChanged;
 
     private readonly string[] _filesToLoad =
     {
@@ -88,7 +78,7 @@ public sealed class FeedProvider : IFeedProvider
                     if (fileContent.Feeds != null)
                     {
                         // add feeds without saving
-                        AddFeedsAndSaveIfNeeded(fileContent.Feeds.Select(o => o.ConvertFromDto()).ToArray(), false);
+                        AddAndSaveIfNeeded(fileContent.Feeds.Select(o => o.ConvertFromDto()).ToArray(), new NoSaveFeedMonitor());
                     }
 
                     if (fileContent.Recipes != null)
@@ -98,7 +88,7 @@ public sealed class FeedProvider : IFeedProvider
                         {
                             try
                             {
-                                AddOrUpdateRecipe(recipe.ConvertFromDto());
+                                _recipeByLabel.AddOrUpdate(recipe.ConvertFromDto());
                             }
                             catch (Exception e)
                             {
@@ -107,7 +97,7 @@ public sealed class FeedProvider : IFeedProvider
                         }
 
                         // raise outside the lock
-                        RaiseOnRecipeChanged();
+                        RaiseOnFeedOrRecipeChanged();
                     }
                 }
             }
@@ -120,173 +110,146 @@ public sealed class FeedProvider : IFeedProvider
 
 
     /// <inheritdoc />
-    public IEnumerable<IFeed> GetFeeds()
+    public IEnumerable<IFeedOrRecipe> GetFeedsOrRecipes()
     {
         lock (_key)
         {
-            return _feedByLabels.Values.ToArray();
-        }
-    }
-
-    /// <inheritdoc />
-    public IEnumerable<IRecipe> GetRecipe()
-    {
-        lock (_key)
-        {
-            return _recipeByLabels.Values.ToArray();
+            var aggregated = new List<IFeedOrRecipe>(_recipeByLabel.Count + _customFeedByLabel.Count + _referenceFeedByLabel.Count);
+            aggregated.AddRange(_recipeByLabel.Values);
+            aggregated.AddRange(_customFeedByLabel.Values);
+            aggregated.AddRange(_referenceFeedByLabel.Values);
+            return aggregated;
         }
     }
 
     public void AddFeedsAndSave(IReadOnlyCollection<IFeed> newFeeds)
     {
-        AddFeedsAndSaveIfNeeded(newFeeds, true);
+        AddAndSaveIfNeeded(newFeeds, new FeedChangeMonitor());
     }
 
     /// <inheritdoc />
     public void AddRecipeAndSave(IRecipe recipe)
     {
-        lock (_key)
-        {
-            AddOrUpdateRecipe(recipe);
-            SaveRecipe();
-        }
-
-        // raise outside the lock
-        RaiseOnRecipeChanged();
+        AddAndSaveIfNeeded(new[] { recipe }, new FeedChangeMonitor());
     }
 
-    private void AddOrUpdateRecipe(IRecipe recipe)
+    /// <inheritdoc />
+    public bool ContainsName(string name)
     {
-        if (_recipeByLabels.ContainsKey(recipe.RecipeName))
+        lock (_key)
         {
-            // The recipe has already been registered and will be overriden
-            _recipeByLabels[recipe.RecipeName] = recipe;
-        }
-        else
-        {
-            _recipeByLabels.Add(recipe.RecipeName, recipe);
+            return _customFeedByLabel.ContainsKey(name) || _recipeByLabel.ContainsKey(name);
         }
     }
 
     /// <inheritdoc />
-    public bool ContainsFeedName(string feedEditedName)
+    public void DeleteCustomFeedAndSave(ICustomFeed customFeed)
     {
         lock (_key)
         {
-            return _feedByLabels.ContainsKey(feedEditedName);
-        }
-    }
-
-    /// <inheritdoc />
-    public bool ContainsRecipeName(string recipeName)
-    {
-        lock (_key)
-        {
-            return _recipeByLabels.ContainsKey(recipeName);
-        }
-    }
-
-    /// <inheritdoc />
-    public void DeleteFeedAndSave(ICustomFeed customFeed)
-    {
-        lock (_key)
-        {
-            if (_feedByLabels.TryGetValue(customFeed.Label, out var matchingFeed) && ReferenceEquals(matchingFeed, customFeed))
+            if (_customFeedByLabel.TryGetValue(customFeed.Label, out var matchingFeed) && ReferenceEquals(matchingFeed, customFeed))
             {
-                _feedByLabels.Remove(customFeed.Label);
-                Save(true, false);
+                _customFeedByLabel.Remove(customFeed.Label);
+                SaveCustomFeeds();
             }
         }
 
         // raise outside the lock
-        RaiseOnFeedChanged();
+        RaiseOnFeedOrRecipeChanged();
     }
 
 
-    private void AddFeedsAndSaveIfNeeded(IReadOnlyCollection<IFeed> newFeeds, bool shouldSave)
+    private void AddAndSaveIfNeeded(IReadOnlyCollection<IFeedOrRecipe> newFeeds, IFeedChangeMonitor monitor)
     {
         if (newFeeds.Count == 0) return;
 
         lock (_key)
         {
-            var referenceChanged = false;
-            var userDataChanged = false;
 
             foreach (var newFeed in newFeeds)
             {
-                if (_feedByLabels.TryGetValue(newFeed.Label, out var previous))
+                switch (newFeed)
                 {
-                    // if the new one is a reference feed, replace previous 
-                    if (newFeed is IReferenceFeed)
-                    {
-                        _feedByLabels[newFeed.Label] = newFeed;
-                        referenceChanged = true;
-                    }
+                    case ICustomFeed customFeed:
+                        // if the new one is custom: 2 cases:
+                        // 1) if the previous is a reference, ignore it:
+                        // 2) if the previous was custom, just replace it
+                        if (!_referenceFeedByLabel.ContainsKey(newFeed.UniqueReferenceKey))
+                        {
+                            _customFeedByLabel.AddOrUpdate(customFeed);
+                            monitor.SignalCustomDataChanged();
+                        }
+                        break;
 
-                    // else if previous is custom and new one is custom replace it
-                    if (previous is ICustomFeed)
-                    {
-                        _feedByLabels[newFeed.Label] = newFeed;
-                        userDataChanged = true;
-                    }
-                    // else if the previous is a reference feed, ignore the custom new one
-                }
-                else
-                {
-                    // if not there, juste add it
-                    _feedByLabels.Add(newFeed.Label, newFeed);
-                    if (newFeed is IReferenceFeed)
-                    {
-                        referenceChanged = true;
-                    }
-                    else
-                    {
-                        userDataChanged = true;
-                    }
+                    case IReferenceFeed referenceFeed:
+                        // if the new one is a reference feed, replace previous whatever it was:
+                        // do not allow duplicates in custom feed, so remove it if needed:
+                        if (_customFeedByLabel.RemoveIfNeeded(referenceFeed))
+                        {
+                            monitor.SignalCustomDataChanged();
+                        }
+                        
+                        // then add or update:
+                        _referenceFeedByLabel.AddOrUpdate(referenceFeed);
+                        monitor.SignalReferenceChanged();
+                        break;
+                    
+                    case IRecipe recipe:
+                        // For recipe, just add it to the reference or replace it if already found.
+                        _recipeByLabel.AddOrUpdate(recipe);
+                        monitor.SignalRecipeChanged();
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(newFeed));
                 }
             }
 
-            if (shouldSave && (referenceChanged || userDataChanged))
+            if (monitor.ShouldSaveReference())
             {
-                Save(userDataChanged, referenceChanged);
+                SaveReferenceFeeds();
+            }
+            if (monitor.ShouldSaveCustomDataChanged())
+            {
+                SaveCustomFeeds();
+            }
+            if (monitor.ShouldSaveRecipeChanged())
+            {
+                SaveRecipe();
             }
         }
 
-        // raise outside the lock
-        RaiseOnFeedChanged();
+        if (monitor.HasAnySave())
+        {
+            // raise outside the lock
+            RaiseOnFeedOrRecipeChanged();
+        }
     }
-
-    private void Save(bool userDataChanged, bool referenceChanged)
+    
+    private void SaveRecipe()
     {
-        var referenceFeeds = new List<IFeed>(_feedByLabels.Count);
-        var customFeeds = new List<IFeed>();
-        foreach (var feedByLabel in _feedByLabels)
+        lock (_key)
         {
-            switch (feedByLabel.Value)
-            {
-                case ICustomFeed customFeed:
-                    customFeeds.Add(customFeed);
-                    break;
-                case IReferenceFeed referenceFeed:
-                    referenceFeeds.Add(referenceFeed);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(feedByLabel.Value));
-            }
+            SaveShared(_recipeByLabel.Values, VetSolutionRatioConstants.SAVED_RECIPE_USER_FILE_NAME);
         }
-
-        if (userDataChanged)
+    }
+    
+    private void SaveCustomFeeds()
+    {
+        lock (_key)
         {
-            SaveFeeds(customFeeds, VetSolutionRatioConstants.SAVED_DATA_USER_FILE_NAME);
-        }
-
-        if (referenceChanged)
-        {
-            SaveFeeds(referenceFeeds, VetSolutionRatioConstants.SAVED_DATA_REFERENCE_FILE_NAME);
+            SaveShared(_customFeedByLabel.Values, VetSolutionRatioConstants.SAVED_DATA_USER_FILE_NAME);
         }
     }
 
-    private void SaveFeeds(IReadOnlyCollection<IFeed> feeds, string fileName)
+    private void SaveReferenceFeeds()
+    {
+        lock (_key)
+        {
+            SaveShared(_referenceFeedByLabel.Values, VetSolutionRatioConstants.SAVED_DATA_REFERENCE_FILE_NAME);
+        }
+    }
+
+    private void SaveShared(IReadOnlyCollection<IFeedOrRecipe> feeds, string fileName)
     {
         try
         {
@@ -301,28 +264,8 @@ public sealed class FeedProvider : IFeedProvider
         }
     }
 
-    private void SaveRecipe()
+    private void RaiseOnFeedOrRecipeChanged()
     {
-        try
-        {
-            _cacheFolder.CreateIfNotExist();
-            var json = _recipeByLabels.Values.ConvertToDto().SerializeReferenceToJson();
-            File.WriteAllText(_cacheFolder.GetFile(VetSolutionRatioConstants.SAVED_RECIPE_USER_FILE_NAME).FullName, json);
-        }
-        catch (Exception e)
-        {
-            Trace.TraceError($"error while trying to save new feeds: {e}");
-            DebugCore.Fail($"error while trying to save new feeds: {e}");
-        }
-    }
-
-    private void RaiseOnRecipeChanged()
-    {
-        OnRecipeChanged?.Invoke();
-    }
-
-    private void RaiseOnFeedChanged()
-    {
-        OnFeedChanged?.Invoke();
+        OnFeedOrRecipeChanged?.Invoke();
     }
 }

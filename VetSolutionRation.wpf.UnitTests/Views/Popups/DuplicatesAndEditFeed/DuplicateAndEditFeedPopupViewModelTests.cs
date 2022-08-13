@@ -6,6 +6,7 @@ using VetSolutionRation.wpf.Services.PopupManager;
 using VetSolutionRation.wpf.Services.Saves;
 using VetSolutionRation.wpf.UnitTests.UnitTestUtils;
 using VetSolutionRation.wpf.Views.Adapter;
+using VetSolutionRation.wpf.Views.Adapter.Feeds;
 using VetSolutionRation.wpf.Views.Popups.Adapters;
 using VetSolutionRation.wpf.Views.Popups.DuplicatesAndEditFeed;
 using VetSolutionRationLib.Enums;
@@ -32,9 +33,9 @@ internal class DuplicateAndEditFeedPopupViewModelTests
         _feed = new Mock<IFeedAdapter>();
         
         // setup
-        _feed.Setup(o => o.FeedName).Returns(FEED_NAME);
+        _feed.Setup(o => o.Name).Returns(FEED_NAME);
         _feed.Setup(o => o.GetInraValue(It.IsAny<InraHeader>())).Returns(CELL_VALUE);
-        _feedProvider.Setup(o => o.ContainsFeedName(FEED_NAME)).Returns(true);
+        _feedProvider.Setup(o => o.ContainsName(FEED_NAME)).Returns(true);
         _nbProvidedHeaders = FeedInEditionHelpers.GetDefaultHeaderForEdition(_feed.Object, () => {}).Length;
     }
 
@@ -109,7 +110,7 @@ internal class DuplicateAndEditFeedPopupViewModelTests
     {
         //Arrange
         _sut = new DuplicateAndEditFeedPopupViewModel(_popupManager.Object, _feedProvider.Object, _feed.Object, FeedEditionMode.Duplication);
-        _feedProvider.Setup(o => o.ContainsFeedName("foo")).Returns(false);
+        _feedProvider.Setup(o => o.ContainsName("foo")).Returns(false);
         
         //Act
         _sut.FeedEditedName = "foo";

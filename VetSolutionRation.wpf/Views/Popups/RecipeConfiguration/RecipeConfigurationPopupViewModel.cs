@@ -110,7 +110,7 @@ internal sealed class RecipeConfigurationPopupViewModel : ViewModelBase, IPopupV
 
     private void RefreshValidity()
     {
-        IsDuplicatedLabel = _recipeName != null && _feedProvider.ContainsRecipeName(_recipeName);
+        IsDuplicatedLabel = _recipeName != null && _feedProvider.ContainsName(_recipeName);
         ValidateRecipeCreationCommand.RaiseCanExecuteChanged();
     }
 }

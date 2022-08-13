@@ -20,7 +20,7 @@ namespace VetSolutionRation.wpf.Views.RatioPanel.VerifyRatio;
 
 internal interface IVerifyRatiosViewModel
 {
-    void AddSelectedFeed(IFeedOrReciepe feedOrRecipe);
+    void AddSelectedFeed(IFeedOrRecipe feedOrRecipe);
 }
 
 internal sealed class VerifyRatiosViewModel : ViewModelBase, IVerifyRatiosViewModel
@@ -30,7 +30,7 @@ internal sealed class VerifyRatiosViewModel : ViewModelBase, IVerifyRatiosViewMo
     private readonly IPopupManagerLight _popupManagerLight;
     public ICollectionView SelectedFeedsForVerifyPanel { get; }
     private readonly ObservableCollectionRanged<IFeedThatCouldBeAddedIntoRecipe> _selectedFeedForVerifyPanel;
-    private readonly HashSet<IFeedOrReciepe> _alreadyAddedHash = new HashSet<IFeedOrReciepe>();
+    private readonly HashSet<IFeedOrRecipe> _alreadyAddedHash = new HashSet<IFeedOrRecipe>();
 
     public IDelegateCommandLight<FeedVerifySpecificAdapter> RemoveFromSelectedFeedsCommand { get; }
 
@@ -79,7 +79,7 @@ internal sealed class VerifyRatiosViewModel : ViewModelBase, IVerifyRatiosViewMo
     }
 
     /// <inheritdoc />
-    public void AddSelectedFeed(IFeedOrReciepe feedOrRecipe)
+    public void AddSelectedFeed(IFeedOrRecipe feedOrRecipe)
     {
         if (_alreadyAddedHash.Add(feedOrRecipe))
         {

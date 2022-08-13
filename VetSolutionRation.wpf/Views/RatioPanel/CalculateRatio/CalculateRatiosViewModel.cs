@@ -1,5 +1,6 @@
 ﻿using PRF.WPFCore;
 using VetSolutionRation.wpf.Views.Adapter;
+using VetSolutionRation.wpf.Views.Adapter.Feeds;
 
 namespace VetSolutionRation.wpf.Views.RatioPanel.CalculateRatio;
 

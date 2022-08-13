@@ -41,6 +41,7 @@ internal sealed class FeedProviderTests
         var feed = new Mock<IReferenceFeed>();
         feed.Setup(o => o.Guid).Returns(Guid.NewGuid());
         feed.Setup(o => o.Label).Returns(label);
+        feed.Setup(o => o.UniqueReferenceKey).Returns(label);
         feed.Setup(o => o.GetLabels()).Returns(new List<string> { label });
         feed.Setup(o => o.NutritionalDetails).Returns(new List<INutritionalFeedDetails>());
         feed.Setup(o => o.StringDetailsContent).Returns(new List<IStringDetailsContent>());
@@ -61,6 +62,7 @@ internal sealed class FeedProviderTests
         var feed = new Mock<ICustomFeed>();
         feed.Setup(o => o.Guid).Returns(Guid.NewGuid());
         feed.Setup(o => o.Label).Returns(label);
+        feed.Setup(o => o.UniqueReferenceKey).Returns(label);
         feed.Setup(o => o.GetLabels()).Returns(new List<string> { label });
         feed.Setup(o => o.NutritionalDetails).Returns(new List<INutritionalFeedDetails>());
         feed.Setup(o => o.StringDetailsContent).Returns(new List<IStringDetailsContent>());
@@ -71,6 +73,7 @@ internal sealed class FeedProviderTests
     {
         var recipe = new Mock<IRecipe>();
         recipe.Setup(o => o.RecipeName).Returns(recipeName);
+        recipe.Setup(o => o.UniqueReferenceKey).Returns(recipeName);
         recipe.Setup(o => o.Unit).Returns(FeedUnit.Kg);
         recipe.Setup(o => o.Ingredients).Returns(ingredients.ToList());
         return recipe;
@@ -94,7 +97,7 @@ internal sealed class FeedProviderTests
     {
         //Arrange
         var count = 0;
-        _sut.OnFeedChanged += () => Interlocked.Increment(ref count);
+        _sut.OnFeedOrRecipeChanged += () => Interlocked.Increment(ref count);
 
         //Act
         _sut.AddFeedsAndSave(Array.Empty<IFeed>());
@@ -180,7 +183,7 @@ internal sealed class FeedProviderTests
     {
         //Arrange
         var count = 0;
-        _sut.OnRecipeChanged += () => Interlocked.Increment(ref count);
+        _sut.OnFeedOrRecipeChanged += () => Interlocked.Increment(ref count);
         var ingredient = CreateIngredient(1d, "foo_1");
         var feed = CreateRecipeFeed("foo_label_recipe", ingredient.Object);
 
@@ -218,7 +221,7 @@ internal sealed class FeedProviderTests
         var count = 0;
         var feed = CreateCustomFeed("foo_label");
         _sut.AddFeedsAndSave(new List<IFeed> { feed.Object });
-        _sut.OnFeedChanged += () => Interlocked.Increment(ref count);
+        _sut.OnFeedOrRecipeChanged += () => Interlocked.Increment(ref count);
 
         //Act
         _sut.LoadInitialSavedFeeds();
@@ -238,7 +241,7 @@ internal sealed class FeedProviderTests
         _sut.LoadInitialSavedFeeds();
 
         //Assert
-        var res = _sut.GetFeeds().Cast<ICustomFeed>().ToArray();
+        var res = _sut.GetFeedsOrRecipes().Cast<ICustomFeed>().ToArray();
         Assert.AreEqual(1, res.Length);
         Assert.AreEqual(feed.Object.Label, res[0].Label);
     }
@@ -250,7 +253,7 @@ internal sealed class FeedProviderTests
         var count = 0;
         var feed = CreateReferenceFeed("foo_label");
         _sut.AddFeedsAndSave(new List<IFeed> { feed.Object });
-        _sut.OnFeedChanged += () => Interlocked.Increment(ref count);
+        _sut.OnFeedOrRecipeChanged += () => Interlocked.Increment(ref count);
 
         //Act
         _sut.LoadInitialSavedFeeds();
@@ -270,7 +273,7 @@ internal sealed class FeedProviderTests
         _sut.LoadInitialSavedFeeds();
 
         //Assert
-        var res = _sut.GetFeeds().Cast<IReferenceFeed>().ToArray();
+        var res = _sut.GetFeedsOrRecipes().Cast<IReferenceFeed>().ToArray();
         Assert.AreEqual(1, res.Length);
         Assert.AreEqual(feed.Object.Label, res[0].Label);
     }
@@ -288,7 +291,7 @@ internal sealed class FeedProviderTests
         _sut.LoadInitialSavedFeeds();
 
         //Assert
-        var res = _sut.GetRecipe().ToArray();
+        var res = _sut.GetFeedsOrRecipes().Cast<IRecipe>().ToArray();
         Assert.AreEqual(1, res.Length);
         Assert.AreEqual("foo_label_recipe", res[0].RecipeName);
     }
@@ -302,7 +305,7 @@ internal sealed class FeedProviderTests
         var recipe = CreateRecipeFeed("foo_label_recipe", ingredient.Object);
         _sut.AddRecipeAndSave(recipe.Object);
 
-        _sut.OnRecipeChanged += () => Interlocked.Increment(ref count);
+        _sut.OnFeedOrRecipeChanged += () => Interlocked.Increment(ref count);
 
         //Act
         _sut.LoadInitialSavedFeeds();
