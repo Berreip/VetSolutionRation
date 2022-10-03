@@ -58,7 +58,7 @@ internal static class RecipeConfigurationCalculator
                         AddIngredientIfNotAlreadyThere(individualFeeds, ingredient);
                     }
                     break;
-                case IFeedVerifySpecificAdapter ingredient:
+                case IVerifyFeed ingredient:
                     AddIngredientIfNotAlreadyThere(individualFeeds, ingredient);
                     break;
                 default:

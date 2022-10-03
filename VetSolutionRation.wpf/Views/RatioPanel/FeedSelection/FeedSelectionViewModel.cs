@@ -1,4 +1,6 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Windows.Forms;
+using PRF.Utils.CoreComponents.Diagnostic;
 using PRF.WPFCore;
 using PRF.WPFCore.Commands;
 using VetSolutionRation.Common.Async;
@@ -31,10 +33,13 @@ internal sealed class FeedSelectionViewModel : ViewModelBase, IFeedSelectionView
     private IResultView _selectedResultView;
     public IFeedSelectionModeAdapter[] AvailableFeedSelectionModes { get; }
     public IFeedProviderHoster FeedProviderHoster { get; }
-    public IDelegateCommandLight<ReferenceFeedAdapter> SelectFeedCommand { get; }
+    public IDelegateCommandLight<IFeedOrRecipeAdapter?> SelectFeedCommand { get; }
     public IDelegateCommandLight<IFeedAdapter> DuplicateFeedCommand { get; }
     public IDelegateCommandLight<CustomUserFeedAdapter> EditFeedCommand { get; }
     public IDelegateCommandLight<CustomUserFeedAdapter> DeleteFeedCommand { get; }
+    public IDelegateCommandLight<IRecipeAdapter?> EditRecipeCommand { get; }
+    public IDelegateCommandLight<IRecipeAdapter?> DuplicateRecipeCommand { get; }
+    public IDelegateCommandLight<IRecipeAdapter?> DeleteRecipeCommand { get; }
 
     public FeedSelectionViewModel(
         // ReSharper disable SuggestBaseTypeForParameterInConstructor
@@ -67,10 +72,52 @@ internal sealed class FeedSelectionViewModel : ViewModelBase, IFeedSelectionView
         _selectedResultView = AvailableFeedSelectionModes[0].ResultView;
         AvailableFeedSelectionModes[0].IsSelected = true;
 
-        SelectFeedCommand = new DelegateCommandLight<IFeedAdapter?>(ExecuteSelectFeedCommand);
+        SelectFeedCommand = new DelegateCommandLight<IFeedOrRecipeAdapter?>(ExecuteSelectFeedCommand);
         DuplicateFeedCommand = new DelegateCommandLight<IFeedAdapter?>(ExecuteDuplicateFeedCommand);
         EditFeedCommand = new DelegateCommandLight<CustomUserFeedAdapter?>(ExecuteEditFeedCommand);
         DeleteFeedCommand = new DelegateCommandLight<CustomUserFeedAdapter?>(ExecuteDeleteFeedCommand);
+        EditRecipeCommand = new DelegateCommandLight<IRecipeAdapter?>(ExecuteEditRecipeCommand);
+        DuplicateRecipeCommand = new DelegateCommandLight<IRecipeAdapter?>(ExecuteDuplicateRecipeCommand);
+        DeleteRecipeCommand = new DelegateCommandLight<IRecipeAdapter?>(ExecuteDeleteRecipeCommand);
+    }
+
+    private void ExecuteEditRecipeCommand(IRecipeAdapter? recipe)
+    {
+        AsyncWrapper.Wrap(() =>
+        {
+            if (recipe == null)
+            {
+                return;
+            }
+
+            DebugCore.Fail("TODO edit à faire");
+        });
+    }
+
+    private void ExecuteDuplicateRecipeCommand(IRecipeAdapter? recipe)
+    {
+        AsyncWrapper.Wrap(() =>
+        {
+            if (recipe == null)
+            {
+                return;
+            }
+
+            DebugCore.Fail("TODO edit à faire");
+        });
+    }
+
+    private void ExecuteDeleteRecipeCommand(IRecipeAdapter? recipe)
+    {
+        AsyncWrapper.Wrap(() =>
+        {
+            if (recipe == null)
+            {
+                return;
+            }
+
+            DebugCore.Fail("TODO edit à faire");
+        });
     }
 
     private void ExecuteDeleteFeedCommand(CustomUserFeedAdapter? customUserFeed)
@@ -88,28 +135,38 @@ internal sealed class FeedSelectionViewModel : ViewModelBase, IFeedSelectionView
     {
         AsyncWrapper.Wrap(() => ShowEditAndDuplicateWindow(feed, FeedEditionMode.Edition));
     }
-    
+
     private void ExecuteDuplicateFeedCommand(IFeedAdapter? feed)
     {
         AsyncWrapper.Wrap(() => ShowEditAndDuplicateWindow(feed, FeedEditionMode.Duplication));
     }
-    
+
     private void ShowEditAndDuplicateWindow(IFeedAdapter? feed, FeedEditionMode mode)
     {
         if (feed != null)
         {
             _popupManagerLight.ShowDialog(
-                () => new DuplicateAndEditFeedPopupViewModel(_popupManagerLight, _feedProvider, feed, mode), 
+                () => new DuplicateAndEditFeedPopupViewModel(_popupManagerLight, _feedProvider, feed, mode),
                 vm => new DuplicateAndEditFeedPopupView(vm));
         }
     }
 
-    private void ExecuteSelectFeedCommand(IFeedAdapter? feedAdapter)
+    private void ExecuteSelectFeedCommand(IFeedOrRecipeAdapter? feedOrRecipeAdapter)
     {
-        if (feedAdapter != null)
+        if (feedOrRecipeAdapter != null)
         {
-            _calculateRatiosView.ViewModel.AddSelectedFeed(feedAdapter);
-            _verifyRatiosView.ViewModel.AddSelectedFeed(feedAdapter.GetUnderlyingFeed());
+            switch (feedOrRecipeAdapter)
+            {
+                case IFeedAdapter feedAdapter:
+                    _calculateRatiosView.ViewModel.AddSelectedFeed(feedAdapter);
+                    _verifyRatiosView.ViewModel.AddSelectedFeed(feedAdapter.GetUnderlyingFeed());
+                    break;
+                case RecipeAdapter recipeAdapter:
+                    _verifyRatiosView.ViewModel.AddSelectedFeed(recipeAdapter.GetUnderlyingRecipeModel());
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(feedOrRecipeAdapter));
+            }
         }
     }
 

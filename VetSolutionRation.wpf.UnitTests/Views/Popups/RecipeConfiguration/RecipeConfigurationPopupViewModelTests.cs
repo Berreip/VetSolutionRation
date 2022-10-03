@@ -31,8 +31,8 @@ internal sealed class RecipeConfigurationPopupViewModelTests
         _popupManager = new Mock<IPopupManagerLight>();
         _feedProvider = new Mock<IFeedProvider>();
 
-        _feed1 = CreateFeed("feed1_name");
-        _feed2 = CreateFeed("feed2_name");
+        _feed1 = UtilsUnitTests.CreateFeed("feed1_name");
+        _feed2 = UtilsUnitTests.CreateFeed("feed2_name");
 
         _feed1.Setup(o => o.GetUnderlyingFeed()).Returns(new Mock<IFeed>().Object);
         _feed2.Setup(o => o.GetUnderlyingFeed()).Returns(new Mock<IFeed>().Object);
@@ -111,12 +111,12 @@ internal sealed class RecipeConfigurationPopupViewModelTests
     public void Ctor_do_not_duplicate_ingredient_even_if_provided_multiple_times()
     {
         //Arrange
-        var feed1 = CreateFeed("feed1");
-        var feed2 = CreateFeed("feed2");
-        var feed3 = CreateFeed("feed3");
+        var feed1 = UtilsUnitTests.CreateIngredientFeed("feed1");
+        var feed2 = UtilsUnitTests.CreateIngredientFeed("feed2");
+        var feed3 = UtilsUnitTests.CreateIngredientFeed("feed3");
         var recipe = new Mock<IRecipeAdapter>();
         // the recipe already contains all previous feed except feed3
-        recipe.Setup(o => o.Ingredients).Returns(new List<IVerifyFeed> { feed1.Object, feed2.Object });
+        recipe.Setup(o => o.Ingredients).Returns(new [] { feed1.Object, feed2.Object });
 
         var feeds = new List<IFeedThatCouldBeAddedIntoRecipe>
         {
@@ -135,17 +135,5 @@ internal sealed class RecipeConfigurationPopupViewModelTests
         Assert.IsTrue(selectedFeeds.Any(o => o.Name == feed1.Object.Name));
         Assert.IsTrue(selectedFeeds.Any(o => o.Name == feed2.Object.Name));
         Assert.IsTrue(selectedFeeds.Any(o => o.Name == feed3.Object.Name));
-    }
-
-    private static Mock<IFeedVerifySpecificAdapter> CreateFeed(string name)
-    {
-        var feed = new Mock<IFeedVerifySpecificAdapter>();
-        feed.Setup(o => o.Name).Returns(name);
-        feed.Setup(o => o.Guid).Returns(Guid.NewGuid());
-        var qty = new Mock<IFeedQuantityAdapter>();
-        qty.Setup(o => o.Unit).Returns(FeedUnit.Kg);
-        qty.Setup(o => o.Quantity).Returns(1);
-        feed.Setup(o => o.FeedQuantity).Returns(qty.Object);
-        return feed;
     }
 }

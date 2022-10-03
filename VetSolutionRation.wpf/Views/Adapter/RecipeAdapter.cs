@@ -15,7 +15,12 @@ internal interface IRecipeAdapter : IFeedThatCouldBeAddedIntoRecipe
     /// <summary>
     /// list of feed ingredients
     /// </summary>
-    IReadOnlyList<IVerifyFeed> Ingredients { get; }
+    IReadOnlyList<IIngredientFeedAdapter> Ingredients { get; }
+}
+
+internal interface IIngredientFeedAdapter : IVerifyFeed
+{
+    IIngredientForRecipe GetFeedForRecipe();
 }
 
 internal sealed class RecipeAdapter : ViewModelBase, IRecipeAdapter, IFeedOrRecipeAdapter
@@ -29,7 +34,13 @@ internal sealed class RecipeAdapter : ViewModelBase, IRecipeAdapter, IFeedOrReci
         Ingredients = recipe.Ingredients.Select(o => new IngredientFeedAdapter(o.Ingredient)).ToArray();
     }
 
-    public IReadOnlyList<IVerifyFeed> Ingredients { get; }
+    public IFeedOrRecipe GetUnderlyingRecipeModel()
+    {
+        // TODO PBO => quel pourcentage prendre? => décider et externaliser dans calculateur
+        return new RecipeModel(Name, FeedUnit.Kg, Ingredients.Select(o => o.GetFeedForRecipe()).ToArray());
+    }
+    
+    public IReadOnlyList<IIngredientFeedAdapter> Ingredients { get; }
 
     /// <inheritdoc />
     public bool IsSelected
@@ -49,7 +60,7 @@ internal sealed class RecipeAdapter : ViewModelBase, IRecipeAdapter, IFeedOrReci
     /// <summary>
     /// Adapter of an ingredient
     /// </summary>
-    private sealed class IngredientFeedAdapter : IVerifyFeed 
+    private sealed class IngredientFeedAdapter : IIngredientFeedAdapter
     {
         private readonly IFeed _feed;
 
@@ -75,6 +86,11 @@ internal sealed class RecipeAdapter : ViewModelBase, IRecipeAdapter, IFeedOrReci
 
         /// <inheritdoc />
         public Guid Guid => _feed.Guid;
-    }
 
+        /// <inheritdoc />
+        public IIngredientForRecipe GetFeedForRecipe()
+        {
+            return new IngredientForRecipe(0, _feed);
+        }
+    }
 }
