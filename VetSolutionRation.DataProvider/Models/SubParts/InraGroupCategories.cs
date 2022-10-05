@@ -1,5 +1,5 @@
 ﻿using VetSolutionRation.DataProvider.Services.Excel.ExcelDto;
-using VetSolutionRationLib.Enums;
+using VSR.Core.Extensions;
 
 namespace VetSolutionRation.DataProvider.Models.SubParts;
 

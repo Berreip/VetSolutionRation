@@ -1,7 +1,8 @@
 ﻿using System.Globalization;
 using NUnit.Framework;
-using VetSolutionRation.wpf.Views.Popups.Adapters;
-using VetSolutionRationLib.Enums;
+using VSR.Enums;
+using VSR.WPF.Utils.Adapters.EditionIngredients;
+
 // ReSharper disable UseObjectOrCollectionInitializer
 
 namespace VetSolutionRation.wpf.UnitTests.Adapters;
@@ -16,7 +17,7 @@ internal sealed class FeedDetailInEditionAdapterTests
         var counter = 0;
         
         //Act
-        var res =new FeedDetailInEditionAdapter(InraHeader.Amidon, 56, () => Interlocked.Increment(ref counter));
+        var res =new NutritionalDetailsAdapter(InraHeader.Amidon, 56, () => Interlocked.Increment(ref counter));
 
         //Assert
         Assert.AreEqual(InraHeader.Amidon, res.Header);
@@ -32,7 +33,7 @@ internal sealed class FeedDetailInEditionAdapterTests
     {
         //Arrange
         var counter = 0;
-        var res = new FeedDetailInEditionAdapter(InraHeader.Amidon, 56, () => Interlocked.Increment(ref counter));
+        var res = new NutritionalDetailsAdapter(InraHeader.Amidon, 56, () => Interlocked.Increment(ref counter));
         
         //Act
         res.CellValue = null;
@@ -50,7 +51,7 @@ internal sealed class FeedDetailInEditionAdapterTests
     {
         //Arrange
         var counter = 0;
-        var res = new FeedDetailInEditionAdapter(InraHeader.Amidon, 56, () => Interlocked.Increment(ref counter));
+        var res = new NutritionalDetailsAdapter(InraHeader.Amidon, 56, () => Interlocked.Increment(ref counter));
         
         //Act
         res.CellValue = "foo";
@@ -68,7 +69,7 @@ internal sealed class FeedDetailInEditionAdapterTests
     {
         //Arrange
         var counter = 0;
-        var res = new FeedDetailInEditionAdapter(InraHeader.Amidon, 56, () => Interlocked.Increment(ref counter));
+        var res = new NutritionalDetailsAdapter(InraHeader.Amidon, 56, () => Interlocked.Increment(ref counter));
         
         //Act
         var strValue = (78.7d).ToString(CultureInfo.CurrentCulture);

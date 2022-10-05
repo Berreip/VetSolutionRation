@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using NUnit.Framework;
-using VetSolutionRation.DataProvider.Models;
-using VetSolutionRationLib.Enums;
+using VSR.Core.Extensions;
+using VSR.Dto.Utils;
+using VSR.Enums;
 
 namespace VetSolutionRation.DataProvider.UnitTests.Models;
 
@@ -103,7 +104,7 @@ internal sealed class InraHeaderExtensionsTests
         {
             var label = inraHeader.ToDtoKey();
             Assert.IsNotEmpty(label);
-            var parseSuccess = InraHeaderExtensions.TryParseDtoInraHeader(label, out var parsedHeader);
+            var parseSuccess = InraHeaderDtoConverter.TryParseDtoInraHeader(label, out var parsedHeader);
             Assert.IsTrue(parseSuccess, $"failed to parse {label}");
             Assert.AreEqual(inraHeader, parsedHeader);
         }

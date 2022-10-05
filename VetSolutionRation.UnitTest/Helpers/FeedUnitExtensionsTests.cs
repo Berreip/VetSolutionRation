@@ -1,6 +1,6 @@
 ﻿using System;
 using NUnit.Framework;
-using VetSolutionRationLib.Enums;
+using VSR.Enums;
 
 namespace VetSolutionRation.UnitTest.Helpers
 {

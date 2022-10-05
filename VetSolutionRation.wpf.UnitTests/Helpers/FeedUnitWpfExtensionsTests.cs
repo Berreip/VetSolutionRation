@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
-using VetSolutionRation.wpf.Helpers;
-using VetSolutionRationLib.Enums;
+using VSR.Enums;
+using VSR.WPF.Utils.Helpers;
 
 namespace VetSolutionRation.wpf.UnitTests.Helpers;
 

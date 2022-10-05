@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using NUnit.Framework;
-using VetSolutionRationLib.Helpers;
+using VSR.Core.Helpers;
 
 namespace VetSolutionRation.UnitTest.Helpers
 {

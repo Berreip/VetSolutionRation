@@ -1,0 +1,238 @@
+﻿<UserControl x:Class="VetSolutionRation.wpf.Views.IngredientsAndRecipesList.IngredientsAndRecipesListView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:ingredientsAndRecipesList="clr-namespace:VetSolutionRation.wpf.Views.IngredientsAndRecipesList"
+             xmlns:feeds="clr-namespace:VSR.WPF.Utils.Adapters.IngredientsAndRecipeList;assembly=VSR.WPF.Utils"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance ingredientsAndRecipesList:IngredientsAndRecipesListViewModel, IsDesignTimeCreatable=False}"
+             d:DesignHeight="300"
+             d:DesignWidth="300"
+             x:Name="FeedSelectionUserControlName"
+             x:ClassModifier="internal">
+    <materialDesign:Card Margin="2" Padding="5, 10, 5, 5" materialDesign:ShadowAssist.ShadowDepth="Depth2">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <!-- SEARCH BAR -->
+            <TextBox
+                Grid.Row="0"
+                Margin="5, 2"
+                Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                materialDesign:HintAssist.Hint="Chercher un aliment"
+                VerticalAlignment="Center"
+                Height="50"
+                HorizontalAlignment="Stretch"
+                Text="{Binding IngredientAdaptersHoster.SearchFilter, UpdateSourceTrigger=PropertyChanged, Delay=100}" />
+
+            <!-- AVAILABLE FEEDS -->
+            <ItemsControl Grid.Row="1" Margin="2, 5" Padding="5"
+                          HorizontalAlignment="Stretch"
+                          ItemsSource="{Binding IngredientAdaptersHoster.AvailableIngredientAndRecipes}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <VirtualizingStackPanel IsVirtualizing="True"
+                                                VirtualizationMode="Recycling" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.Template>
+                    <ControlTemplate TargetType="ItemsControl">
+                        <ScrollViewer CanContentScroll="True"
+                                      VerticalScrollBarVisibility="Auto"
+                                      HorizontalScrollBarVisibility="Disabled"
+                                      Padding="{TemplateBinding Padding}"
+                                      Background="{DynamicResource MaterialDesignPaper}"
+                                      Focusable="False">
+                            <ItemsPresenter />
+                        </ScrollViewer>
+                    </ControlTemplate>
+                </ItemsControl.Template>
+                <ItemsControl.Resources>
+                    <!-- REFERENCE INGREDIENT -->
+                    <DataTemplate DataType="{x:Type feeds:ReferenceIngredientForListAdapter}">
+                        <Button Grid.Column="1" Margin="1" Padding="1"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Stretch"
+                                VerticalContentAlignment="Center"
+                                ToolTip="Cliquez pour ajouter l'aliment"
+                                Command="{Binding DataContext.SelectIngredientCommand, ElementName=FeedSelectionUserControlName}"
+                                CommandParameter="{Binding .}"
+                                Style="{StaticResource MaterialDesignFlatButton}">
+                            <Grid HorizontalAlignment="Stretch">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="35" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="35" />
+                                </Grid.ColumnDefinitions>
+
+                                <materialDesign:PackIcon Grid.Column="0" Margin="2,4"
+                                                         Kind="Barley"
+                                                         HorizontalAlignment="Center"
+                                                         VerticalAlignment="Center"
+                                                         Height="25" Width="25" />
+                                
+                                <!-- REFERENCE FEED NAME -->
+                                <TextBlock Grid.Column="1" Text="{Binding Name}"
+                                           TextTrimming="CharacterEllipsis"
+                                           ToolTip="{Binding Name}"
+                                           VerticalAlignment="Center" />
+
+                                <!-- DUPLICATE AND EDIT -->
+                                <Button Grid.Column="2" Margin="1" Padding="1"
+                                        Width="35"
+                                        VerticalAlignment="Center"
+                                        ToolTip="Créer une copie de cet aliment pour édition"
+                                        Command="{Binding DataContext.DuplicateFeedCommand, ElementName=FeedSelectionUserControlName}"
+                                        CommandParameter="{Binding .}"
+                                        Style="{StaticResource MaterialDesignFlatButton}">
+                                    <materialDesign:PackIcon Kind="PencilBoxMultipleOutline" Margin="0" Padding="0" Height="20" Width="20" />
+                                </Button>
+                            </Grid>
+                        </Button>
+                    </DataTemplate>
+
+                    <!-- USER DEFINED INGREDIENT FOR LIST ADAPTER -->
+                    <DataTemplate DataType="{x:Type feeds:UserDefinedIngredientForListAdapter}">
+                        <Button Grid.Column="1" Margin="1" Padding="1"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Stretch"
+                                VerticalContentAlignment="Center"
+                                ToolTip="Cliquez pour ajouter l'aliment"
+                                Command="{Binding DataContext.SelectIngredientCommand, ElementName=FeedSelectionUserControlName}"
+                                CommandParameter="{Binding .}"
+                                Style="{StaticResource MaterialDesignFlatButton}">
+                            <Grid HorizontalAlignment="Stretch">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="35" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="35" />
+                                    <ColumnDefinition Width="35" />
+                                    <ColumnDefinition Width="35" />
+                                </Grid.ColumnDefinitions>
+
+                                <materialDesign:PackIcon Grid.Column="0" Margin="2,4"
+                                                         Kind="AccountEdit"
+                                                         HorizontalAlignment="Center"
+                                                         VerticalAlignment="Center"
+                                                         Height="25" Width="25" />
+                                
+                                <!-- CUSTOM FEED NAME -->
+                                <TextBlock Grid.Column="1" Text="{Binding Name}"
+                                           VerticalAlignment="Center" />
+
+                                <!-- EDIT -->
+                                <Button Grid.Column="2"
+                                        Margin="1" Padding="1"
+                                        Width="35"
+                                        VerticalAlignment="Center"
+                                        ToolTip="Editer l'aliment"
+                                        Command="{Binding DataContext.EditIngredientCommand, ElementName=FeedSelectionUserControlName}"
+                                        CommandParameter="{Binding .}"
+                                        Style="{StaticResource MaterialDesignFlatButton}">
+                                    <materialDesign:PackIcon Kind="Pencil" Margin="0" Padding="0" Height="20" Width="20" />
+                                </Button>
+
+                                <!-- DUPLICATE AND EDIT -->
+                                <Button Grid.Column="3"
+                                        Margin="1" Padding="1"
+                                        Width="35"
+                                        VerticalAlignment="Center"
+                                        ToolTip="Créer une copie de cet aliment pour édition"
+                                        Command="{Binding DataContext.DuplicateFeedCommand, ElementName=FeedSelectionUserControlName}"
+                                        CommandParameter="{Binding .}"
+                                        Style="{StaticResource MaterialDesignFlatButton}">
+                                    <materialDesign:PackIcon Kind="PencilBoxMultipleOutline" Margin="0" Padding="0" Height="20" Width="20" />
+                                </Button>
+
+                                <!-- DELETE -->
+                                <Button Grid.Column="4"
+                                        Margin="1" Padding="1"
+                                        Width="35"
+                                        VerticalAlignment="Center"
+                                        ToolTip="Supprimer définitivement l'aliment"
+                                        Command="{Binding DataContext.DeleteIngredientCommand, ElementName=FeedSelectionUserControlName}"
+                                        CommandParameter="{Binding .}"
+                                        Style="{StaticResource MaterialDesignFlatButton}">
+                                    <materialDesign:PackIcon Kind="DeleteOutline" Margin="0" Padding="0" Height="20" Width="20" />
+                                </Button>
+                            </Grid>
+                        </Button>
+                    </DataTemplate>
+
+                    <!-- RECIPE -->
+                    <DataTemplate DataType="{x:Type feeds:RecipeForListAdapter}">
+                        <Button Grid.Column="1" Margin="1" Padding="1"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Stretch"
+                                VerticalContentAlignment="Center"
+                                ToolTip="Cliquez pour ajouter la recette"
+                                Command="{Binding DataContext.SelectRecipeCommand, ElementName=FeedSelectionUserControlName}"
+                                CommandParameter="{Binding .}"
+                                Style="{StaticResource MaterialDesignFlatButton}">
+                            <Grid HorizontalAlignment="Stretch">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="35" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="35" />
+                                    <ColumnDefinition Width="35" />
+                                    <ColumnDefinition Width="35" />
+                                </Grid.ColumnDefinitions>
+
+                                <materialDesign:PackIcon Grid.Column="0" Margin="2,4"
+                                                         Kind="BookOpenVariant"
+                                                         HorizontalAlignment="Center"
+                                                         VerticalAlignment="Center"
+                                                         Height="25" Width="25" />
+
+                                <!-- NAME -->
+                                <TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center" />
+
+                                <!-- EDIT -->
+                                <Button Grid.Column="2"
+                                        Margin="1" Padding="1"
+                                        Width="35"
+                                        VerticalAlignment="Center"
+                                        ToolTip="Editer l'aliment"
+                                        Command="{Binding DataContext.EditRecipeCommand, ElementName=FeedSelectionUserControlName}"
+                                        CommandParameter="{Binding .}"
+                                        Style="{StaticResource MaterialDesignFlatButton}">
+                                    <materialDesign:PackIcon Kind="Pencil" Margin="0" Padding="0" Height="20" Width="20" />
+                                </Button>
+
+                                <!-- DUPLICATE AND EDIT -->
+                                <Button Grid.Column="3"
+                                        Margin="1" Padding="1"
+                                        Width="35"
+                                        VerticalAlignment="Center"
+                                        ToolTip="Créer une copie de cette recette pour édition"
+                                        Command="{Binding DataContext.DuplicateRecipeCommand, ElementName=FeedSelectionUserControlName}"
+                                        CommandParameter="{Binding .}"
+                                        Style="{StaticResource MaterialDesignFlatButton}">
+                                    <materialDesign:PackIcon Kind="PencilBoxMultipleOutline" Margin="0" Padding="0" Height="20" Width="20" />
+                                </Button>
+
+                                <!-- DELETE -->
+                                <Button Grid.Column="4"
+                                        Margin="1" Padding="1"
+                                        Width="35"
+                                        VerticalAlignment="Center"
+                                        ToolTip="Supprimer définitivement cette recette"
+                                        Command="{Binding DataContext.DeleteRecipeCommand, ElementName=FeedSelectionUserControlName}"
+                                        CommandParameter="{Binding .}"
+                                        Style="{StaticResource MaterialDesignFlatButton}">
+                                    <materialDesign:PackIcon Kind="DeleteOutline" Margin="0" Padding="0" Height="20" Width="20" />
+                                </Button>
+                            </Grid>
+                        </Button>
+                    </DataTemplate>
+
+                </ItemsControl.Resources>
+            </ItemsControl>
+        </Grid>
+    </materialDesign:Card>
+</UserControl>

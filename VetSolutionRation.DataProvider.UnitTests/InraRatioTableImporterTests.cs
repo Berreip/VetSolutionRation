@@ -53,7 +53,7 @@ internal sealed class Tests
 
         //Assert
         var allLines = res.GetAllLines();
-        Assert.AreEqual(expectedCount, allLines.Count, $"COUNT:; {allLines.Count} {Environment.NewLine}{string.Join(Environment.NewLine, allLines.Select(o => o.JoinedLabel))}");
+        Assert.AreEqual(expectedCount, allLines.Count, $"COUNT:; {allLines.Count} {Environment.NewLine}{string.Join(Environment.NewLine, allLines.Select(o => o.Label))}");
     }
 
     [Test]
@@ -67,7 +67,7 @@ internal sealed class Tests
         var res = InraRatioTableImporter.ImportInraTable(file);
 
         //Assert
-        Assert.AreEqual(value, res.GetAllLines()[position].JoinedLabel);
+        Assert.AreEqual(value, res.GetAllLines()[position].Label);
     }
 
 

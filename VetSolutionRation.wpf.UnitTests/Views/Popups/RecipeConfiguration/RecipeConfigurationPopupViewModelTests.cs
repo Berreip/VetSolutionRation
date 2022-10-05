@@ -1,14 +1,13 @@
 ﻿using Moq;
 using NUnit.Framework;
-using VetSolutionRation.wpf.Services.PopupManager;
-using VetSolutionRation.wpf.Services.Saves;
 using VetSolutionRation.wpf.UnitTests.UnitTestUtils;
-using VetSolutionRation.wpf.Views.Adapter;
-using VetSolutionRation.wpf.Views.Popups.RecipeConfiguration;
-using VetSolutionRation.wpf.Views.Popups.RecipeConfiguration.Adapters;
-using VetSolutionRation.wpf.Views.RatioPanel.Recipe;
-using VetSolutionRationLib.Enums;
-using VetSolutionRationLib.Models.Feed;
+using VetSolutionRation.wpf.Views.RecipeConfiguration;
+using VSR.Core.Services;
+using VSR.Models.Ingredients;
+using VSR.Models.Recipe;
+using VSR.WPF.Utils.Adapters.CalculationAdapters;
+using VSR.WPF.Utils.Adapters.EditionRecipes;
+using VSR.WPF.Utils.PopupManager;
 
 namespace VetSolutionRation.wpf.UnitTests.Views.Popups.RecipeConfiguration;
 
@@ -17,43 +16,32 @@ internal sealed class RecipeConfigurationPopupViewModelTests
 {
     private RecipeConfigurationPopupViewModel _sut;
     private Mock<IPopupManagerLight> _popupManager;
-    private Mock<IFeedProvider> _feedProvider;
-    private List<IVerifyFeed> _selectedFeed;
-    private Mock<IFeedVerifySpecificAdapter> _feed1;
-    private Mock<IFeedVerifySpecificAdapter> _feed2;
-    private Mock<IFeedQuantityAdapter> _quantity1;
-    private Mock<IFeedQuantityAdapter> _quantity2;
+    private Mock<IIngredientsManager> _ingredientsManager;
+    private List<IAdapterInCalculation> _selectedFeed;
+    private IngredientInCalculationAdapter _feed1;
+    private IngredientInCalculationAdapter _feed2;
 
     [SetUp]
     public void TestInitialize()
     {
         // mock:
         _popupManager = new Mock<IPopupManagerLight>();
-        _feedProvider = new Mock<IFeedProvider>();
+        _ingredientsManager = new Mock<IIngredientsManager>();
 
-        _feed1 = UtilsUnitTests.CreateFeed("feed1_name");
-        _feed2 = UtilsUnitTests.CreateFeed("feed2_name");
+        _feed1 = UtilsUnitTests.CreateIngredientCalculationAdapter("feed1_name");
+        _feed2 = UtilsUnitTests.CreateIngredientCalculationAdapter("feed2_name");
+     
+        _feed1.IngredientQuantity.QuantityString = "60";
+        _feed2.IngredientQuantity.QuantityString = "20";
 
-        _feed1.Setup(o => o.GetUnderlyingFeed()).Returns(new Mock<IFeed>().Object);
-        _feed2.Setup(o => o.GetUnderlyingFeed()).Returns(new Mock<IFeed>().Object);
-
-        _quantity1 = new Mock<IFeedQuantityAdapter>();
-        _quantity2 = new Mock<IFeedQuantityAdapter>();
-
-        _quantity1.Setup(o => o.Quantity).Returns(60);
-        _quantity2.Setup(o => o.Quantity).Returns(20);
-
-        _feed1.Setup(o => o.FeedQuantity).Returns(_quantity1.Object);
-        _feed2.Setup(o => o.FeedQuantity).Returns(_quantity2.Object);
-
-        _selectedFeed = new List<IVerifyFeed>
+        _selectedFeed = new List<IAdapterInCalculation>
         {
-            _feed1.Object,
-            _feed2.Object,
+            _feed1,
+            _feed2,
         };
 
         // software under test:
-        _sut = new RecipeConfigurationPopupViewModel(_popupManager.Object, _feedProvider.Object, _selectedFeed);
+        _sut = new RecipeConfigurationPopupViewModel(_popupManager.Object, _ingredientsManager.Object, _selectedFeed);
     }
 
     [Test]
@@ -62,16 +50,14 @@ internal sealed class RecipeConfigurationPopupViewModelTests
         //Arrange
 
         //Act
-        var res = _sut.SelectedFeedsCollection.ToArray<FeedForRecipeCreationAdapter>();
+        var res = _sut.SelectedIngredients.ToArray<IngredientInRecipeCreationAdapter>();
 
         //Assert
         Assert.AreEqual(2, res.Count);
         Assert.AreEqual("feed1_name", res[0].Name);
         Assert.AreEqual("feed2_name", res[1].Name);
-        Assert.AreNotSame(res[0].FeedQuantity, _quantity1.Object, "adapter should have same values but not be the same object");
-        Assert.AreNotSame(res[1].FeedQuantity, _quantity2.Object, "adapter should have same values but not be the same object");
-        Assert.AreNotSame(60d, res[0].FeedQuantity.Quantity);
-        Assert.AreNotSame(20d, res[1].FeedQuantity.Quantity);
+        Assert.AreNotSame(60d, res[0].Quantity);
+        Assert.AreNotSame(20d, res[1].Quantity);
         Assert.IsFalse(_sut.ValidateRecipeCreationCommand.CanExecute());
     }
 
@@ -111,29 +97,33 @@ internal sealed class RecipeConfigurationPopupViewModelTests
     public void Ctor_do_not_duplicate_ingredient_even_if_provided_multiple_times()
     {
         //Arrange
-        var feed1 = UtilsUnitTests.CreateIngredientFeed("feed1");
-        var feed2 = UtilsUnitTests.CreateIngredientFeed("feed2");
-        var feed3 = UtilsUnitTests.CreateIngredientFeed("feed3");
-        var recipe = new Mock<IRecipeAdapter>();
+        var feed1 = UtilsUnitTests.CreateIngredientCalculationAdapter("feed1");
+        var feed2 = UtilsUnitTests.CreateIngredientCalculationAdapter("feed2");
+        var feed3 = UtilsUnitTests.CreateIngredientCalculationAdapter("feed3");
+        var recipe = new Mock<IRecipe>();
         // the recipe already contains all previous feed except feed3
-        recipe.Setup(o => o.Ingredients).Returns(new [] { feed1.Object, feed2.Object });
-
-        var feeds = new List<IFeedThatCouldBeAddedIntoRecipe>
+        recipe.Setup(o => o.IngredientsForRecipe).Returns(new []
         {
-            feed1.Object,
-            feed2.Object,
-            feed3.Object,
-            recipe.Object,
+            new IngredientForRecipe(50, feed1.GetUnderlyingIngredient()), 
+            new IngredientForRecipe(50, feed2.GetUnderlyingIngredient()),
+        });
+
+        var feeds = new List<IAdapterInCalculation>
+        {
+            feed1,
+            feed2,
+            feed3,
+            new RecipeInCalculationAdapter(recipe.Object),
         };
 
         //Act
-        var sut = new RecipeConfigurationPopupViewModel(_popupManager.Object, _feedProvider.Object, feeds);
+        var sut = new RecipeConfigurationPopupViewModel(_popupManager.Object, _ingredientsManager.Object, feeds);
 
         //Assert
-        var selectedFeeds = sut.SelectedFeedsCollection.ToArray<FeedForRecipeCreationAdapter>();
+        var selectedFeeds = sut.SelectedIngredients.ToArray<IngredientInRecipeCreationAdapter>();
         Assert.AreEqual(3, selectedFeeds.Count);
-        Assert.IsTrue(selectedFeeds.Any(o => o.Name == feed1.Object.Name));
-        Assert.IsTrue(selectedFeeds.Any(o => o.Name == feed2.Object.Name));
-        Assert.IsTrue(selectedFeeds.Any(o => o.Name == feed3.Object.Name));
+        Assert.IsTrue(selectedFeeds.Any(o => o.Name == feed1.Name));
+        Assert.IsTrue(selectedFeeds.Any(o => o.Name == feed2.Name));
+        Assert.IsTrue(selectedFeeds.Any(o => o.Name == feed3.Name));
     }
 }

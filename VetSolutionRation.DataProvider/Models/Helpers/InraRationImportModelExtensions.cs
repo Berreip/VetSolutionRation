@@ -1,10 +1,9 @@
-﻿using System.Collections;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using PRF.Utils.CoreComponents.Diagnostic;
-using VetSolutionRation.DataProvider.Dto;
-using VetSolutionRationLib.Enums;
-using VetSolutionRationLib.Models.Feed;
+using VSR.Core.Extensions;
+using VSR.Enums;
+using VSR.Models.Ingredients;
 
 namespace VetSolutionRation.DataProvider.Models.Helpers;
 
@@ -16,26 +15,26 @@ public static class InraRationImportModelExtensions
         new CultureInfo("En-us"),
     };
 
-    public static IReferenceFeed ToReferenceFeed(this IInraRationLineImportModel lineImportModel)
+    public static IIngredient ToReferenceIngredient(this IInraRationLineImportModel lineImportModel)
     {
         var details = GetAllNutritionalDetails(lineImportModel);
-        // create a unique id for further reference
-        var newGuid = Guid.NewGuid();
-        return new ReferenceFeed(lineImportModel.GetLabels(), details.NutritionalDetails, details.StringDetails, newGuid);
+        // TODO PBO NIAK => voir  details.StringDetails value
+        var rr = details.StringDetails;
+        return new Ingredient(Guid.NewGuid(), lineImportModel.Label, false, details.NutritionalDetails);
     }
 
 
-    public static ICustomFeed ToCustomFeed(this IInraRationLineImportModel lineImportModel)
+    public static IIngredient ToUserDefinedIngredient(this IInraRationLineImportModel lineImportModel)
     {
         var details = GetAllNutritionalDetails(lineImportModel);
-        // create a unique id for further reference
-        var newGuid = Guid.NewGuid();
-        return new CustomFeed(lineImportModel.GetLabels(), details.NutritionalDetails, newGuid);
+        // TODO PBO NIAK => voir  details.StringDetails value
+        var rr = details.StringDetails;
+        return new Ingredient(Guid.NewGuid(), lineImportModel.Label, false, details.NutritionalDetails);
     }
     
-    private static (IReadOnlyList<INutritionalFeedDetails> NutritionalDetails, IReadOnlyList<IStringDetailsContent> StringDetails) GetAllNutritionalDetails(IInraRationLineImportModel lineImportModel)
+    private static (IReadOnlyList<INutritionalDetails> NutritionalDetails, IReadOnlyList<IStringDetailsContent> StringDetails) GetAllNutritionalDetails(IInraRationLineImportModel lineImportModel)
     {
-        var nutritionalDetails = new List<INutritionalFeedDetails>();
+        var nutritionalDetails = new List<INutritionalDetails>();
         var stringDetails = new List<IStringDetailsContent>();
         foreach (var cell in lineImportModel.GetAllCells())
         {
@@ -46,7 +45,7 @@ public static class InraRationImportModelExtensions
             else if(string.IsNullOrWhiteSpace(cell.Value.Content))
             {
                 // empty cell is considered as zero
-                nutritionalDetails.Add(new NutritionalFeedDetails(cell.Key, 0d));
+                nutritionalDetails.Add(new NutritionalDetails(cell.Key, 0d));
             }
             else if(TryParseDouble(cell, out var feedDetail))
             {
@@ -61,13 +60,13 @@ public static class InraRationImportModelExtensions
         return (nutritionalDetails, stringDetails);
     }
 
-    private static bool TryParseDouble(KeyValuePair<InraHeader, FeedCellModel> cell,  [MaybeNullWhen(false)] out INutritionalFeedDetails nutritionalDetails)
+    private static bool TryParseDouble(KeyValuePair<InraHeader, FeedCellModel> cell,  [MaybeNullWhen(false)] out INutritionalDetails nutritionalDetails)
     {
         foreach (var culture in _allowedCultures)
         {
             if (double.TryParse(cell.Value.Content, NumberStyles.Any, culture, out var doubleValue))
             {
-                nutritionalDetails = new NutritionalFeedDetails(cell.Key, doubleValue);
+                nutritionalDetails = new NutritionalDetails(cell.Key, doubleValue);
                 return true;
             }
         }

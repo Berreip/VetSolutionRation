@@ -1,7 +1,6 @@
 ﻿using NUnit.Framework;
-using VetSolutionRation.wpf.Views.Adapter;
-using VetSolutionRation.wpf.Views.Adapter.Feeds;
-using VetSolutionRationLib.Models.Feed;
+using VSR.Models.Ingredients;
+using VSR.WPF.Utils.Adapters.IngredientsAndRecipeList;
 
 namespace VetSolutionRation.wpf.UnitTests.Services;
 
@@ -18,7 +17,7 @@ internal sealed class FeedVerificationAdapterTests
     public void SearchReturns_expected_results(string adapterName, string searchText, bool expectedMatch)
     {
         //Arrange
-        var feed = new ReferenceFeedAdapter(new ReferenceFeed(new[] { adapterName }, Array.Empty<INutritionalFeedDetails>(), Array.Empty<IStringDetailsContent>(), Guid.NewGuid()));
+        var feed = new ReferenceIngredientForListAdapter(new Ingredient(Guid.NewGuid(), adapterName, false , Array.Empty<INutritionalDetails>()));
 
         //Act
         var res = feed.MatchSearch(new[] { searchText });

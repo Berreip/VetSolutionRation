@@ -33,15 +33,4 @@
     <SolidColorBrush x:Key="Color_Warning_Text" Color="Black" />
     <SolidColorBrush x:Key="Color_Danger" Color="Red" />
     <SolidColorBrush x:Key="Color_Danger_Text" Color="White" />
-
-    <!-- ~1~Label@1@ -->
-    <!-- <Style x:Key="Label_Base" TargetType="{x:Type Label}" BasedOn="{StaticResource MaterialDesignLabel}"> -->
-    <!--     <Setter Property="FontWeight" Value="DemiBold"/> -->
-    <!--     <Setter Property="Background" Value="Transparent"/> -->
-    <!--     <Setter Property="Foreground" Value="{DynamicResource MaterialDesignBody}"/> -->
-    <!--     <Setter Property="IsHitTestVisible" Value="False"/> -->
-    <!--     <Setter Property="HorizontalAlignment" Value="Center"/> -->
-    <!--     <Setter Property="VerticalAlignment" Value="Center"/> -->
-    <!--     <Setter Property="Margin" Value="2"/> -->
-    <!-- </Style> -->
 </ResourceDictionary>

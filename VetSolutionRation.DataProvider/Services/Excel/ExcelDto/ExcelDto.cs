@@ -1,6 +1,4 @@
-﻿using VetSolutionRation.DataProvider.Models;
-
-namespace VetSolutionRation.DataProvider.Services.Excel.ExcelDto;
+﻿namespace VetSolutionRation.DataProvider.Services.Excel.ExcelDto;
 
 public sealed class ExcelDto
 {

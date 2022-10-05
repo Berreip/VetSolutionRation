@@ -1,5 +1,5 @@
 ﻿using NUnit.Framework;
-using VetSolutionRation.wpf.Helpers;
+using VSR.WPF.Utils.Helpers;
 
 namespace VetSolutionRation.wpf.UnitTests.Helpers;
 

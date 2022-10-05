@@ -1,8 +1,7 @@
 ﻿using Moq;
 using NUnit.Framework;
-using VetSolutionRation.wpf.UnitTests.Helpers;
-using VetSolutionRation.wpf.Views.Popups.Adapters;
-using VetSolutionRationLib.Models.Units;
+using VSR.Models.Units;
+using VSR.WPF.Utils.Adapters.EditionIngredients;
 
 namespace VetSolutionRation.wpf.UnitTests.Views.Popups.Adapters;
 

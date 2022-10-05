@@ -1,8 +1,6 @@
 ﻿using System.Diagnostics;
 using PRF.Utils.CoreComponents.Diagnostic;
-using VetSolutionRation.DataProvider.Utils;
-using VetSolutionRationLib.Enums;
-using VetSolutionRationLib.Helpers;
+using VSR.Enums;
 
 namespace VetSolutionRation.DataProvider.Models;
 
@@ -11,9 +9,8 @@ namespace VetSolutionRation.DataProvider.Models;
 /// </summary>
 public interface IInraRationLineImportModel
 {
-    string JoinedLabel { get; }
+    string Label { get; }
     IReadOnlyDictionary<InraHeader, FeedCellModel> GetAllCells();
-    IReadOnlyCollection<string> GetLabels();
 }
 
 /// <summary>
@@ -21,15 +18,13 @@ public interface IInraRationLineImportModel
 /// </summary>
 public sealed class InraRationLineImportModel : IInraRationLineImportModel
 {
-    private readonly IReadOnlyCollection<string> _labels;
     private readonly Dictionary<InraHeader, FeedCellModel> _feedCellModels = new Dictionary<InraHeader, FeedCellModel>();
-    public string JoinedLabel { get; }
+    public string Label { get; }
 
     public InraRationLineImportModel(IEnumerable<FeedCellModel> feedCellModels, IReadOnlyCollection<string> labels)
     {
-        _labels = labels;
+        Label = string.Join(" | ", labels);
         DebugCore.Assert(labels.Count != 0, "should have at least one label");
-        JoinedLabel = labels.JoinAsLabel();
         foreach (var cell in feedCellModels)
         {
             if(_feedCellModels.TryGetValue(cell.HeaderKind, out var value))
@@ -47,8 +42,8 @@ public sealed class InraRationLineImportModel : IInraRationLineImportModel
                 
                 if (!value.Match(cell))
                 {
-                    Trace.TraceError($"row [{JoinedLabel}] : the field {cell.HeaderKind} is duplicated and it value differs: [{value.Content}] VS [{cell.Content}]");
-                    DebugCore.Fail($"row [{JoinedLabel}] : the field {cell.HeaderKind} is duplicated and it value differs: [{value.Content}] VS [{cell.Content}]");
+                    Trace.TraceError($"row [{Label}] : the field {cell.HeaderKind} is duplicated and it value differs: [{value.Content}] VS [{cell.Content}]");
+                    DebugCore.Fail($"row [{Label}] : the field {cell.HeaderKind} is duplicated and it value differs: [{value.Content}] VS [{cell.Content}]");
                 }
                 // else ignore the duplicates if same values
             }
@@ -65,14 +60,8 @@ public sealed class InraRationLineImportModel : IInraRationLineImportModel
     }
 
     /// <inheritdoc />
-    public IReadOnlyCollection<string> GetLabels()
-    {
-        return _labels.ToArray();
-    }
-
-    /// <inheritdoc />
     public override string ToString()
     {
-        return $"[{_feedCellModels.Count}] - {JoinedLabel}";
+        return $"[{_feedCellModels.Count}] - {Label}";
     }
 }

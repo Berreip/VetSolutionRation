@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 using VetSolutionRation.DataProvider.Models.SubParts;
-using VetSolutionRationLib.Enums;
+using VSR.Enums;
 
 namespace VetSolutionRation.DataProvider.Models;
 

@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Threading;
-using PRF.Utils.CoreComponents.Diagnostic;
-using PRF.WPFCore.UiWorkerThread;
-using VetSolutionRation.wpf.Helpers.Assertions;
-using VetSolutionRation.wpf.Services.Injection;
-using VetSolutionRation.wpf.Views;
+using VSR.WPF.Utils.Assertions;
 
 namespace VetSolutionRation.wpf
 {
@@ -20,9 +16,10 @@ namespace VetSolutionRation.wpf
                 var app = new App
                 {
                     //close the app when the main window is closed (default value is lastWindow)
-                    ShutdownMode = ShutdownMode.OnMainWindowClose
+                    ShutdownMode = ShutdownMode.OnMainWindowClose,
                 };
-                DebugCore.SetAssertionFailedCallback(OnAssertionFailed);
+                
+                AssertionRegistration.RegisterAssertionHandler();
                 
                 app.DispatcherUnhandledException += OnUnhandledException;
                 AppDomain.CurrentDomain.UnhandledException += AppDomainOnUnhandledException;
@@ -35,18 +32,6 @@ namespace VetSolutionRation.wpf
             {
                 MessageBox.Show($"Unhandled Exception (will exit after close): {ex} ");
             }
-        }
-
-        private static AssertionResponse OnAssertionFailed(AssertionFailedResult assertionfailedResult)
-        {
-            return UiThreadDispatcher.ExecuteOnUI(() =>
-            {
-                var assertionVm = new AssertionFailedViewModel(assertionfailedResult);
-                var view = new AssertionFailedView(assertionVm);
-                assertionVm.OnResponseSet += () => view.Close();
-                view.ShowDialog();
-                return assertionVm.GetResponse();
-            });
         }
 
         private static void AppDomainOnUnhandledException(object sender, UnhandledExceptionEventArgs e)
