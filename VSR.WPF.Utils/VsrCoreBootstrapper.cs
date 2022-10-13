@@ -1,9 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
-using PRF.Utils.CoreComponents.Diagnostic;
+﻿using System.Threading.Tasks;
 using PRF.Utils.Injection.BootStrappers;
 using PRF.Utils.Injection.Containers;
 using PRF.Utils.Injection.Utils;
+using VSR.WPF.Utils.Loading;
 using VSR.WPF.Utils.Services;
 using VSR.WPF.Utils.Services.Configuration;
 
@@ -19,21 +18,24 @@ public sealed class VsrWpfUtilsBootstrapper : BootStrapperCore
         
         container.Register<IAnimalAdaptersHoster, AnimalAdaptersHoster>(LifeTime.Singleton);
         container.Register<IIngredientAdaptersHoster, IngredientAdaptersHoster>(LifeTime.Singleton);
+        container.RegisterOrAppendCollection<IPostStartupLoading>(LifeTime.Transient, new []{typeof(IngredientFileLoaderOnStartup)});
     }
+}
 
-    /// <inheritdoc />
-    public override async Task InitializeAsync(IInjectionContainer container)
+internal sealed class IngredientFileLoaderOnStartup : IPostStartupLoading
+{
+    private readonly IngredientsFileLoader _ingredientsFileLoader;
+
+    public IngredientFileLoaderOnStartup(IngredientsFileLoader ingredientsFileLoader)
     {
-        try
-        {
-            // load the initial configuration
-            container.Resolve<IngredientsFileLoader>().LoadInitialSavedFeeds();
-        }
-        catch (Exception e)
-        {
-            DebugCore.Fail($"Error while loading initial data: {e}");
-        }
-
+        _ingredientsFileLoader = ingredientsFileLoader;
+    }
+    
+    /// <inheritdoc />
+    public async Task InitializeAsync()
+    {
+        // load the initial configuration
+        _ingredientsFileLoader.LoadInitialSavedFeeds();
         await Task.CompletedTask.ConfigureAwait(false);
     }
 }

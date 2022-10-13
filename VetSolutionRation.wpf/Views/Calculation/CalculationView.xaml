@@ -33,9 +33,7 @@
                     <ItemsControl.Resources>
                         <DataTemplate DataType="{x:Type adapters:RecipeInCalculationAdapter}">
                             <Button Style="{StaticResource MaterialDesignFlatButton}"
-                                    MinHeight="80"
                                     HorizontalContentAlignment="Stretch"
-                                    VerticalContentAlignment="Stretch"
                                     Command="{Binding ClickOnRecipeLineCommand}">
                                 
                                 <!-- TODO PBO => mettre nom et valeur recette à propager -->

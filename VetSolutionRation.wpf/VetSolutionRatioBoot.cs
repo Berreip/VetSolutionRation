@@ -9,7 +9,9 @@ using VetSolutionRation.wpf.Views.AnimalSelection;
 using VetSolutionRation.wpf.Views.Calculation;
 using VetSolutionRation.wpf.Views.IngredientsAndRecipesList;
 using VSR.Core;
+using VSR.Core.Helpers.Async;
 using VSR.WPF.Utils;
+using VSR.WPF.Utils.Loading;
 using VSR.WPF.Utils.Navigation;
 using VSR.WPF.Utils.PopupManager;
 
@@ -34,7 +36,20 @@ namespace VetSolutionRation.wpf
         {
             Register();
             Initialize();
-            return _internalContainer.Resolve<TMainWindow>();
+            var mainWindow = _internalContainer.Resolve<TMainWindow>();
+            StartInitTaskInFireAndForget();
+            return mainWindow;
+        }
+
+        private void StartInitTaskInFireAndForget()
+        {
+            AsyncWrapper.DispatchAndWrapInFireAndForget(async () =>
+            {
+                foreach (var postStartupLoading in _internalContainer.ResolveAll<IPostStartupLoading>())
+                {
+                    await postStartupLoading.InitializeAsync().ConfigureAwait(false);
+                }
+            });
         }
 
         private void Register()
