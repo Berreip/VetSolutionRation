@@ -15,8 +15,8 @@ public interface IIngredientOrRecipeForListAdapter : ISearcheable
 
 public static class DisplayPriorities
 {
+    public const int RECIPE_PRIORITY = 30;
     public const int USER_DEFINED_PRIORITY = 20;
-    public const int RECIPE_PRIORITY = 10;
     public const int REFERENCE_PRIORITY = 5;
 }
 

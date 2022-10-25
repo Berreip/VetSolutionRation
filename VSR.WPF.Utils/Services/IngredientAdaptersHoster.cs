@@ -19,6 +19,14 @@ public interface IIngredientAdaptersHoster
     ICollectionView AvailableIngredientAndRecipes { get; }
 
     string? SearchFilter { get; set; }
+    void SetFilterKind(FilterKind kind);
+}
+
+public enum FilterKind
+{
+    All,
+    Ingredient,
+    Recipe
 }
 
 internal sealed class IngredientAdaptersHoster : ViewModelBase, IIngredientAdaptersHoster
@@ -27,6 +35,7 @@ internal sealed class IngredientAdaptersHoster : ViewModelBase, IIngredientAdapt
     private readonly ObservableCollectionRanged<IIngredientOrRecipeForListAdapter> _availableFeeds;
 
     private readonly Dictionary<Guid, IIngredientOrRecipeForListAdapter> _adapterByGuid;
+    private FilterKind _lastFilterKind = FilterKind.All;
     public ICollectionView AvailableIngredientAndRecipes { get; }
 
     public IngredientAdaptersHoster(IIngredientsManager ingredientsManager)
@@ -59,10 +68,12 @@ internal sealed class IngredientAdaptersHoster : ViewModelBase, IIngredientAdapt
 
     private void FilterAvailableFeeds(string? inputText)
     {
-        if (inputText == null)
+        if (inputText == null && _lastFilterKind == FilterKind.All)
+        {
             return;
-        var splitByWhitspace = SearchHelpers.SplitByWhitspaceAndSpecificSymbols(inputText);
-        AvailableIngredientAndRecipes.Filter = item => SearchFilters.FilterParts(item, splitByWhitspace);
+        }
+        var splitByWhitspace = inputText != null ? SearchHelpers.SplitByWhitspaceAndSpecificSymbols(inputText) : Array.Empty<string>();
+        AvailableIngredientAndRecipes.Filter = item => SearchFilters.FilterIngredientsOrRecipe(item, splitByWhitspace, _lastFilterKind);
     }
 
     public string? SearchFilter
@@ -74,6 +85,16 @@ internal sealed class IngredientAdaptersHoster : ViewModelBase, IIngredientAdapt
             {
                 FilterAvailableFeeds(value);
             }
+        }
+    }
+
+    /// <inheritdoc />
+    public void SetFilterKind(FilterKind kind)
+    {
+        if (_lastFilterKind != kind)
+        {
+            _lastFilterKind = kind;
+            FilterAvailableFeeds(_searchText);
         }
     }
 

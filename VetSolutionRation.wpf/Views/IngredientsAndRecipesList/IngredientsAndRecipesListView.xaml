@@ -20,15 +20,29 @@
             </Grid.RowDefinitions>
 
             <!-- SEARCH BAR -->
-            <TextBox
-                Grid.Row="0"
-                Margin="5, 2"
-                Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                materialDesign:HintAssist.Hint="Chercher un aliment"
-                VerticalAlignment="Center"
-                Height="50"
-                HorizontalAlignment="Stretch"
-                Text="{Binding IngredientAdaptersHoster.SearchFilter, UpdateSourceTrigger=PropertyChanged, Delay=100}" />
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <TextBox
+                    Margin="5, 2"
+                    Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                    materialDesign:HintAssist.Hint="Chercher un aliment"
+                    VerticalAlignment="Center"
+                    Height="50"
+                    HorizontalAlignment="Stretch"
+                    Text="{Binding IngredientAdaptersHoster.SearchFilter, UpdateSourceTrigger=PropertyChanged, Delay=100}" />
+
+                <ComboBox
+                    Width="150"
+                    Grid.Column="1" 
+                    Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                    ToolTip="Filtrer par type"
+                    ItemsSource="{Binding AvailableFilterKinds}"
+                    SelectedItem="{Binding SelectedFilterKind}" />
+            </Grid>
 
             <!-- AVAILABLE FEEDS -->
             <ItemsControl Grid.Row="1" Margin="2, 5" Padding="5"
@@ -75,7 +89,7 @@
                                                          HorizontalAlignment="Center"
                                                          VerticalAlignment="Center"
                                                          Height="25" Width="25" />
-                                
+
                                 <!-- REFERENCE FEED NAME -->
                                 <TextBlock Grid.Column="1" Text="{Binding Name}"
                                            TextTrimming="CharacterEllipsis"
@@ -120,7 +134,7 @@
                                                          HorizontalAlignment="Center"
                                                          VerticalAlignment="Center"
                                                          Height="25" Width="25" />
-                                
+
                                 <!-- CUSTOM FEED NAME -->
                                 <TextBlock Grid.Column="1" Text="{Binding Name}"
                                            VerticalAlignment="Center" />

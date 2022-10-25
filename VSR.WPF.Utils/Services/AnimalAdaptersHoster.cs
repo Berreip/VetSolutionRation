@@ -81,7 +81,7 @@ namespace VSR.WPF.Utils.Services
             if (inputText == null)
                 return;
             var splitByWhitspace = SearchHelpers.SplitByWhitspaceAndSpecificSymbols(inputText);
-            AvailableAnimals.Filter = item => SearchFilters.FilterParts(item, splitByWhitspace);
+            AvailableAnimals.Filter = item => SearchFilters.FilterAnimals(item, splitByWhitspace);
         }
     }
 }

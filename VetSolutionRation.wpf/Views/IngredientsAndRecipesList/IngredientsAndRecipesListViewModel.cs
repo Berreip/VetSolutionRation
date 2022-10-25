@@ -1,9 +1,12 @@
-﻿using System.Windows.Forms;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Forms;
 using PRF.Utils.CoreComponents.Diagnostic;
 using PRF.WPFCore;
 using PRF.WPFCore.Commands;
 using VetSolutionRation.wpf.Views.Calculation;
 using VetSolutionRation.wpf.Views.DuplicatesAndEditFeed;
+using VetSolutionRation.wpf.Views.IngredientsAndRecipesList.Adapters;
 using VSR.Core.Helpers.Async;
 using VSR.Core.Services;
 using VSR.WPF.Utils.Adapters.IngredientsAndRecipeList;
@@ -21,6 +24,7 @@ internal sealed class IngredientsAndRecipesListViewModel : ViewModelBase, IIngre
     private readonly IIngredientsManager _ingredientsManager;
     private readonly IPopupManagerLight _popupManagerLight;
     private readonly ICalculationViewModel _calculationViewModel;
+    private FilterKindAdapter _selectedFilterKind;
     public IIngredientAdaptersHoster IngredientAdaptersHoster { get; }
     
     public IDelegateCommandLight<IngredientForListAdapterBase?> SelectIngredientCommand { get; }
@@ -32,6 +36,7 @@ internal sealed class IngredientsAndRecipesListViewModel : ViewModelBase, IIngre
     public IDelegateCommandLight<RecipeForListAdapter?> EditRecipeCommand { get; }
     public IDelegateCommandLight<RecipeForListAdapter?> DuplicateRecipeCommand { get; }
     public IDelegateCommandLight<RecipeForListAdapter?> DeleteRecipeCommand { get; }
+    public IReadOnlyList<FilterKindAdapter> AvailableFilterKinds { get; }
 
     public IngredientsAndRecipesListViewModel(
         ICalculationViewModel calculationViewModel, // TODO PBO => isolate
@@ -43,7 +48,15 @@ internal sealed class IngredientsAndRecipesListViewModel : ViewModelBase, IIngre
         _ingredientsManager = ingredientsManager;
         _popupManagerLight = popupManagerLight;
         IngredientAdaptersHoster = ingredientAdaptersHoster;
-   
+        AvailableFilterKinds = new[]
+        {
+            new FilterKindAdapter(FilterKind.All), 
+            new FilterKindAdapter(FilterKind.Ingredient), 
+            new FilterKindAdapter(FilterKind.Recipe),
+        };
+        _selectedFilterKind = AvailableFilterKinds[0];
+        ingredientAdaptersHoster.SetFilterKind(_selectedFilterKind.Kind);
+        
         SelectIngredientCommand = new DelegateCommandLight<IngredientForListAdapterBase?>(ExecuteSelectIngredientCommand);
         SelectRecipeCommand = new DelegateCommandLight<RecipeForListAdapter?>(ExecuteSelectRecipeCommand);
         DuplicateFeedCommand = new DelegateCommandLight<IngredientForListAdapterBase?>(ExecuteDuplicateAndEditIngredientCommand);
@@ -54,6 +67,18 @@ internal sealed class IngredientsAndRecipesListViewModel : ViewModelBase, IIngre
         EditRecipeCommand = new DelegateCommandLight<RecipeForListAdapter?>(ExecuteEditRecipeCommand);
         DuplicateRecipeCommand = new DelegateCommandLight<RecipeForListAdapter?>(ExecuteDuplicateRecipeCommand);
         DeleteRecipeCommand = new DelegateCommandLight<RecipeForListAdapter?>(ExecuteDeleteRecipeCommand);
+    }
+
+    public FilterKindAdapter SelectedFilterKind
+    {
+        get => _selectedFilterKind;
+        set
+        {
+            if (SetProperty(ref _selectedFilterKind, value))
+            {
+                IngredientAdaptersHoster.SetFilterKind(value.Kind);
+            }
+        }
     }
 
     private void ExecuteSelectRecipeCommand(RecipeForListAdapter? recipe)
