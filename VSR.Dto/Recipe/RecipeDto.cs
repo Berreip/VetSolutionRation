@@ -23,6 +23,7 @@ public static class RecipeExtensions
     {
         return new RecipeDto
         {
+            Guid = model.Guid,
             Name = model.RecipeName,
             Ingredients = model.IngredientsForRecipe.Select(o => o.ConvertFromModelToDto()).ToList(),
         };

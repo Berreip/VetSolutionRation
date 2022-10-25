@@ -21,4 +21,8 @@
       <ProjectReference Include="..\VSR.Enums\VSR.Enums.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="PRF.Utils.CoreComponents" Version="2.2.2" />
+    </ItemGroup>
+
 </Project>

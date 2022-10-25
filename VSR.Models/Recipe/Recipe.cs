@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using PRF.Utils.CoreComponents.Diagnostic;
 using VSR.Enums;
 using VSR.Models.Ingredients;
 
@@ -46,6 +47,7 @@ public sealed class Recipe : IRecipe
 
     public Recipe(Guid guid, string recipeName, IReadOnlyList<IIngredientForRecipe> ingredients)
     {
+        DebugCore.Assert(guid != Guid.Empty, "the Guid should not be empty for Recipe");
         IngredientsForRecipe = ingredients;
         Guid = guid;
         RecipeName = recipeName;
