@@ -1,7 +1,7 @@
 ﻿using Moq;
 using NUnit.Framework;
 using VetSolutionRation.wpf.UnitTests.UnitTestUtils;
-using VetSolutionRation.wpf.Views.RecipeConfiguration;
+using VetSolutionRation.wpf.Views.PopupRecipeConfiguration;
 using VSR.Core.Services;
 using VSR.Models.Ingredients;
 using VSR.Models.Recipe;

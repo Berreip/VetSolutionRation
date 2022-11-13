@@ -11,7 +11,7 @@ using VSR.WPF.Utils.Adapters;
 using VSR.WPF.Utils.Adapters.EditionIngredients;
 using VSR.WPF.Utils.PopupManager;
 
-namespace VetSolutionRation.wpf.Views.DuplicatesAndEditFeed;
+namespace VetSolutionRation.wpf.Views.PopupDuplicatesAndEditFeed;
 
 internal interface IDuplicateAndEditFeedPopupViewModel: IPopupViewModel
 {

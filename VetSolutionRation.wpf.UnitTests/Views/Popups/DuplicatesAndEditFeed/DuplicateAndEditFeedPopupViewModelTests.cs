@@ -2,7 +2,7 @@
 using Moq;
 using NUnit.Framework;
 using VetSolutionRation.wpf.UnitTests.UnitTestUtils;
-using VetSolutionRation.wpf.Views.DuplicatesAndEditFeed;
+using VetSolutionRation.wpf.Views.PopupDuplicatesAndEditFeed;
 using VSR.Core.Services;
 using VSR.Enums;
 using VSR.Models.Ingredients;

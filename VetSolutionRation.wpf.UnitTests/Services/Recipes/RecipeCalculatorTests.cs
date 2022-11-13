@@ -1,7 +1,7 @@
 ﻿using Moq;
 using NUnit.Framework;
 using VetSolutionRation.wpf.Views;
-using VetSolutionRation.wpf.Views.RecipeConfiguration;
+using VetSolutionRation.wpf.Views.PopupRecipeConfiguration;
 using VSR.Enums;
 using VSR.Models.Ingredients;
 using VSR.WPF.Utils.Adapters.CalculationAdapters;

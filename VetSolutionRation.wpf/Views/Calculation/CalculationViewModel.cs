@@ -6,7 +6,7 @@ using PRF.WPFCore;
 using PRF.WPFCore.Commands;
 using PRF.WPFCore.CustomCollections;
 using PRF.WPFCore.UiWorkerThread;
-using VetSolutionRation.wpf.Views.RecipeConfiguration;
+using VetSolutionRation.wpf.Views.PopupRecipeConfiguration;
 using VSR.Core.Helpers.Async;
 using VSR.Core.Services;
 using VSR.Models.Ingredients;

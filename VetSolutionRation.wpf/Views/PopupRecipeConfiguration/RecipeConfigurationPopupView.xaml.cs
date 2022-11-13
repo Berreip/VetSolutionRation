@@ -1,4 +1,4 @@
-﻿namespace VetSolutionRation.wpf.Views.RecipeConfiguration;
+﻿namespace VetSolutionRation.wpf.Views.PopupRecipeConfiguration;
 
 internal sealed partial class RecipeConfigurationPopupView
 {

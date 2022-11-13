@@ -9,7 +9,7 @@
         Title="Assertion failed!"
         mc:Ignorable="d"
         Height="400" Width="700"
-        d:DataContext="{d:DesignInstance assertions:AssertionFailedViewModel, IsDesignTimeCreatable=true}">
+        d:DataContext="{d:DesignInstance assertions:AssertionFailedViewModel, IsDesignTimeCreatable=False}">
     <Grid>
 
         <Grid.ColumnDefinitions>

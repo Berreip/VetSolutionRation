@@ -1,13 +1,13 @@
-﻿<Window x:Class="VetSolutionRation.wpf.Views.PopupRecipeConfiguration.RecipeConfigurationPopupView"
+﻿<Window x:Class="VetSolutionRation.wpf.Views.PopupRecipeEdition.RecipeEditionPopupView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:VetSolutionRation.wpf.Views.PopupRecipeEdition"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        xmlns:wpf1="clr-namespace:VSR.WPF.Utils.Adapters.EditionRecipes;assembly=VSR.WPF.Utils"
-        xmlns:popupRecipeConfiguration="clr-namespace:VetSolutionRation.wpf.Views.PopupRecipeConfiguration"
+        xmlns:editionRecipes="clr-namespace:VSR.WPF.Utils.Adapters.EditionRecipes;assembly=VSR.WPF.Utils"
         mc:Ignorable="d"
-        Title="Création de recette"
+        Title="Edition de recette"
         Height="400" Width="600"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="Regular"
@@ -16,9 +16,10 @@
         TextOptions.TextRenderingMode="Auto"
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}"
-        x:Name="DuplicateAndEditPopup"
-        d:DataContext="{d:DesignInstance popupRecipeConfiguration:RecipeConfigurationPopupViewModel, IsDesignTimeCreatable=False}" x:ClassModifier="internal">
-    <Grid>
+        d:DesignHeight="300" d:DesignWidth="300" 
+        x:ClassModifier="internal"
+        d:DataContext="{d:DesignInstance local:RecipeEditionPopupViewModel, IsDesignTimeCreatable=False}">
+        <Grid>
         <Grid.RowDefinitions>
             <!-- RECIPE NAME -->
             <RowDefinition Height="Auto" />
@@ -84,10 +85,10 @@
                     </StackPanel>
                 </DataTemplate>
             </GroupBox.HeaderTemplate>
-            
+
             <ItemsControl Margin="2, 5" Padding="5"
                           HorizontalAlignment="Stretch"
-                          ItemsSource="{Binding SelectedIngredients}">
+                          ItemsSource="{Binding IngredientsInEditedRecipe}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <VirtualizingStackPanel IsVirtualizing="True"
@@ -106,7 +107,7 @@
                     </ControlTemplate>
                 </ItemsControl.Template>
                 <ItemsControl.ItemTemplate>
-                    <DataTemplate DataType="{x:Type wpf1:IngredientInRecipeCreationAdapter}">
+                    <DataTemplate DataType="{x:Type editionRecipes:IngredientInRecipeCreationAdapter}">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
@@ -125,13 +126,13 @@
                                 Text="{Binding Name, Mode=OneTime}"
                                 TextTrimming="CharacterEllipsis"
                                 ToolTip="{Binding Name, Mode=OneTime}" />
-                            
+
                             <!-- QUANTITY -->
-                            <TextBox  Grid.Column="1"
-                                      Margin="5, 2"
-                                      Text="{Binding QuantityString, UpdateSourceTrigger=PropertyChanged}"
-                                      VerticalAlignment="Center"
-                                      HorizontalContentAlignment="Right">
+                            <TextBox Grid.Column="1"
+                                     Margin="5, 2"
+                                     Text="{Binding QuantityString, UpdateSourceTrigger=PropertyChanged}"
+                                     VerticalAlignment="Center"
+                                     HorizontalContentAlignment="Right">
                                 <TextBox.Style>
                                     <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource MaterialDesignTextBox}">
                                         <Setter Property="Foreground" Value="{StaticResource MaterialDesignBody}" />
@@ -142,7 +143,7 @@
                                         </Style.Triggers>
                                     </Style>
                                 </TextBox.Style>
-                            </TextBox>    
+                            </TextBox>
 
                             <!-- QUANTITY UNIT -->
                             <TextBlock
@@ -151,7 +152,7 @@
                                 HorizontalAlignment="Left"
                                 Margin="2"
                                 Text="{Binding UnitDisplayName}" />
-                            
+
                             <!-- PERCENTAGE -->
                             <TextBlock
                                 Grid.Column="3"
@@ -168,7 +169,7 @@
         <StackPanel Grid.Row="2"
                     Orientation="Horizontal"
                     Margin="20, 5"
-                    VerticalAlignment="Center" 
+                    VerticalAlignment="Center"
                     HorizontalAlignment="Center">
 
             <Button
@@ -178,13 +179,14 @@
                 Content="Annuler"
                 Background="{StaticResource Color_Warning}"
                 Foreground="{StaticResource Color_Warning_Text}"
-                Command="{Binding CancelCreationCommand}" />
+                Command="{Binding CancelEditionCommand}" />
             <Button
                 Margin="20, 5"
                 MinWidth="150"
                 Style="{StaticResource MaterialDesignOutlinedButton}"
                 Content="Valider"
-                Command="{Binding ValidateRecipeCreationCommand}" />
+                Command="{Binding ValidateRecipeEditionCommand}" />
         </StackPanel>
     </Grid>
+
 </Window>

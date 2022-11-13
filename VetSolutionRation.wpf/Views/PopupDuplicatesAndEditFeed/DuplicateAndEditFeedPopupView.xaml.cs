@@ -1,4 +1,4 @@
-﻿namespace VetSolutionRation.wpf.Views.DuplicatesAndEditFeed;
+﻿namespace VetSolutionRation.wpf.Views.PopupDuplicatesAndEditFeed;
 
 internal sealed partial class DuplicateAndEditFeedPopupView
 {

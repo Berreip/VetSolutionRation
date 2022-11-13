@@ -14,7 +14,7 @@ using VSR.WPF.Utils.Adapters.CalculationAdapters;
 using VSR.WPF.Utils.Adapters.EditionRecipes;
 using VSR.WPF.Utils.PopupManager;
 
-namespace VetSolutionRation.wpf.Views.RecipeConfiguration;
+namespace VetSolutionRation.wpf.Views.PopupRecipeConfiguration;
 
 internal sealed class RecipeConfigurationPopupViewModel : ViewModelBase, IPopupViewModel
 {

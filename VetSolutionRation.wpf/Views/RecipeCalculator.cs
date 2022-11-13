@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using VetSolutionRation.wpf.Views.RecipeConfiguration;
+using VetSolutionRation.wpf.Views.PopupRecipeConfiguration;
 using VSR.Models.Recipe;
 using VSR.WPF.Utils.Adapters.CalculationAdapters;
 

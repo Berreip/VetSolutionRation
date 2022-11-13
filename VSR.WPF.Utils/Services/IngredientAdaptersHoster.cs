@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using PRF.Utils.CoreComponents.Diagnostic;
 using PRF.WPFCore;
 using PRF.WPFCore.CustomCollections;
@@ -26,7 +27,7 @@ public enum FilterKind
 {
     All,
     Ingredient,
-    Recipe
+    Recipe,
 }
 
 internal sealed class IngredientAdaptersHoster : ViewModelBase, IIngredientAdaptersHoster
@@ -50,15 +51,15 @@ internal sealed class IngredientAdaptersHoster : ViewModelBase, IIngredientAdapt
         ingredientsManager.OnRecipesChanged += OnRecipesChanged;
     }
 
-    private static Dictionary<Guid, IIngredientOrRecipeForListAdapter> InitializeAdapters(IIngredientsManager feedProvider)
+    private static Dictionary<Guid, IIngredientOrRecipeForListAdapter> InitializeAdapters(IIngredientsManager ingredientsManager)
     {
         var adapters = new Dictionary<Guid, IIngredientOrRecipeForListAdapter>();
-        foreach (var ingredient in feedProvider.GetAllIngredients())
+        foreach (var ingredient in ingredientsManager.GetAllIngredients())
         {
             adapters.Add(ingredient.Guid, ingredient.IsUserAdded ? new UserDefinedIngredientForListAdapter(ingredient) : new ReferenceIngredientForListAdapter(ingredient));
         }
 
-        foreach (var recipe in feedProvider.GetAllRecipes())
+        foreach (var recipe in ingredientsManager.GetAllRecipes())
         {
             adapters.Add(recipe.Guid, new RecipeForListAdapter(recipe));
         }
@@ -100,43 +101,48 @@ internal sealed class IngredientAdaptersHoster : ViewModelBase, IIngredientAdapt
 
     private void OnRecipesChanged(IRecipesChangeMonitor monitor)
     {
-        foreach (var removed in monitor.GetRemoved())
-        {
-            if (_adapterByGuid.TryGetValue(removed.Guid, out var adapter))
-            {
-                _availableFeeds.Remove(adapter);
-            }
-        }
-
+        RemoveShared(monitor.GetRemoved().Select(o => o.Guid));
+        
         foreach (var added in monitor.GetAdded())
         {
-            DebugCore.Assert(_adapterByGuid.ContainsKey(added.Guid), $"duplicate Guid on added item: {added.Guid}");
+            DebugCore.Assert(!_adapterByGuid.ContainsKey(added.Guid), $"duplicate Guid on added recipe: {added.Guid}");
 
             var adapter = new RecipeForListAdapter(added);
-            _adapterByGuid.Add(added.Guid, adapter);
-            _availableFeeds.Add(adapter);
+            AddShared(added.Guid, adapter);
         }
     }
 
     private void OnIngredientsChanged(IIngredientsChangeMonitor monitor)
     {
-        foreach (var removed in monitor.GetRemoved())
-        {
-            if (_adapterByGuid.TryGetValue(removed.Guid, out var adapter))
-            {
-                _availableFeeds.Remove(adapter);
-            }
-        }
+        RemoveShared(monitor.GetRemoved().Select(o => o.Guid));
 
         foreach (var added in monitor.GetAdded())
         {
-            DebugCore.Assert(_adapterByGuid.ContainsKey(added.Guid), $"duplicate Guid on added item: {added.Guid}");
+            DebugCore.Assert(_adapterByGuid.ContainsKey(added.Guid), $"duplicate Guid on added ingredient: {added.Guid}");
 
             IIngredientOrRecipeForListAdapter adapter = added.IsUserAdded
                 ? new UserDefinedIngredientForListAdapter(added)
                 : new ReferenceIngredientForListAdapter(added);
-            _adapterByGuid.Add(added.Guid, adapter);
-            _availableFeeds.Add(adapter);
+            AddShared(added.Guid, adapter);
         }
     }
+
+    private void AddShared(Guid addedGuid, IIngredientOrRecipeForListAdapter adapter)
+    {
+        _adapterByGuid.Add(addedGuid, adapter);
+        _availableFeeds.Add(adapter);
+    }
+    
+    private void RemoveShared(IEnumerable<Guid> guids)
+    {
+        foreach (var removedGuid in guids)
+        {
+            if (_adapterByGuid.TryGetValue(removedGuid, out var adapter))
+            {
+                _availableFeeds.Remove(adapter);
+                _adapterByGuid.Remove(removedGuid);
+            }
+        }
+    }
+
 }

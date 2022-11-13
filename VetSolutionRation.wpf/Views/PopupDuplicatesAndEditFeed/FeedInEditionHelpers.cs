@@ -6,7 +6,7 @@ using VSR.Models.Ingredients;
 using VSR.WPF.Utils.Adapters;
 using VSR.WPF.Utils.Adapters.EditionIngredients;
 
-namespace VetSolutionRation.wpf.Views.DuplicatesAndEditFeed;
+namespace VetSolutionRation.wpf.Views.PopupDuplicatesAndEditFeed;
 
 internal class FeedInEditionHelpers
 {

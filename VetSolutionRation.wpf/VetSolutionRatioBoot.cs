@@ -8,6 +8,7 @@ using VetSolutionRation.wpf.Views;
 using VetSolutionRation.wpf.Views.AnimalSelection;
 using VetSolutionRation.wpf.Views.Calculation;
 using VetSolutionRation.wpf.Views.IngredientsAndRecipesList;
+using VetSolutionRation.wpf.Views.PopupRecipeEdition;
 using VSR.Core;
 using VSR.Core.Helpers.Async;
 using VSR.WPF.Utils;
@@ -67,6 +68,9 @@ namespace VetSolutionRation.wpf
             // views:
             _internalContainer.RegisterType<MainPanelView>(LifeTime.Singleton);
             _internalContainer.Register<IMainPanelViewModel, MainPanelViewModel>(LifeTime.Singleton);
+            
+            _internalContainer.RegisterType<RecipeEditionPopupView>(LifeTime.Singleton);
+            _internalContainer.Register<IRecipeEditionPopupViewModel, RecipeEditionPopupViewModel>(LifeTime.Singleton);
 
             _internalContainer.RegisterType<AnimalSelectionView>(LifeTime.Singleton);
             _internalContainer.Register<IAnimalSelectionViewModel, AnimalSelectionViewModel>(LifeTime.Singleton);

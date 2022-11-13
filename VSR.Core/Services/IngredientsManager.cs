@@ -38,6 +38,7 @@ public interface IIngredientsManager
     IReadOnlyList<IRecipe> AddRecipes(IEnumerable<IRecipeCandidate> recipeCandidates);
     
     void DeleteIngredient(IIngredient ingredient);
+    void DeleteRecipe(IRecipe recipe);
 }
 
 public sealed class IngredientsManager : IIngredientsManager
@@ -152,6 +153,25 @@ public sealed class IngredientsManager : IIngredientsManager
         }
     }
 
+
+    /// <inheritdoc />
+    public void DeleteRecipe(IRecipe recipe)
+    {
+        var monitor = new RecipesChangeMonitor();
+        lock (_key)
+        {
+            if (_recipeByLabel.Remove(recipe.RecipeName))
+            {
+                monitor.SignalRemoved(recipe);
+            }
+            else
+            {
+                DebugCore.Fail($"Trying to remove recipe {recipe.RecipeName} but it was not found in reference list");
+            }
+        }
+        RaiseOnRecipesChanged(monitor);
+    }
+    
     /// <inheritdoc />
     public IReadOnlyList<IRecipe> AddRecipes(IEnumerable<IRecipeCandidate> recipeCandidates)
     {

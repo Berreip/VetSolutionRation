@@ -154,4 +154,52 @@ internal sealed class IngredientsManagerTests
         //Assert
         Assert.AreEqual(0, monitors.Count);
     }
+
+    [Test]
+    public void AddRecipes_nominal_adding()
+    {
+        //Arrange
+        var monitors = new List<IRecipesChangeMonitor>();
+        _sut.OnRecipesChanged += o => monitors.Add(o);
+
+        var ingredient = UtilsUnitTests.CreateIngredient("foo_label");
+        var ingredientForRecipe = CreateIngredientForRecipe(1d, ingredient.Object);
+        var recipe = UtilsUnitTests.CreateRecipeCandidate(ingredientForRecipe.Object);
+        // recipe ingredient must be known before adding the recipe otherwise, it will be ignored
+        _sut.AddIngredients(new List<IIngredient> { ingredient.Object });
+
+        //Act
+        _sut.AddRecipes(new[] { recipe.Object });
+        
+
+        //Assert
+        Assert.AreEqual(1, monitors.Single().GetAdded().Count);
+    }
+
+    [Test]
+    public void DeleteRecipe_nominal()
+    {
+        //Arrange
+        var monitors = new List<IRecipesChangeMonitor>();
+
+        var ingredient = UtilsUnitTests.CreateIngredient("foo_label");
+        var ingredientForRecipe = CreateIngredientForRecipe(1d, ingredient.Object);
+        var recipe = UtilsUnitTests.CreateRecipeCandidate(ingredientForRecipe.Object);
+        
+        // recipe ingredient must be known before adding the recipe otherwise, it will be ignored
+        _sut.AddIngredients(new List<IIngredient> { ingredient.Object });
+        var added = _sut.AddRecipes(new[] { recipe.Object });
+        
+        _sut.OnRecipesChanged += o => monitors.Add(o);
+        
+        
+        //Act
+        _sut.DeleteRecipe(added.Single());
+        
+
+        //Assert
+        var monitor = monitors.Single();
+        Assert.AreEqual(0, monitor.GetAdded().Count);
+        Assert.AreEqual(1, monitor.GetRemoved().Count);
+    }
 }

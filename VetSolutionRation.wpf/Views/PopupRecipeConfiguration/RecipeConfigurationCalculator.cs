@@ -7,7 +7,7 @@ using VSR.WPF.Utils.Adapters.CalculationAdapters;
 using VSR.WPF.Utils.Adapters.EditionRecipes;
 using VSR.WPF.Utils.Helpers;
 
-namespace VetSolutionRation.wpf.Views.RecipeConfiguration;
+namespace VetSolutionRation.wpf.Views.PopupRecipeConfiguration;
 
 internal static class RecipeConfigurationCalculator
 {

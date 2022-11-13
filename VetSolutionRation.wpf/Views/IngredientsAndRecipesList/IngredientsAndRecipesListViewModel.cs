@@ -1,14 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using PRF.Utils.CoreComponents.Diagnostic;
 using PRF.WPFCore;
 using PRF.WPFCore.Commands;
+using PRF.WPFCore.UiWorkerThread;
 using VetSolutionRation.wpf.Views.Calculation;
-using VetSolutionRation.wpf.Views.DuplicatesAndEditFeed;
 using VetSolutionRation.wpf.Views.IngredientsAndRecipesList.Adapters;
+using VetSolutionRation.wpf.Views.PopupDuplicatesAndEditFeed;
+using VetSolutionRation.wpf.Views.PopupRecipeEdition;
 using VSR.Core.Helpers.Async;
 using VSR.Core.Services;
+using VSR.Models.Recipe;
 using VSR.WPF.Utils.Adapters.IngredientsAndRecipeList;
 using VSR.WPF.Utils.PopupManager;
 using VSR.WPF.Utils.Services;
@@ -39,7 +43,7 @@ internal sealed class IngredientsAndRecipesListViewModel : ViewModelBase, IIngre
     public IReadOnlyList<FilterKindAdapter> AvailableFilterKinds { get; }
 
     public IngredientsAndRecipesListViewModel(
-        ICalculationViewModel calculationViewModel, // TODO PBO => isolate
+        ICalculationViewModel calculationViewModel,
         IIngredientsManager ingredientsManager,
         IIngredientAdaptersHoster ingredientAdaptersHoster,
         IPopupManagerLight popupManagerLight)
@@ -97,17 +101,39 @@ internal sealed class IngredientsAndRecipesListViewModel : ViewModelBase, IIngre
         }
     }
 
-    private void ExecuteEditRecipeCommand(RecipeForListAdapter? recipe)
+    private async void ExecuteEditRecipeCommand(RecipeForListAdapter? recipeAdapter)
     {
-        AsyncWrapper.Wrap(() =>
+        await AsyncWrapper.DispatchAndWrapAsync(async () =>
         {
-            if (recipe == null)
+            if (recipeAdapter == null)
             {
                 return;
             }
 
-            DebugCore.Fail("TODO edit à faire");
-        });
+            var recipe = recipeAdapter.GetUnderlyingRecipe();
+            
+            var recipeConfiguration = await UiThreadDispatcher.ExecuteOnUIAsync(() =>
+            {
+                var vm = new RecipeEditionPopupViewModel(recipe, _popupManagerLight, _ingredientsManager);
+                _popupManagerLight.ShowDialog(() => vm, vmCreated => new RecipeEditionPopupView(vmCreated));
+                return vm.RecipeConfiguration;
+            }).ConfigureAwait(false);
+
+            if (recipeConfiguration != null)
+            {
+                // remove the previous one:
+                _ingredientsManager.DeleteRecipe(recipe);
+                
+                // create a new recipe with same GUID
+                var recipeCandidate =  new RecipeCandidate(
+                    recipe.Guid, 
+                    recipeConfiguration.RecipeName,
+                    recipeConfiguration.GetIngredients().Select(o => new IngredientForRecipeCandidate(o.Percentage, o.Ingredient.Guid)).ToArray());
+
+                // and replace the previous:
+                _ingredientsManager.AddRecipes(new[] { recipeCandidate });
+            }
+        }).ConfigureAwait(false);
     }
 
     private void ExecuteDuplicateRecipeCommand(RecipeForListAdapter? recipe)
