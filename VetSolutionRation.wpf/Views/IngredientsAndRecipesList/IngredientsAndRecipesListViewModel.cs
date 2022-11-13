@@ -145,7 +145,22 @@ internal sealed class IngredientsAndRecipesListViewModel : ViewModelBase, IIngre
                 return;
             }
 
-            DebugCore.Fail("TODO edit à faire");
+            // find an available name
+            var newName = recipe.Name;
+            var i = 1;
+            while (_ingredientsManager.TryGetRecipeByName(newName, out _) || i == 1000)
+            {
+                i++;
+                newName = $"{recipe.Name}_{i}";
+            }
+            
+            // create a new recipe with another GUID
+            var recipeCandidate =  new RecipeCandidate(
+                Guid.NewGuid(),
+                newName,
+                recipe.GetUnderlyingRecipe().IngredientsForRecipe.Select(o => new IngredientForRecipeCandidate(o.Percentage, o.Ingredient.Guid)).ToArray());
+
+            _ingredientsManager.AddRecipes(new[] { recipeCandidate });
         });
     }
 
@@ -153,12 +168,10 @@ internal sealed class IngredientsAndRecipesListViewModel : ViewModelBase, IIngre
     {
         AsyncWrapper.Wrap(() =>
         {
-            if (recipe == null)
+            if (recipe != null && MessageBox.Show(@$"Voulez vous vraiment supprimer la recette {recipe.Name} ? ", @"Confirmation", MessageBoxButtons.YesNoCancel) == DialogResult.Yes)
             {
-                return;
+                _ingredientsManager.DeleteRecipe(recipe.GetUnderlyingRecipe());
             }
-
-            DebugCore.Fail("TODO edit à faire");
         });
     }
 

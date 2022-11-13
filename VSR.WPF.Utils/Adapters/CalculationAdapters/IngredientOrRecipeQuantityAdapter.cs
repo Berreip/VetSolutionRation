@@ -4,13 +4,13 @@ using VSR.WPF.Utils.Helpers;
 
 namespace VSR.WPF.Utils.Adapters.CalculationAdapters;
 
-public sealed class IngredientQuantityAdapter : ViewModelBase
+public sealed class IngredientOrRecipeQuantityAdapter : ViewModelBase
 {
     private bool _isValid;
     private string? _quantityString;
     private int _quantity;
 
-    public IngredientQuantityAdapter(int initialQuantity = 1)
+    public IngredientOrRecipeQuantityAdapter(int initialQuantity = 1)
     {
         UnitDisplayName = FeedUnit.Kg.ToDiplayName();
         _quantity = initialQuantity;

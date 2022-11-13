@@ -11,7 +11,7 @@
              d:DesignWidth="600"
              d:DataContext="{d:DesignInstance calculation:CalculationViewModel, IsDesignTimeCreatable=False}" x:ClassModifier="internal"
              x:Name="CalculationPanel">
-    
+
     <!-- SELECTED FEED PANEL -->
     <materialDesign:Card Margin="2" Padding="5, 10, 5, 5" materialDesign:ShadowAssist.ShadowDepth="Depth2">
         <Grid>
@@ -32,28 +32,48 @@
                 <ItemsControl ItemsSource="{Binding IngredientAndRecipeInCalculationPanel}">
                     <ItemsControl.Resources>
                         <DataTemplate DataType="{x:Type adapters:RecipeInCalculationAdapter}">
-                            <Button Style="{StaticResource MaterialDesignFlatButton}"
-                                    HorizontalContentAlignment="Stretch"
-                                    Command="{Binding ClickOnRecipeLineCommand}">
-                                
-                                <!-- TODO PBO => mettre nom et valeur recette à propager -->
-                                <!-- Ingredient in the recipe details -->
-                                <ItemsControl Grid.Row="1"
-                                              Grid.Column="0"
-                                              Grid.ColumnSpan="4"
-                                              Background="Pink"
-                                              ItemsSource="{Binding Ingredients}">
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate DataType="{x:Type adapters:IRecipeIngredientInCalculationAdapter}">
-                                            <Grid Margin="2">
-                                                <Grid.ColumnDefinitions>
-                                                    <!-- FEED NAME -->
-                                                    <ColumnDefinition Width="*" />
-                                                    <!-- QUANTITY -->
-                                                    <ColumnDefinition Width="70" />
-                                                    <!-- QUANTITY UNIT -->
-                                                    <ColumnDefinition Width="50" />
-                                                </Grid.ColumnDefinitions>
+                            <materialDesign:Card
+                                Margin="2"
+                                Padding="2">
+                                <materialDesign:Card.Style>
+                                    <Style TargetType="{x:Type materialDesign:Card}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ElementName=RecipeCheckBox, Path=IsChecked}" Value="False">
+                                                <Setter Property="Opacity" Value="0.4" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </materialDesign:Card.Style>
+                                <Button Style="{StaticResource MaterialDesignFlatButton}"
+                                        HorizontalContentAlignment="Stretch"
+                                        Height="Auto"
+                                        Command="{Binding ClickOnRecipeLineCommand}">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <!-- IS SELECTED AND NAME -->
+                                                <ColumnDefinition Width="*" />
+                                                <!-- QUANTITY -->
+                                                <ColumnDefinition Width="70" />
+                                                <!-- QUANTITY UNIT -->
+                                                <ColumnDefinition Width="50" />
+                                                <!-- REMOVE FROM SELECTION BUTTON -->
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <!-- CHECKBOX AND NAME -->
+                                            <CheckBox
+                                                Grid.Column="0"
+                                                x:Name="RecipeCheckBox"
+                                                VerticalAlignment="Center"
+                                                HorizontalAlignment="Left"
+                                                Margin="2, 2"
+                                                IsChecked="{Binding IsSelected}">
 
                                                 <TextBlock
                                                     VerticalAlignment="Center"
@@ -61,25 +81,91 @@
                                                     Text="{Binding Name, Mode=OneTime}"
                                                     TextTrimming="CharacterEllipsis"
                                                     ToolTip="{Binding Name, Mode=OneTime}" />
+                                            </CheckBox>
 
-                                                <!-- QUANTITY PERCENTAGE-->
-                                                <TextBlock Grid.Column="1"
-                                                           Margin="5, 2"
-                                                           Text="{Binding QuantityPercentage}"
-                                                           VerticalAlignment="Center" />
+                                            <!-- QUANTITY -->
+                                            <TextBox Grid.Column="1"
+                                                     Margin="5, 2"
+                                                     Text="{Binding RecipeQuantity.QuantityString, UpdateSourceTrigger=PropertyChanged}"
+                                                     VerticalAlignment="Center"
+                                                     HorizontalContentAlignment="Right">
+                                                <TextBox.Style>
+                                                    <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource MaterialDesignTextBox}">
+                                                        <Setter Property="Foreground" Value="{StaticResource MaterialDesignBody}" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding RecipeQuantity.IsValid}" Value="False">
+                                                                <Setter Property="Foreground" Value="Red" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBox.Style>
+                                            </TextBox>
 
-                                                <!-- QUANTITY VALUE -->
-                                                <TextBlock
-                                                    Grid.Column="2"
+                                            <!-- QUANTITY UNIT -->
+                                            <TextBlock
+                                                Grid.Column="2"
+                                                VerticalAlignment="Center"
+                                                HorizontalAlignment="Left"
+                                                Margin="2"
+                                                Text="{Binding RecipeQuantity.UnitDisplayName}" />
+
+                                            <!-- REMOVE FEED FROM SELECTION BUTTON -->
+                                            <Button Grid.Column="3"
+                                                    Margin="1" Padding="1"
+                                                    Width="35"
                                                     VerticalAlignment="Center"
-                                                    HorizontalAlignment="Left"
-                                                    Margin="2"
-                                                    Text="{Binding Quantity}" />
-                                            </Grid>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                            </Button>
+                                                    ToolTip="Retire cet aliment de la liste"
+                                                    Command="{Binding Path=DataContext. RemoveFromSelectedRecipeCommand, ElementName=CalculationPanel}"
+                                                    CommandParameter="{Binding .}"
+                                                    Style="{StaticResource MaterialDesignFlatButton}">
+                                                <materialDesign:PackIcon Kind="Delete" Margin="0" Padding="0" Height="20" Width="20" />
+                                            </Button>
+                                        </Grid>
+
+                                        <!-- Ingredient in the recipe details -->
+                                        <ItemsControl Grid.Row="1"
+                                                      ItemsSource="{Binding Ingredients}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate DataType="{x:Type adapters:IRecipeIngredientInCalculationAdapter}">
+                                                    <Grid Margin="2">
+                                                        <Grid.ColumnDefinitions>
+                                                            <!-- FEED NAME -->
+                                                            <ColumnDefinition Width="*" />
+                                                            <!-- QUANTITY -->
+                                                            <ColumnDefinition Width="70" />
+                                                            <!-- QUANTITY UNIT -->
+                                                            <ColumnDefinition Width="50" />
+                                                        </Grid.ColumnDefinitions>
+
+                                                        <TextBlock
+                                                            VerticalAlignment="Center"
+                                                            Margin="2"
+                                                            Text="{Binding Name, Mode=OneTime}"
+                                                            TextTrimming="CharacterEllipsis"
+                                                            ToolTip="{Binding Name, Mode=OneTime}" />
+
+                                                        <!-- QUANTITY PERCENTAGE-->
+                                                        <TextBlock Grid.Column="1"
+                                                                   Margin="5, 2"
+                                                                   Text="{Binding QuantityPercentage}"
+                                                                   VerticalAlignment="Center" />
+
+                                                        <!-- QUANTITY VALUE -->
+                                                        <TextBlock
+                                                            Grid.Column="2"
+                                                            VerticalAlignment="Center"
+                                                            HorizontalAlignment="Left"
+                                                            Margin="2"
+                                                            Text="{Binding Quantity}" />
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+
+                                    </Grid>
+
+                                </Button>
+                            </materialDesign:Card>
                         </DataTemplate>
 
                         <!-- INGREDIENT -->

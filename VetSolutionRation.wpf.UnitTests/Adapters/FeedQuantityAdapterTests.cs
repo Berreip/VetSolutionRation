@@ -6,7 +6,7 @@ namespace VetSolutionRation.wpf.UnitTests.Adapters;
 [TestFixture]
 internal sealed class FeedQuantityAdapterTests
 {
-    private IngredientQuantityAdapter _sut;
+    private IngredientOrRecipeQuantityAdapter _sut;
 
     [SetUp]
     public void TestInitialize()
@@ -14,7 +14,7 @@ internal sealed class FeedQuantityAdapterTests
         // mock:
 
         // software under test:
-        _sut = new IngredientQuantityAdapter();
+        _sut = new IngredientOrRecipeQuantityAdapter();
     }
 
     [Test]

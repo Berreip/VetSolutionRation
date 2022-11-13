@@ -28,9 +28,12 @@ public sealed class RecipeInCalculationAdapter : ViewModelBase, IAdapterInCalcul
     {
         _recipe = recipe;
         Name = recipe.RecipeName;
+        RecipeQuantity = new IngredientOrRecipeQuantityAdapter();
         Ingredients = recipe.IngredientsForRecipe.Select(o => new RecipeIngredientInCalculationAdapter(o.Ingredient)).ToArray();
         ClickOnRecipeLineCommand = new DelegateCommandLight(ExecuteClickOnRecipeLineCommand);
     }
+
+    public IngredientOrRecipeQuantityAdapter RecipeQuantity { get; }
 
     private void ExecuteClickOnRecipeLineCommand()
     {
@@ -45,6 +48,8 @@ public sealed class RecipeInCalculationAdapter : ViewModelBase, IAdapterInCalcul
         get => _isSelected;
         set => SetProperty(ref _isSelected, value);
     }
+
+    public Guid Guid => _recipe.Guid;
 
     /// <summary>
     /// Adapter of an ingredient

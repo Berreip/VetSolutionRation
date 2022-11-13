@@ -10,14 +10,14 @@ public sealed class IngredientInCalculationAdapter : ViewModelBase, IAdapterInCa
     private readonly IIngredient _ingredient;
     public string Name => _ingredient.Label;
     private readonly Action<bool>? _onSelectedChangedCallback;
-    public IngredientQuantityAdapter IngredientQuantity { get; }
+    public IngredientOrRecipeQuantityAdapter IngredientQuantity { get; }
     public IDelegateCommandLight ClickOnLineCommand { get; }
     private bool _isSelected;
     
     public IngredientInCalculationAdapter(IIngredient ingredient, Action<bool>? onSelectedChangedCallback, bool initialIsSelected = true)
     {
         _ingredient = ingredient;
-        IngredientQuantity = new IngredientQuantityAdapter();
+        IngredientQuantity = new IngredientOrRecipeQuantityAdapter();
         _onSelectedChangedCallback = onSelectedChangedCallback;
         _isSelected = initialIsSelected;
         ClickOnLineCommand = new DelegateCommandLight(ExecuteClickOnLineCommand);

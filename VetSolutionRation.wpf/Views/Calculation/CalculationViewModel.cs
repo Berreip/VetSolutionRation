@@ -32,6 +32,7 @@ internal sealed class CalculationViewModel : ViewModelBase, ICalculationViewMode
     private readonly HashSet<Guid> _alreadyAddedHash = new HashSet<Guid>();
 
     public IDelegateCommandLight<IngredientInCalculationAdapter> RemoveFromSelectedIngredientCommand { get; }
+    public IDelegateCommandLight<RecipeInCalculationAdapter> RemoveFromSelectedRecipeCommand { get; }
     public IDelegateCommandLight CreateRecipeCommand { get; }
 
     /// <inheritdoc />
@@ -43,6 +44,7 @@ internal sealed class CalculationViewModel : ViewModelBase, ICalculationViewMode
         IngredientAndRecipeInCalculationPanel = ObservableCollectionSource.GetDefaultView(out _ingredientAndRecipeInCalculationPanel);
 
         RemoveFromSelectedIngredientCommand = new DelegateCommandLight<IngredientInCalculationAdapter>(ExecuteRemoveFromSelectedFeedsCommand);
+        RemoveFromSelectedRecipeCommand = new DelegateCommandLight<RecipeInCalculationAdapter>(ExecuteRemoveFromSelectedRecipeCommand);
         CreateRecipeCommand = new DelegateCommandLight(ExecuteCreateRecipeCommand, CanExecuteCreateRecipeCommand);
     }
 
@@ -62,7 +64,6 @@ internal sealed class CalculationViewModel : ViewModelBase, ICalculationViewMode
 
             if (recipeConfiguration != null)
             {
-                //
                 var recipeCandidate = _recipeCalculator.CreateNewRecipe(recipeConfiguration);
 
                 // save it:
@@ -112,6 +113,15 @@ internal sealed class CalculationViewModel : ViewModelBase, ICalculationViewMode
         if (_alreadyAddedHash.Remove(feed.Guid))
         {
             _ingredientAndRecipeInCalculationPanel.Remove(feed);
+            CreateRecipeCommand.RaiseCanExecuteChanged();
+        }
+    }
+    
+    private void ExecuteRemoveFromSelectedRecipeCommand(RecipeInCalculationAdapter recipe)
+    {
+        if (_alreadyAddedHash.Remove(recipe.Guid))
+        {
+            _ingredientAndRecipeInCalculationPanel.Remove(recipe);
             CreateRecipeCommand.RaiseCanExecuteChanged();
         }
     }
